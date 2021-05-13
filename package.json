@@ -1,7 +1,7 @@
 {
   "name": "ipfs-car",
   "version": "0.0.0",
-  "description": "The @ipld/car with the UnixFS representation.",
+  "description": "Convert files to content-addressed archives (.car) and back",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
