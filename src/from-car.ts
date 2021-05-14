@@ -1,14 +1,10 @@
-// This is olizilla's fork of index.ts to show WIP.
-// It is imagined that we'd pull index.ts apart into from-car.ts and to-car.ts
-// so consumers could import just the direction they are interested in.
-
 import fs from 'fs'
 import pipe from 'it-pipe'
 import equals from 'uint8arrays/equals'
 import { map } from 'streaming-iterables'
 import BufferList from 'bl'
 
-import { CarIndexedReader, CarCIDIterator, CarReader } from '@ipld/car'
+import { CarIndexedReader, CarReader } from '@ipld/car'
 import { Block } from '@ipld/car/api'
 import { CID } from 'multiformats'
 import { sha256 } from 'multiformats/hashes/sha2'
@@ -38,11 +34,17 @@ export async function unpackCarToFs ({input, output}: {input: string, output?: s
   await writeFiles(fromCar(carReader), output)
 }
 
+// Node only, read a stream, write files to fs
 export async function unpackCarStreamToFs ({input, output}: {input: AsyncIterable<Uint8Array>, output?: string}) {
   // This stores blocks in memory, which is bad for large car files.
   // Could write the stream to a BlockStore impl first and make it abuse the disk instead.
-  const carReader = await CarReader.fromIterable(input)
-  await writeFiles(fromCar(carReader), output)
+  await writeFiles(fromCarIterable(input), output)
+}
+
+export async function* fromCarIterable (iterable: AsyncIterable<Uint8Array>) {
+  const carReader = await CarReader.fromIterable(iterable)
+
+  yield* fromCar(carReader)
 }
 
 export async function* fromCar (carReader: CarReaderish, roots?: CID[] ) {
@@ -64,9 +66,7 @@ export async function* fromCar (carReader: CarReaderish, roots?: CID[] ) {
   }
 
   for (const root of roots) {
-    for await (const file of exporter.recursive(root, verifyingBlockService, { /* options */ })) {
-      yield file
-    }
+    yield* exporter.recursive(root, verifyingBlockService, { /* options */ })
   }
 }
 
