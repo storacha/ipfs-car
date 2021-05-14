@@ -1,7 +1,17 @@
 #!/usr/bin/env node
 
 import meow from 'meow'
-import { unpackCarToFs, unpackCarStreamToFs, listFilesInCar, listCidsInCar } from './from-car.js'
+import { unpackCarToFs, unpackCarStreamToFs } from '../from-car.js'
+import { listFilesInCar, listCidsInCar, listRootsInCar } from './lib.js'
+
+interface Flags {
+  output?: string,
+  pack?: string,
+  unpack?: string,
+  list?: string,
+  listCids?: string
+  listRoots?: string
+}
 
 const options = {
   flags: {
@@ -22,6 +32,9 @@ const options = {
       alias: 'l',
     },
     listCids: {
+      type: 'string'
+    },
+    listRoots: {
       type: 'string'
     }
   }
@@ -63,14 +76,6 @@ const cli = meow(`
 
 `, options)
 
-interface Flags {
-  output?: string,
-  pack?: string,
-  unpack?: string,
-  list?: string,
-  listCids?: string
-}
-
 async function handleInput ({ flags }: { flags: Flags }) {
   if (flags.pack) {
     console.log('TODO! pack files into a .car')
@@ -84,6 +89,9 @@ async function handleInput ({ flags }: { flags: Flags }) {
 
   } else if (flags.list) {
     return listFilesInCar({input: flags.list})
+
+  } else if (flags.listRoots) {
+    return listRootsInCar({input: flags.listRoots})
 
   } else if (flags.listCids) {
     return listCidsInCar({input: flags.listCids})

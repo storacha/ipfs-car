@@ -8,7 +8,7 @@
     "/dist"
   ],
   "bin": {
-    "ipfs-car": "./dist/cli.js"
+    "ipfs-car": "./dist/cli/cli.js"
   },
   "scripts": {
     "build": "tsc",
