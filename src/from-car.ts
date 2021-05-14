@@ -18,6 +18,7 @@ interface CarReaderish {
 // appeasing tsc, figure out how to import from unix-fs-exporter
 interface UnixFSEntryish {
   type: 'file' | 'directory' | 'object' | 'raw' | 'identity',
+  cid: CID
   name: string
   path: string
   content: () => AsyncIterable<Uint8Array>
@@ -29,25 +30,20 @@ const exporter: any = require('ipfs-unixfs-exporter')
 const toIterable = require('stream-to-it')
 
 // Node only, read a car from fs, write files to fs
-export async function unpackCarToFs ({input, output}: {input: string, output?: string}) {
+export async function unpackCarToFs ({input, roots, output}: {input: string, roots?: CID[], output?: string}) {
   const carReader = await CarIndexedReader.fromFile(input)
-  await writeFiles(fromCar(carReader), output)
+  await writeFiles(fromCar(carReader, roots), output)
 }
 
 // Node only, read a stream, write files to fs
-export async function unpackCarStreamToFs ({input, output}: {input: AsyncIterable<Uint8Array>, output?: string}) {
+export async function unpackCarStreamToFs ({input, roots, output}: {input: AsyncIterable<Uint8Array>, roots?: CID[], output?: string}) {
   // This stores blocks in memory, which is bad for large car files.
   // Could write the stream to a BlockStore impl first and make it abuse the disk instead.
-  await writeFiles(fromCarIterable(input), output)
+  const carReader = await CarReader.fromIterable(input)
+  await writeFiles(fromCar(carReader, roots), output)
 }
 
-export async function* fromCarIterable (iterable: AsyncIterable<Uint8Array>) {
-  const carReader = await CarReader.fromIterable(iterable)
-
-  yield* fromCar(carReader)
-}
-
-export async function* fromCar (carReader: CarReaderish, roots?: CID[] ) {
+export async function* fromCar (carReader: CarReaderish, roots?: CID[]): AsyncIterable<UnixFSEntryish> {
   const verifyingBlockService = {
     get: async (cid: CID) => {
       const res = await carReader.get(cid)
@@ -61,7 +57,7 @@ export async function* fromCar (carReader: CarReaderish, roots?: CID[] ) {
     }
   }
 
-  if (!roots) {
+  if (!roots || roots.length === 0 ) {
     roots = await carReader.getRoots()
   }
 

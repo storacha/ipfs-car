@@ -1,24 +1,24 @@
 import fs from 'fs'
 import { expect } from 'chai'
 import { CID } from 'multiformats'
+import { CarReader } from '@ipld/car'
 
 import {
-  fromCarIterable,
+  fromCar,
   unpackCarToFs,
   unpackCarStreamToFs,
-  listFilesInCar,
-  listCidsInCar
 } from '../dist/from-car'
 
 const rawCidString = 'bafkreigk2mcysiwgmacvilb3q6lcdaq53zlwu3jn4pj6qev2lylyfbqfdm'
 const rawCid = CID.parse(rawCidString)
 
-describe('fromCarIterable', () => {
+describe('fromCar', () => {
   it('file system stream', async () => {
     const inStream = fs.createReadStream(`${__dirname}/fixtures/raw.car`)
+    const carReader = await CarReader.fromIterable(inStream)
     const files = []
 
-    for await (const file of fromCarIterable(inStream)) {
+    for await (const file of fromCar(carReader)) {
       expect(file.path).to.eql(rawCidString)
       expect(rawCid.equals(file.cid)).to.eql(true)
       files.push(file)
