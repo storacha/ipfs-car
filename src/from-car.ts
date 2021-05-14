@@ -8,7 +8,7 @@ import equals from 'uint8arrays/equals'
 import { map } from 'streaming-iterables'
 import BufferList from 'bl'
 
-import { CarIndexedReader, CarCIDIterator } from '@ipld/car'
+import { CarIndexedReader, CarCIDIterator, CarReader } from '@ipld/car'
 import { Block } from '@ipld/car/api'
 import { CID } from 'multiformats'
 import { sha256 } from 'multiformats/hashes/sha2'
@@ -35,6 +35,13 @@ const toIterable = require('stream-to-it')
 // Node only, read a car from fs, write files to fs
 export async function unpackCarToFs ({input, output}: {input: string, output?: string}) {
   const carReader = await CarIndexedReader.fromFile(input)
+  await writeFiles(fromCar(carReader), output)
+}
+
+export async function unpackCarStreamToFs ({input, output}: {input: AsyncIterable<Uint8Array>, output?: string}) {
+  // This stores blocks in memory, which is bad for large car files.
+  // Could write the stream to a BlockStore impl first and make it abuse the disk instead.
+  const carReader = await CarReader.fromIterable(input)
   await writeFiles(fromCar(carReader), output)
 }
 
@@ -80,6 +87,7 @@ export async function* fromCar (carReader: CarReaderish, roots?: CID[] ) {
 export async function writeFiles (source: AsyncIterable<UnixFSEntryish>, output?: string) {
   for await (const file of source) {
     let filePath = file.path
+    
     // output overrides the first part of the path.
     if (output) {
       const parts = file.path.split('/')
@@ -87,15 +95,16 @@ export async function writeFiles (source: AsyncIterable<UnixFSEntryish>, output?
       filePath = parts.join('/')
     }
 
-    if (file.type === 'file') {
+    if (file.type === 'file' || file.type === 'raw') {
       await pipe(
         file.content,
         map((chunk: BufferList) => chunk.slice()), // BufferList to Buffer
         toIterable.sink(fs.createWriteStream(filePath))
       )
-    } else {
-      // this is a dir
+    } else if (file.type === 'directory' ){
       await fs.promises.mkdir(filePath, { recursive: true })
+    } else {
+      throw new Error(`Unsupported UnixFS type ${file.type} for ${file.path}`)
     }
   }
 }

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import meow from 'meow'
-import { unpackCarToFs, listFilesInCar, listCidsInCar } from './from-car.js'
+import { unpackCarToFs, unpackCarStreamToFs, listFilesInCar, listCidsInCar } from './from-car.js'
 
 const options = {
   flags: {
@@ -52,6 +52,9 @@ const cli = meow(`
     # unpack files from a .car to a specific file path
     $ ipfs-car --unpack path/to/my.car --output /path/to/unpack/files/to
 
+    # unpack files from a .car on stdin
+    $ cat path/to/my.car | ipfs-car --unpack
+
     # list cids in a .car
     $ ipfs-car --list-cids path/to/my.ca
 
@@ -68,19 +71,27 @@ interface Flags {
   listCids?: string
 }
 
-async function handleInput ({flags}: { flags: Flags}) {
+async function handleInput ({ flags }: { flags: Flags }) {
   if (flags.pack) {
     console.log('TODO! pack files into a .car')
     // await fsToCar({input: flags.pack, output: flags.output})
 
-  } else if (flags.unpack) {
-    await unpackCarToFs({input: flags.unpack, output: flags.output})
+  } else if (flags.unpack !== undefined) {
+    if (flags.unpack === '') {
+      return unpackCarStreamToFs({input: process.stdin, output: flags.output})
+    }
+    return unpackCarToFs({input: flags.unpack, output: flags.output})
 
   } else if (flags.list) {
-    await listFilesInCar({input: flags.list})
+    return listFilesInCar({input: flags.list})
 
   } else if (flags.listCids) {
-    await listCidsInCar({input: flags.listCids})
+    return listCidsInCar({input: flags.listCids})
+
+  } else if (!process.stdin.isTTY) {
+    // maybe stream?
+    console.log('Reading .car from stdin')
+    return unpackCarStreamToFs({input: process.stdin, output: flags.output})
 
   } else {
     cli.showHelp()
