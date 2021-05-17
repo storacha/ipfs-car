@@ -75,7 +75,7 @@ export async function writeFiles (source: AsyncIterable<UnixFSEntry>, output?: s
   }
 }
 
-async function isValid({ cid, bytes }: Block) {
+async function isValid ({ cid, bytes }: Block) {
   // TODO: simple defaults for now
   const hash = await sha256.digest(bytes)
   return equals(hash.digest, cid.multihash.digest)

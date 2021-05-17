@@ -6,11 +6,13 @@ import { CarReader } from '@ipld/car'
 import {
   fromCar,
   unpackCarToFs,
-  unpackCarStreamToFs,
+  unpackCarStreamToFs
 } from '../dist/from-car'
 
 const rawCidString = 'bafkreigk2mcysiwgmacvilb3q6lcdaq53zlwu3jn4pj6qev2lylyfbqfdm'
 const rawCid = CID.parse(rawCidString)
+
+const dirTmp = `${__dirname}/tmp`
 
 describe('fromCar', () => {
   it('file system stream', async () => {
@@ -29,12 +31,14 @@ describe('fromCar', () => {
 })
 
 describe('unpackCarStreamToFs', () => {
-  before(() => {
-    fs.mkdirSync(`${__dirname}/tmp`)
+  beforeEach(() => {
+    if (!fs.existsSync(dirTmp)) {
+      fs.mkdirSync(dirTmp)
+    }
   })
 
   afterEach(() => {
-    fs.rmdirSync(`${__dirname}/tmp`, { recursive: true })
+    fs.rmdirSync(dirTmp, { recursive: true })
   })
 
   it('raw file stream', async () => {
@@ -63,12 +67,14 @@ describe('unpackCarStreamToFs', () => {
 })
 
 describe('unpackCarToFs', () => {
-  before(() => {
-    fs.mkdirSync(`${__dirname}/tmp`)
+  beforeEach(() => {
+    if (!fs.existsSync(dirTmp)) {
+      fs.mkdirSync(dirTmp)
+    }
   })
 
   afterEach(() => {
-    fs.rmdirSync(`${__dirname}/tmp`, { recursive: true })
+    fs.rmdirSync(dirTmp, { recursive: true })
   })
 
   it('file system raw', async () => {
