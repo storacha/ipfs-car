@@ -11,6 +11,7 @@ import {
 
 import {
   packFileToCar,
+  packFileToCarFs,
   toCar
 } from '../dist/to-car'
 
@@ -40,9 +41,9 @@ describe('toCar', () => {
     })
   })
 
-  it('pack raw file to car', async () => {
+  it('pack raw file to car with filesystem output', async () => {
     // Create car from file
-    await packFileToCar({
+    await packFileToCarFs({
       input: `${__dirname}/fixtures/file.raw`,
       output: `${__dirname}/tmp/raw2.car`
     })
@@ -56,6 +57,27 @@ describe('toCar', () => {
     const rawOriginalContent = new Uint8Array(fs.readFileSync(`${__dirname}/fixtures/file.raw`))
     const rawContent = (await all(files[0].content()))[0]
     
+    expect(equals(rawOriginalContent, rawContent)).to.eql(true)
+  })
+
+  it('pack raw file to car with writable stream', async () => {
+    const writable = fs.createWriteStream(`${__dirname}/tmp/raw3.car`)
+
+    // Create car from file
+    await packFileToCar({
+      input: `${__dirname}/fixtures/file.raw`,
+      writable
+    })
+
+    const inStream = fs.createReadStream(`${__dirname}/tmp/raw3.car`)
+    const carReader = await CarReader.fromIterable(inStream)
+    const files = await all(fromCar(carReader))
+
+    expect(files).to.have.lengthOf(1)
+
+    const rawOriginalContent = new Uint8Array(fs.readFileSync(`${__dirname}/fixtures/file.raw`))
+    const rawContent = (await all(files[0].content()))[0]
+
     expect(equals(rawOriginalContent, rawContent)).to.eql(true)
   })
 })

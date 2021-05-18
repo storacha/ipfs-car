@@ -20,34 +20,27 @@ const { importer }: any = require('ipfs-unixfs-importer')
 
 // TODO: create types.ts
 interface UnixFSEntryish {
-  type: 'file' | 'directory' | 'object' | 'raw' | 'identity' | string,
+  type: 'file' | 'directory' | 'object' | 'raw' | 'identity',
   name: string
   cid: CID
   path: string
   content: () => AsyncIterable<Uint8Array>
 }
 
-export async function packFileToCar ({ input, output }: { input: string | Iterable<string> | AsyncIterable<string>, output?: string }) {
-  const unixFsFiles = await streamToUnixFs({
-    source: normalizeAddInput(globSource(input, {
-      recursive: true
-    }))
-  })
+export async function packFileToCarFs ({ input, output }: { input: string | Iterable<string> | AsyncIterable<string>, output?: string }) {
+  const writable = fs.createWriteStream(output || 'output.car') // TODO: How to handle default naming given we do not have cid
 
-  await toCar({
-    files: unixFsFiles,
-    writable: fs.createWriteStream(output || unixFsFiles[0].path)
-  })
+  return packFileToCar({input, writable})
 }
 
-export async function packFileToCar2 ({input, output}: {input: string, output: string}) {
+export async function packFileToCar ({ input, writable }: { input: string | Iterable<string> | AsyncIterable<string>, writable: Writable}) {
   let writerChannel: WriterChannel | undefined
-  const writable = fs.createWriteStream(output)
 
   const writeBlockService = {
     put: async ({ cid, bytes }: { cid: CID, bytes: Uint8Array}) => {
       if (!writerChannel) {
         writerChannel = await CarWriter.create([cid])
+        // const writable = fs.createWriteStream(output || `${cid.toString()}.car`)
         Readable.from(writerChannel.out).pipe(writable)
       }
 
@@ -58,6 +51,7 @@ export async function packFileToCar2 ({input, output}: {input: string, output: s
     }
   }
 
+  // Consume the source
   await all(pipe(
     normalizeAddInput(globSource(input, {
       recursive: true
@@ -71,56 +65,11 @@ export async function packFileToCar2 ({input, output}: {input: string, output: s
     }), // TODO: check defaults
   ))
 
-  if (writerChannel) {
-    await writerChannel.writer.close()
-  }
-}
-
-export async function streamToUnixFs ({source}: {source: AsyncIterable<Uint8Array>}) {
-  let root: CID | undefined
-  const blocks: Map<CID, Uint8Array> = new Map()
-
-  const writeBlockService = {
-    put: async ({ cid, bytes }: { cid: CID, bytes: Uint8Array }) => {
-      if (!root) {
-        root = cid
-      }
-
-      blocks.set(cid, bytes)
-    }
+  if (!writerChannel) {
+    throw new Error('any file was read')
   }
 
-  const files: Array<UnixFSEntryish> = await all(pipe(
-    source,
-    (source: any) => importer(source, writeBlockService, {
-      cidVersion: 1,
-      chunker: 'fixed',
-      maxChunkSize: 262144,
-      hasher: sha256,
-      rawLeaves: true // TODO: option for now
-    }), // TODO: check defaults
-    async function* (source: any) {
-      for await (const file of source) {
-        const bytes = blocks.get(file.cid)
-
-        if (!bytes) {
-          return
-        }
-
-        yield {
-          type: 'raw',
-          cid: file.cid,
-          path: file.path,
-          name: file.cid.toString(),
-          content: async function* () {
-            yield bytes
-          }
-        }
-      }
-    }
-  ))
-
-  return files
+  await writerChannel.writer.close()
 }
 
 // UnixFs to Car function
