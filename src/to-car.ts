@@ -36,18 +36,11 @@ export async function packFileToCarFs ({ input, output }: { input: string | Iter
 export async function packFileToCar ({ input, writable }: { input: string | Iterable<string> | AsyncIterable<string>, writable: Writable}) {
   let writerChannel: WriterChannel | undefined
 
+  const blockStore: Array<{ cid: CID, bytes: Uint8Array }> = []
+
   const writeBlockService = {
     put: async ({ cid, bytes }: { cid: CID, bytes: Uint8Array}) => {
-      if (!writerChannel) {
-        writerChannel = await CarWriter.create([cid])
-        // const writable = fs.createWriteStream(output || `${cid.toString()}.car`)
-        Readable.from(writerChannel.out).pipe(writable)
-      }
-
-      await writerChannel.writer.put({
-        cid,
-        bytes
-      })
+      blockStore.push({ cid, bytes })
     }
   }
 
@@ -61,12 +54,20 @@ export async function packFileToCar ({ input, writable }: { input: string | Iter
       chunker: 'fixed',
       maxChunkSize: 262144,
       hasher: sha256,
-      rawLeaves: true // TODO: option for now
-    }), // TODO: check defaults
+      rawLeaves: true,
+      wrapWithDirectory: false // TODO: Set to true when not directory to keep names?
+    }), // TODO: recheck defaults
   ))
 
-  if (!writerChannel) {
-    throw new Error('any file was read')
+  if (!blockStore.length) {
+    throw new Error('error')
+  }
+
+  writerChannel = CarWriter.create([blockStore[blockStore.length - 1].cid])
+  Readable.from(writerChannel.out).pipe(writable)
+  
+  for (let i = 0; i < blockStore.length; i++) {
+    await writerChannel.writer.put(blockStore[i])
   }
 
   await writerChannel.writer.close()
@@ -80,7 +81,7 @@ export async function toCar ({ files, writable }: { files: UnixFSEntryish[], wri
   Readable.from(out).pipe(writable)
 
   for (let i = 0; i < files.length; i++) {
-    // TODO: This gets everything in memory
+    // TODO: This gets everything in memory...
     const bytes = await all(files[i].content())
 
     await writer.put({

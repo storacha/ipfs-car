@@ -41,14 +41,28 @@ describe('toCar', () => {
     })
   })
 
+  it('pack dir to car with filesystem output', async () => {
+    // Create car from file
+    await packFileToCarFs({
+      input: `${__dirname}/fixtures/dir`,
+      output: `${__dirname}/tmp/dir.car`
+    })
+
+    const inStream = fs.createReadStream(`${__dirname}/tmp/dir.car`)
+    const carReader = await CarReader.fromIterable(inStream)
+    const files = await all(fromCar(carReader))
+
+    expect(files).to.have.lengthOf(2)
+  })
+
   it('pack raw file to car with filesystem output', async () => {
     // Create car from file
     await packFileToCarFs({
       input: `${__dirname}/fixtures/file.raw`,
-      output: `${__dirname}/tmp/raw2.car`
+      output: `${__dirname}/tmp/raw.car`
     })
 
-    const inStream = fs.createReadStream(`${__dirname}/tmp/raw2.car`)
+    const inStream = fs.createReadStream(`${__dirname}/tmp/raw.car`)
     const carReader = await CarReader.fromIterable(inStream)
     const files = await all(fromCar(carReader))
 
@@ -61,7 +75,7 @@ describe('toCar', () => {
   })
 
   it('pack raw file to car with writable stream', async () => {
-    const writable = fs.createWriteStream(`${__dirname}/tmp/raw3.car`)
+    const writable = fs.createWriteStream(`${__dirname}/tmp/raw.car`)
 
     // Create car from file
     await packFileToCar({
@@ -69,7 +83,7 @@ describe('toCar', () => {
       writable
     })
 
-    const inStream = fs.createReadStream(`${__dirname}/tmp/raw3.car`)
+    const inStream = fs.createReadStream(`${__dirname}/tmp/raw.car`)
     const carReader = await CarReader.fromIterable(inStream)
     const files = await all(fromCar(carReader))
 
