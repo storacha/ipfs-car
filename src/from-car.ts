@@ -8,25 +8,9 @@ import { CarIndexedReader, CarReader } from '@ipld/car'
 import { Block } from '@ipld/car/api'
 import { CID } from 'multiformats'
 import { sha256 } from 'multiformats/hashes/sha2'
+import exporter from 'ipfs-unixfs-exporter'
+import { UnixFSEntry } from 'ipfs-unixfs-exporter'
 
-// appeasing tsc 
-interface CarReaderish {
-  getRoots(): Promise<CID[]>
-  get(key: CID): Promise<Block | undefined>
-}
-
-// appeasing tsc, figure out how to import from unix-fs-exporter
-interface UnixFSEntryish {
-  type: 'file' | 'directory' | 'object' | 'raw' | 'identity',
-  cid: CID
-  name: string
-  path: string
-  content: () => AsyncIterable<Uint8Array>
-}
-
-// TODO: Needs module with types commited + typedefinitions fixed (different cids...)
-// import exporter from 'ipfs-unixfs-exporter'
-const exporter: any = require('ipfs-unixfs-exporter')
 const toIterable = require('stream-to-it')
 
 // Node only, read a car from fs, write files to fs
@@ -43,7 +27,7 @@ export async function unpackCarStreamToFs ({input, roots, output}: {input: Async
   await writeFiles(fromCar(carReader, roots), output)
 }
 
-export async function* fromCar (carReader: CarReaderish, roots?: CID[]): AsyncIterable<UnixFSEntryish> {
+export async function* fromCar (carReader: CarReader|CarIndexedReader, roots?: CID[]): AsyncIterable<UnixFSEntry> {
   const verifyingBlockService = {
     get: async (cid: CID) => {
       const res = await carReader.get(cid)
@@ -66,7 +50,7 @@ export async function* fromCar (carReader: CarReaderish, roots?: CID[]): AsyncIt
   }
 }
 
-export async function writeFiles (source: AsyncIterable<UnixFSEntryish>, output?: string) {
+export async function writeFiles (source: AsyncIterable<UnixFSEntry>, output?: string) {
   for await (const file of source) {
     let filePath = file.path
     
