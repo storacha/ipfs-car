@@ -2,6 +2,7 @@
 
 import meow from 'meow'
 import { CID } from 'multiformats';
+import { packFileToCarFs } from '../to-car'
 import { unpackCarToFs, unpackCarStreamToFs } from '../from-car.js'
 import { listFilesInCar, listCidsInCar, listRootsInCar } from './lib.js'
 
@@ -95,9 +96,7 @@ const cli = meow(`
 
 async function handleInput ({ flags }: { flags: Flags }) {
   if (flags.pack) {
-    console.log('TODO! pack files into a .car')
-    // await fsToCar({input: flags.pack, output: flags.output})
-
+    return packFileToCarFs({input: flags.pack, output: flags.output})
   } else if (flags.unpack !== undefined) {
     const roots = (flags.root || []).map(r => CID.parse(r))
 
