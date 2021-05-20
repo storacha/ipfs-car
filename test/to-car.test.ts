@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 import fs from 'fs'
+import process from 'process'
 import all from 'it-all'
 const equals = require('uint8arrays/equals')
 
@@ -72,6 +73,28 @@ describe('toCar', () => {
     const rawContent = (await all(files[0].content()))[0]
     
     expect(equals(rawOriginalContent, rawContent)).to.eql(true)
+  })
+
+  it('pack raw file to car without output', async () => {
+    // Create car from file
+    await packFileToCarFs({
+      input: `${__dirname}/fixtures/file.raw`
+    })
+    const newCarPath = `${process.cwd()}/file.car`
+
+    const inStream = fs.createReadStream(newCarPath)
+    const carReader = await CarReader.fromIterable(inStream)
+    const files = await all(fromCar(carReader))
+
+    expect(files).to.have.lengthOf(1)
+
+    const rawOriginalContent = new Uint8Array(fs.readFileSync(`${__dirname}/fixtures/file.raw`))
+    const rawContent = (await all(files[0].content()))[0]
+
+    expect(equals(rawOriginalContent, rawContent)).to.eql(true)
+
+    // Remove created file
+    fs.rmSync(newCarPath)
   })
 
   it('pack raw file to car with writable stream', async () => {

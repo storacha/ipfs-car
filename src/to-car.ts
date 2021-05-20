@@ -1,4 +1,7 @@
 import fs from 'fs'
+import os from 'os'
+import path from 'path'
+import process from 'process'
 import { Readable, Writable } from 'stream'
 
 import { CarWriter } from '@ipld/car'
@@ -17,18 +20,27 @@ import globSource from 'ipfs-utils/src/files/glob-source'
 import { WriterChannel } from '@ipld/car/lib/writer'
 
 export async function packFileToCarFs ({ input, output }: { input: string | Iterable<string> | AsyncIterable<string>, output?: string }) {
-  const writable = fs.createWriteStream(output || 'output.car') // TODO: How to handle default naming given we do not have cid
+  const location = output || `${os.tmpdir()}/${(parseInt(String(Math.random() * 1e9))).toString(36) + Date.now()}`
+  const writable = fs.createWriteStream(location)
 
-  return packFileToCar({input, writable})
+  const root = await packFileToCar({input, writable})
+
+  // Move to work dir
+  if (!output) {
+    const inputName = typeof input === 'string' ? path.parse(path.basename(input)).name : root.toString()
+    await fs.promises.rename(location, `${process.cwd()}/${inputName}.car`)
+  }
 }
 
 export async function packFileToCar ({ input, writable }: { input: string | Iterable<string> | AsyncIterable<string>, writable: Writable}) {
   let writerChannel: WriterChannel | undefined
+  let root: CID | undefined
 
   const blockStore: Array<{ cid: CID, bytes: Uint8Array }> = []
 
   const blockApi = {
     put: ({ cid, bytes }: { cid: CID, bytes: Uint8Array}) => {
+      root = cid
       blockStore.push({ cid, bytes })
 
       return Promise.resolve({ cid, bytes })
@@ -53,8 +65,8 @@ export async function packFileToCar ({ input, writable }: { input: string | Iter
     }), // TODO: recheck defaults
   ))
 
-  if (!blockStore.length) {
-    throw new Error('error')
+  if (!blockStore.length || !root) {
+    throw new Error('Not valid file to pack')
   }
 
   writerChannel = CarWriter.create([blockStore[blockStore.length - 1].cid])
@@ -63,8 +75,9 @@ export async function packFileToCar ({ input, writable }: { input: string | Iter
   for (let i = 0; i < blockStore.length; i++) {
     await writerChannel.writer.put(blockStore[i])
   }
-
   await writerChannel.writer.close()
+
+  return root
 }
 
 // UnixFs to Car function
