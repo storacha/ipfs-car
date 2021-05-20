@@ -38,6 +38,9 @@ export async function* fromCar (carReader: CarReader|CarIndexedReader, roots?: C
         throw new Error(`Invalid CAR. Hash of block data does not match CID ${cid}`)
       }
       return res
+    },
+    put: ({ cid, bytes }: { cid: CID, bytes: Uint8Array }) => {
+      return Promise.reject(new Error('should not get blocks'))
     }
   }
 
