@@ -19,11 +19,17 @@ import normalizeAddInput from 'ipfs-core-utils/src/files/normalise-input/index'
 import globSource from 'ipfs-utils/src/files/glob-source'
 import { WriterChannel } from '@ipld/car/api'
 
-export async function packFileToCarFs ({ input, output }: { input: string | Iterable<string> | AsyncIterable<string>, output?: string }) {
+export async function packFileToCarFs({ input, output }: { input: string | Iterable<string> | AsyncIterable<string>, output?: string }) {
   const location = output || `${os.tmpdir()}/${(parseInt(String(Math.random() * 1e9))).toString(36) + Date.now()}`
   const writable = fs.createWriteStream(location)
 
-  const root = await packFileToCar({input, writable})
+  const { root, headerRoot } = await packFileToCar({ input, writable })
+
+  if (!root.equals(headerRoot)) {
+    const fd = await fs.promises.open(location, 'r+')
+    await CarWriter.updateRootsInFile(fd, [root])
+    await fd.close()
+  }
 
   // Move to work dir
   if (!output) {
@@ -32,16 +38,25 @@ export async function packFileToCarFs ({ input, output }: { input: string | Iter
   }
 }
 
-export async function packFileToCar ({ input, writable }: { input: string | Iterable<string> | AsyncIterable<string>, writable: Writable}) {
+export async function packFileToCar({ input, writable }: { input: string | Iterable<string> | AsyncIterable<string>, writable: Writable }) {
   let writerChannel: WriterChannel | undefined
   let root: CID | undefined
-
-  const blockStore: Array<{ cid: CID, bytes: Uint8Array }> = []
+  let headerRoot: CID | undefined
 
   const blockApi = {
-    put: ({ cid, bytes }: { cid: CID, bytes: Uint8Array}) => {
+    put: async ({ cid, bytes }: { cid: CID, bytes: Uint8Array }) => {
+      // Keep written root on car creation
+      if (!writerChannel) {
+        headerRoot = cid
+
+        writerChannel = CarWriter.create([cid])
+        Readable.from(writerChannel.out).pipe(writable)
+      }
+
+      await writerChannel.writer.put({ cid, bytes })
+
+      // Update root reference
       root = cid
-      blockStore.push({ cid, bytes })
 
       return Promise.resolve({ cid, bytes })
     },
@@ -65,23 +80,17 @@ export async function packFileToCar ({ input, writable }: { input: string | Iter
     }), // TODO: recheck defaults
   ))
 
-  if (!blockStore.length || !root) {
+  if (!writerChannel || !root || !headerRoot) {
     throw new Error('Not valid file to pack')
   }
 
-  writerChannel = CarWriter.create([blockStore[blockStore.length - 1].cid])
-  Readable.from(writerChannel.out).pipe(writable)
-  
-  for (let i = 0; i < blockStore.length; i++) {
-    await writerChannel.writer.put(blockStore[i])
-  }
   await writerChannel.writer.close()
 
-  return root
+  return { root, headerRoot }
 }
 
 // UnixFs to Car function
-export async function toCar ({ files, writable }: { files: UnixFSEntry[], writable: Writable}) {
+export async function toCar({ files, writable }: { files: UnixFSEntry[], writable: Writable }) {
   // create the writer and set the header with the roots
   // Just single root, multiple files: WRAP
   const { writer, out } = await CarWriter.create([files[0].cid])
