@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/vasco-santos/ipfs-car#readme",
   "dependencies": {
-    "@ipld/car": "^1.0.5",
+    "@ipld/car": "^2.1.0",
     "@types/bl": "^5.0.1",
     "bl": "^5.0.0",
     "ipfs-core-utils": "^0.8.0",

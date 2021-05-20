@@ -17,7 +17,7 @@ import { sha256 } from 'multiformats/hashes/sha2'
 import normalizeAddInput from 'ipfs-core-utils/src/files/normalise-input/index'
 
 import globSource from 'ipfs-utils/src/files/glob-source'
-import { WriterChannel } from '@ipld/car/lib/writer'
+import { WriterChannel } from '@ipld/car/api'
 
 export async function packFileToCarFs ({ input, output }: { input: string | Iterable<string> | AsyncIterable<string>, output?: string }) {
   const location = output || `${os.tmpdir()}/${(parseInt(String(Math.random() * 1e9))).toString(36) + Date.now()}`
