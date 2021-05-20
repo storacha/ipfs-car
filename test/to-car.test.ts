@@ -11,7 +11,7 @@ import {
 } from '../dist/from-car'
 
 import {
-  packFileToCar,
+  packFileIterableToCar,
   packFileToCarFs,
   toCar
 } from '../dist/to-car'
@@ -45,7 +45,7 @@ describe('toCar', () => {
   it('pack dir to car with filesystem output', async () => {
     const writable = fs.createWriteStream(`${__dirname}/tmp/dir.car`)
     // Create car from file
-    await packFileToCar({
+    await packFileIterableToCar({
       input: `${__dirname}/fixtures/dir`,
       writable
     })
@@ -116,7 +116,7 @@ describe('toCar', () => {
     const writable = fs.createWriteStream(`${__dirname}/tmp/raw.car`)
 
     // Create car from file
-    await packFileToCar({
+    await packFileIterableToCar({
       input: `${__dirname}/fixtures/file.raw`,
       writable
     })

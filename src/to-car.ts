@@ -40,7 +40,7 @@ export async function packFileToCarFs({ input, output }: { input: string | Itera
   }
 }
 
-export async function packFileToCar({ input, writable }: { input: string | Iterable<string> | AsyncIterable<string>, writable: Writable }) {
+export async function packFileIterableToCar({ input, writable }: { input: Iterable<string> | AsyncIterable<string>, writable: Writable }) {
   let bytes = new Uint8Array([])
 
   const tmpWritable = new stream.Writable({
