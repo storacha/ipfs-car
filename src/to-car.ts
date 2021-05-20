@@ -2,6 +2,7 @@ import fs from 'fs'
 import os from 'os'
 import path from 'path'
 import process from 'process'
+import stream from 'stream'
 import { Readable, Writable } from 'stream'
 
 import { CarWriter } from '@ipld/car'
@@ -11,6 +12,7 @@ import { UnixFSEntry } from 'ipfs-unixfs-exporter'
 import { CID } from 'multiformats'
 import all from 'it-all'
 import pipe from 'it-pipe'
+import concat from 'uint8arrays/concat'
 
 import { sha256 } from 'multiformats/hashes/sha2'
 
@@ -23,7 +25,7 @@ export async function packFileToCarFs({ input, output }: { input: string | Itera
   const location = output || `${os.tmpdir()}/${(parseInt(String(Math.random() * 1e9))).toString(36) + Date.now()}`
   const writable = fs.createWriteStream(location)
 
-  const { root, headerRoot } = await packFileToCar({ input, writable })
+  const { root, headerRoot } = await pack({ input, writable })
 
   if (!root.equals(headerRoot)) {
     const fd = await fs.promises.open(location, 'r+')
@@ -39,6 +41,33 @@ export async function packFileToCarFs({ input, output }: { input: string | Itera
 }
 
 export async function packFileToCar({ input, writable }: { input: string | Iterable<string> | AsyncIterable<string>, writable: Writable }) {
+  let bytes = new Uint8Array([])
+
+  const tmpWritable = new stream.Writable({
+    write: function (chunk, _, next) {
+      bytes = concat([bytes, new Uint8Array(chunk)])
+      next()
+    }
+  })
+
+  const { root, headerRoot } = await pack({ input, writable: tmpWritable })
+
+  if (!root.equals(headerRoot)) {
+    bytes = await CarWriter.updateRootsInBytes(bytes, [root])
+  }
+
+  await new Promise((resolve, reject) => {
+    writable.write(bytes, (err) => {
+      if (err) {
+        return reject(err)
+      }
+
+      resolve({})
+    })
+  })
+}
+
+async function pack({ input, writable }: { input: string | Iterable<string> | AsyncIterable<string>, writable: Writable }) {
   let writerChannel: WriterChannel | undefined
   let root: CID | undefined
   let headerRoot: CID | undefined
