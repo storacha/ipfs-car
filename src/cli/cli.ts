@@ -49,14 +49,14 @@ const options = {
 
 const cli = meow(`
   Content Addressable archives (CAR) store IPLD block data as a sequence of bytes;
-  typically in a file with a .car extension. The CAR format is a serialized 
-  representation of any IPLD DAG (graph) as the concatenation of its blocks, plus 
+  typically in a file with a .car extension. The CAR format is a serialized
+  representation of any IPLD DAG (graph) as the concatenation of its blocks, plus
   a header that describes the graphs in the file (via root CIDs).
 
   See: https://github.com/ipld/specs/blob/master/block-layer/content-addressable-archives.md
-  
+
   Packing files into a .car
-    
+
     # write a content addressed archive to the current working dir.
     $ ipfs-car --pack path/to/file/or/dir
 
@@ -116,6 +116,7 @@ async function handleInput ({ flags }: { flags: Flags }) {
 
   } else if (!process.stdin.isTTY) {
     // maybe stream?
+    // tslint:disable-next-line: no-console
     console.log('Reading .car from stdin')
     return unpackCarStreamToFs({input: process.stdin, output: flags.output})
 

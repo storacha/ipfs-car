@@ -22,7 +22,7 @@ import globSource from 'ipfs-utils/src/files/glob-source'
 import { WriterChannel } from '@ipld/car/api'
 
 export async function packFileToCarFs({ input, output }: { input: string | Iterable<string> | AsyncIterable<string>, output?: string }) {
-  const location = output || `${os.tmpdir()}/${(parseInt(String(Math.random() * 1e9))).toString(36) + Date.now()}`
+  const location = output || `${os.tmpdir()}/${(parseInt(String(Math.random() * 1e9), 10)).toString() + Date.now()}`
   const writable = fs.createWriteStream(location)
 
   const { root, headerRoot } = await pack({ input, writable })
@@ -44,7 +44,7 @@ export async function packFileIterableToCar({ input, writable }: { input: Iterab
   let bytes = new Uint8Array([])
 
   const tmpWritable = new stream.Writable({
-    write: function (chunk, _, next) {
+    write (chunk, _, next) {
       bytes = concat([bytes, new Uint8Array(chunk)])
       next()
     }
@@ -125,12 +125,12 @@ export async function toCar({ files, writable }: { files: UnixFSEntry[], writabl
   const { writer, out } = await CarWriter.create([files[0].cid])
   Readable.from(out).pipe(writable)
 
-  for (let i = 0; i < files.length; i++) {
+  for (const file of files) {
     // TODO: This gets everything in memory...
-    const bytes = await all(files[i].content())
+    const bytes = await all(file.content())
 
     await writer.put({
-      cid: files[i].cid,
+      cid: file.cid,
       bytes: bytes[0]
     })
   }

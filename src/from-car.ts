@@ -11,6 +11,7 @@ import { sha256 } from 'multiformats/hashes/sha2'
 import exporter from 'ipfs-unixfs-exporter'
 import { UnixFSEntry } from 'ipfs-unixfs-exporter'
 
+// tslint:disable-next-line: no-var-requires needs types
 const toIterable = require('stream-to-it')
 
 // Node only, read a car from fs, write files to fs
@@ -56,7 +57,7 @@ export async function* fromCar (carReader: CarReader|CarIndexedReader, roots?: C
 export async function writeFiles (source: AsyncIterable<UnixFSEntry>, output?: string) {
   for await (const file of source) {
     let filePath = file.path
-    
+
     // output overrides the first part of the path.
     if (output) {
       const parts = file.path.split('/')
