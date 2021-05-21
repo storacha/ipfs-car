@@ -1,6 +1,6 @@
 # ipfs-car 🚘✨⬢
 
-> Convert files to content-addressable archives and back
+> Convert files to content-addressable archives (.car) and back
 
 ## Description
 
@@ -10,7 +10,7 @@ Content-addressable archives store data as blocks (a sequence of bytes) each pre
 
 Use `ipfs-car` to pack your files into a .car; a portable, verifiable, IPFS compatible archive.
 
-```console
+```sh
 $ ipfs-car --pack path/to/files --output my-files.car
 ```
 
@@ -75,7 +75,7 @@ Use `ipfs-car/from-car` for functions to unpack content-addressable archives to 
 
 ### `packFileToCarFs`
 
-Take an path on disk and write it to car file
+Take a path on disk and write it to car file
 
 ```js
 import { packFileToCarFs } from 'ipfs-car/to-car'
