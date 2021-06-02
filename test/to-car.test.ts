@@ -2,6 +2,7 @@ import { expect } from 'chai'
 import fs from 'fs'
 import process from 'process'
 import all from 'it-all'
+const rimraf = require('rimraf')
 const equals = require('uint8arrays/equals')
 
 import { CarReader } from '@ipld/car'
@@ -49,7 +50,7 @@ describe('toCar', () => {
   ;[MemoryBlockStore, FsBlockStore, LevelBlockStore].map((Blockstore) => {
     describe(`with ${Blockstore.name}`, () => {
       beforeEach(() => {
-          if(!fs.existsSync(dirTmp)) {
+        if(!fs.existsSync(dirTmp)) {
           fs.mkdirSync(dirTmp)
         }
       })
@@ -57,6 +58,12 @@ describe('toCar', () => {
       afterEach(() => {
         fs.rmdirSync(dirTmp, { recursive: true })
       })
+
+      if (Blockstore.name === 'LevelBlockStore') {
+        afterEach(() => {
+          rimraf.sync(`.blockstore*`)
+        })
+      }
 
       it('pack dir to car with filesystem output with iterable input', async () => {
         const writable = fs.createWriteStream(`${__dirname}/tmp/dir.car`)

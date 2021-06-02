@@ -32,8 +32,6 @@
   "homepage": "https://github.com/vasco-santos/ipfs-car#readme",
   "dependencies": {
     "@ipld/car": "^2.1.0",
-    "@types/bl": "^5.0.1",
-    "@types/level": "^6.0.0",
     "bl": "^5.0.0",
     "ipfs-core-utils": "^0.8.0",
     "ipfs-unixfs-exporter": "https://gitpkg.now.sh/ipfs/js-ipfs-unixfs/packages/ipfs-unixfs-exporter?js-dag-pb-with-dist",
@@ -49,11 +47,14 @@
     "uint8arrays": "^2.1.5"
   },
   "devDependencies": {
+    "@types/bl": "^5.0.1",
     "@types/chai": "^4.2.18",
+    "@types/level": "^6.0.0",
     "@types/mocha": "^8.2.2",
     "chai": "^4.3.4",
     "mocha": "^8.4.0",
     "nyc": "^15.1.0",
+    "rimraf": "^3.0.2",
     "ts-node": "^9.1.1",
     "tslint": "^6.1.3",
     "typescript": "^4.2.4"

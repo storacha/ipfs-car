@@ -4,7 +4,9 @@ import os from 'os'
 import { CID } from 'multiformats'
 import { Block } from '@ipld/car/api'
 
-export class FsBlockStore {
+import { Blockstore } from './'
+
+export class FsBlockStore implements Blockstore {
   store: Set<string>
 
   constructor() {

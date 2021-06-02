@@ -72,7 +72,6 @@ async function pack ({ input, writable, blockstore }: { input: string | Iterable
 }
 
 // UnixFs to Car function
-// TODO: receive async iterable?
 export async function toCar ({ files, writable }: { files: UnixFSEntry[], writable: Writable }) {
   // create the writer and set the header with the roots
   // Just single root, multiple files: WRAP

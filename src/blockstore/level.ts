@@ -5,12 +5,14 @@ import { Block } from '@ipld/car/api'
 // @ts-ignore toIterable has no types exported
 import toIterable from 'stream-to-it'
 
-export class LevelBlockStore {
+import { Blockstore } from './'
+
+export class LevelBlockStore implements Blockstore {
   store: level.LevelDB
   _opened: boolean
 
-  constructor () {
-    this.store = level(`.blockstore`, {
+  constructor ({ location }: {location?: string} = {}) {
+    this.store = level(location || `.blockstore-${(parseInt(String(Math.random() * 1e9), 10)).toString() + Date.now()}`, {
       valueEncoding: 'binary',
       compression: false
     })
