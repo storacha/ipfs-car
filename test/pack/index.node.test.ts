@@ -28,7 +28,7 @@ describe('pack', () => {
       })
 
       afterEach(() => {
-        fs.rmdirSync(dirTmp, { recursive: true })
+        fs.rmSync(dirTmp, { recursive: true })
       })
 
       if (Blockstore.name === 'LevelBlockStore') {

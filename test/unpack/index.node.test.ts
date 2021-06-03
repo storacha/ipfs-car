@@ -35,7 +35,7 @@ describe('unpackStreamToFs', () => {
   })
 
   afterEach(() => {
-    fs.rmdirSync(dirTmp, { recursive: true })
+    fs.rmSync(dirTmp, { recursive: true })
   })
 
   it('raw file stream', async () => {
@@ -71,7 +71,7 @@ describe('unpackToFs', () => {
   })
 
   afterEach(() => {
-    fs.rmdirSync(dirTmp, { recursive: true })
+    fs.rmSync(dirTmp, { recursive: true })
   })
 
   it('file system raw', async () => {

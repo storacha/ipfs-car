@@ -33,7 +33,7 @@ export async function pack ({ input, blockstore = new MemoryBlockStore() }: { in
   }
 
   writer.close(),
-  await blockstore.close()
+  await blockstore.destroy()
 
   return { root, out }
 }

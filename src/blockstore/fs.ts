@@ -7,23 +7,36 @@ import { Block } from '@ipld/car/api'
 import { Blockstore } from './'
 
 export class FsBlockStore implements Blockstore {
-  store: Set<string>
+  path: string
+  _opened: boolean
 
-  constructor() {
-    this.store = new Set()
+  constructor () {
+    this.path = `${os.tmpdir()}/${(parseInt(String(Math.random() * 1e9), 10)).toString() + Date.now()}`
+    this._opened = false
   }
 
-  async put({ cid, bytes }: { cid: CID, bytes: Uint8Array }) {
-    const cidStr = cid.toString()
-    const location = `${os.tmpdir()}/${cidStr}`
-    await fs.promises.writeFile(location, bytes)
+  async _open () {
+    await fs.promises.mkdir(this.path)
+    this._opened = true
+  }
 
-    this.store.add(cidStr)
+  async put ({ cid, bytes }: { cid: CID, bytes: Uint8Array }) {
+    if (!this._opened) {
+      await this._open()
+    }
+
+    const cidStr = cid.toString()
+    const location = `${this.path}/${cidStr}`
+    await fs.promises.writeFile(location, bytes)
 
     return { cid, bytes }
   }
 
-  async get(cid: CID): Promise<Block> {
+  async get (cid: CID): Promise<Block> {
+    if (!this._opened) {
+      await this._open()
+    }
+
     const cidStr = cid.toString()
     const location = `${os.tmpdir()}/${cidStr}`
     const bytes = await fs.promises.readFile(location)
@@ -31,19 +44,22 @@ export class FsBlockStore implements Blockstore {
     return { cid, bytes }
   }
 
-  async * blocks() {
-    for (const cidStr of this.store) {
-      const location = `${os.tmpdir()}/${cidStr}`
+  async * blocks () {
+    if (!this._opened) {
+      await this._open()
+    }
+
+    const cids = await fs.promises.readdir(this.path)
+
+    for (const cidStr of cids) {
+      const location = `${this.path}/${cidStr}`
       const bytes = await fs.promises.readFile(location)
 
       yield { cid: CID.parse(cidStr), bytes }
     }
   }
 
-  async close () {
-    for (const cidStr of this.store) {
-      const location = `${os.tmpdir()}/${cidStr}`
-      await fs.promises.rm(location)
-    }
+  async destroy () {
+    await fs.promises.rm(this.path, { recursive: true })
   }
 }

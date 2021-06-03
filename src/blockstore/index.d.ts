@@ -4,5 +4,5 @@ export interface Blockstore {
   put(block: Block): Promise<Block>
   get(cid: CID): Promise<Block>
   blocks(): AsyncGenerator<Block, void, unknown>
-  close(): Promise<void>
+  destroy(): Promise<void>
 }

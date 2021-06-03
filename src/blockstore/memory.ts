@@ -34,7 +34,7 @@ export class MemoryBlockStore implements Blockstore {
     })
   }
 
-  close () {
+  destroy () {
     this.store.clear()
     return Promise.resolve()
   }

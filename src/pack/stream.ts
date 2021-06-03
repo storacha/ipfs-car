@@ -39,7 +39,7 @@ export async function packToStream ({ input, writable, blockstore }: { input: st
 
   await Promise.all([
     writer.close(),
-    blockstore.close()
+    blockstore.destroy()
   ])
 
   return root

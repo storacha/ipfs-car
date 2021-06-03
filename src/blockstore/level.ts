@@ -64,7 +64,7 @@ export class LevelBlockStore implements Blockstore {
     })
   }
 
-  async close() {
+  async destroy() {
     await this.store.clear()
     return this.store.close()
   }
