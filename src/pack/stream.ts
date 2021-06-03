@@ -1,19 +1,23 @@
+import { Readable, Writable } from 'stream'
+
 import all from 'it-all'
 import pipe from 'it-pipe'
 
 import { CarWriter } from '@ipld/car'
 import { importer } from 'ipfs-unixfs-importer'
 import normalizeAddInput from 'ipfs-core-utils/src/files/normalise-input/index'
-import { ImportCandidateStream } from 'ipfs-core-types/src/utils'
+import globSource from 'ipfs-utils/src/files/glob-source'
 import { sha256 } from 'multiformats/hashes/sha2'
 
 import { Blockstore } from '../blockstore'
-import { MemoryBlockStore } from '../blockstore/memory'
 
-export async function pack ({ input, blockstore = new MemoryBlockStore() }: { input: ImportCandidateStream, blockstore: Blockstore }) {
+// Node version of toCar with Node Stream Writable
+export async function packToStream ({ input, writable, blockstore }: { input: string | Iterable<string> | AsyncIterable<string>, writable: Writable, blockstore: Blockstore }) {
   // Consume the source
   const unixFsEntries = await all(pipe(
-    normalizeAddInput(input),
+    normalizeAddInput(globSource(input, {
+      recursive: true
+    }),),
     (source: any) => importer(source, blockstore, {
       cidVersion: 1,
       chunker: 'fixed',
@@ -27,13 +31,16 @@ export async function pack ({ input, blockstore = new MemoryBlockStore() }: { in
   const root = unixFsEntries[unixFsEntries.length - 1].cid
 
   const { writer, out } = await CarWriter.create([root])
+  Readable.from(out).pipe(writable)
 
   for await (const block of blockstore.blocks()) {
-    writer.put(block)
+    await writer.put(block)
   }
 
-  writer.close(),
-  await blockstore.close()
+  await Promise.all([
+    writer.close(),
+    blockstore.close()
+  ])
 
-  return { root, out }
+  return root
 }

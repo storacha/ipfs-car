@@ -8,7 +8,7 @@ import exporter from 'ipfs-unixfs-exporter'
 import { UnixFSEntry } from 'ipfs-unixfs-exporter'
 
 // Export unixfs entries from car file
-export async function* fromCar (carReader: CarReader|CarIndexedReader, roots?: CID[]): AsyncIterable<UnixFSEntry> {
+export async function* unpack (carReader: CarReader|CarIndexedReader, roots?: CID[]): AsyncIterable<UnixFSEntry> {
   const verifyingBlockService = {
     get: async (cid: CID) => {
       const res = await carReader.get(cid)

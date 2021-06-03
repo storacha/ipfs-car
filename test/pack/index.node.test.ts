@@ -2,15 +2,15 @@ import { expect } from 'chai'
 import fs from 'fs'
 import process from 'process'
 import all from 'it-all'
+
 const rimraf = require('rimraf')
 const equals = require('uint8arrays/equals')
 
 import { CarReader } from '@ipld/car'
 
-import { fromCar } from '../../dist/from-car'
-
-import pack from '../../dist/pack'
-import packToFs from '../../dist/pack/fs'
+import { unpack } from '../../dist/unpack'
+import { packToFs } from '../../dist/pack/fs'
+import { packToStream } from '../../dist/pack/stream'
 
 import { MemoryBlockStore } from '../../dist/blockstore/memory'
 import { FsBlockStore } from '../../dist/blockstore/fs'
@@ -40,7 +40,7 @@ describe('pack', () => {
       it('pack dir to car with filesystem output with iterable input', async () => {
         const writable = fs.createWriteStream(`${__dirname}/tmp/dir.car`)
         // Create car from file
-        await pack({
+        await packToStream({
           input: `${__dirname}/../fixtures/dir`,
           writable,
           blockstore: new Blockstore()
@@ -48,7 +48,7 @@ describe('pack', () => {
 
         const inStream = fs.createReadStream(`${__dirname}/tmp/dir.car`)
         const carReader = await CarReader.fromIterable(inStream)
-        const files = await all(fromCar(carReader))
+        const files = await all(unpack(carReader))
 
         expect(files).to.have.lengthOf(2)
       })
@@ -63,7 +63,7 @@ describe('pack', () => {
 
         const inStream = fs.createReadStream(`${__dirname}/tmp/dir.car`)
         const carReader = await CarReader.fromIterable(inStream)
-        const files = await all(fromCar(carReader))
+        const files = await all(unpack(carReader))
 
         expect(files).to.have.lengthOf(2)
       })
@@ -78,7 +78,7 @@ describe('pack', () => {
 
         const inStream = fs.createReadStream(`${__dirname}/tmp/raw.car`)
         const carReader = await CarReader.fromIterable(inStream)
-        const files = await all(fromCar(carReader))
+        const files = await all(unpack(carReader))
 
         expect(files).to.have.lengthOf(1)
 
@@ -98,7 +98,7 @@ describe('pack', () => {
 
         const inStream = fs.createReadStream(newCarPath)
         const carReader = await CarReader.fromIterable(inStream)
-        const files = await all(fromCar(carReader))
+        const files = await all(unpack(carReader))
 
         expect(files).to.have.lengthOf(1)
 
@@ -115,7 +115,7 @@ describe('pack', () => {
         const writable = fs.createWriteStream(`${__dirname}/tmp/raw.car`)
 
         // Create car from file
-        await pack({
+        await packToStream({
           input: `${__dirname}/../fixtures/file.raw`,
           writable,
           blockstore: new Blockstore()
@@ -123,7 +123,7 @@ describe('pack', () => {
 
         const inStream = fs.createReadStream(`${__dirname}/tmp/raw.car`)
         const carReader = await CarReader.fromIterable(inStream)
-        const files = await all(fromCar(carReader))
+        const files = await all(unpack(carReader))
 
         expect(files).to.have.lengthOf(1)
 

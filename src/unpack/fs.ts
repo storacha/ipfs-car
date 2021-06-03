@@ -10,12 +10,12 @@ import { UnixFSEntry } from 'ipfs-unixfs-exporter'
 // tslint:disable-next-line: no-var-requires needs types
 const toIterable = require('stream-to-it')
 
-import { fromCar } from '.'
+import { unpack } from '.'
 
 // Node only, read a car from fs, write files to fs
 export async function unpackToFs ({input, roots, output}: {input: string, roots?: CID[], output?: string}) {
   const carReader = await CarIndexedReader.fromFile(input)
-  await writeFiles(fromCar(carReader, roots), output)
+  await writeFiles(unpack(carReader, roots), output)
 }
 
 // Node only, read a stream, write files to fs
@@ -23,7 +23,7 @@ export async function unpackStreamToFs ({input, roots, output}: {input: AsyncIte
   // This stores blocks in memory, which is bad for large car files.
   // Could write the stream to a BlockStore impl first and make it abuse the disk instead.
   const carReader = await CarReader.fromIterable(input)
-  await writeFiles(fromCar(carReader, roots), output)
+  await writeFiles(unpack(carReader, roots), output)
 }
 
 export async function writeFiles (source: AsyncIterable<UnixFSEntry>, output?: string) {

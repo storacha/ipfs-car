@@ -3,14 +3,8 @@ name: ci
 on: [pull_request, push]
 
 jobs:
-  tests:
-    name: Tests
+  check:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
-        node: [14, 15]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2-beta
@@ -20,5 +14,27 @@ jobs:
       - run: npm run  build
       - name: Lint
         run: npm run lint
+  test-node:
+    needs: check
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+        node: [14, 16]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: ${{matrix.node}}
+      - run: npm install
       - name: Unit tests
-        run: npm test
+        run: npm run test:node
+  test-browser:
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: npm install
+      - name: Unit tests
+        run: npm run test:browser

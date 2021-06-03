@@ -2,7 +2,7 @@
 
 import meow from 'meow'
 import { CID } from 'multiformats';
-import packToFs from '../pack/fs'
+import { packToFs } from '../pack/fs'
 import { unpackToFs, unpackStreamToFs } from '../unpack/fs'
 import { listFilesInCar, listCidsInCar, listRootsInCar } from './lib.js'
 
