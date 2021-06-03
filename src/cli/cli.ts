@@ -2,8 +2,8 @@
 
 import meow from 'meow'
 import { CID } from 'multiformats';
-import { packFileToCarFs } from '../to-car'
-import { unpackCarToFs, unpackCarStreamToFs } from '../from-car.js'
+import packToFs from '../pack/fs'
+import { unpackToFs, unpackStreamToFs } from '../unpack/fs'
 import { listFilesInCar, listCidsInCar, listRootsInCar } from './lib.js'
 
 interface Flags {
@@ -96,14 +96,14 @@ const cli = meow(`
 
 async function handleInput ({ flags }: { flags: Flags }) {
   if (flags.pack) {
-    return packFileToCarFs({input: flags.pack, output: flags.output})
+    return packToFs({input: flags.pack, output: flags.output})
   } else if (flags.unpack !== undefined) {
     const roots = (flags.root || []).map(r => CID.parse(r))
 
     if (flags.unpack === '') {
-      return unpackCarStreamToFs({input: process.stdin, roots, output: flags.output})
+      return unpackStreamToFs({input: process.stdin, roots, output: flags.output})
     }
-    return unpackCarToFs({input: flags.unpack, roots, output: flags.output})
+    return unpackToFs({input: flags.unpack, roots, output: flags.output})
 
   } else if (flags.list) {
     return listFilesInCar({input: flags.list})
@@ -118,7 +118,7 @@ async function handleInput ({ flags }: { flags: Flags }) {
     // maybe stream?
     // tslint:disable-next-line: no-console
     console.log('Reading .car from stdin')
-    return unpackCarStreamToFs({input: process.stdin, output: flags.output})
+    return unpackStreamToFs({input: process.stdin, output: flags.output})
 
   } else {
     cli.showHelp()

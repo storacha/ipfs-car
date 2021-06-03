@@ -14,7 +14,7 @@
   "scripts": {
     "build": "tsc",
     "lint": "tslint 'src/**/*.ts?(x)'",
-    "test": "npm run build && mocha -r ts-node/register test/*.test.ts",
+    "test": "npm run build && mocha -r ts-node/register test/**/*.test.ts",
     "coverage": "nyc -r lcov -e .ts -x \"*.test.ts\" npm run test"
   },
   "repository": {
