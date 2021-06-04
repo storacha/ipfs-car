@@ -1,4 +1,5 @@
 import { Block } from '@ipld/car/api'
+import { CID } from 'multiformats'
 
 export interface Blockstore {
   put(block: Block): Promise<Block>

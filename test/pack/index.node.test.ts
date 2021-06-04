@@ -2,9 +2,9 @@ import { expect } from 'chai'
 import fs from 'fs'
 import process from 'process'
 import all from 'it-all'
+import equals from 'uint8arrays/equals'
 
 const rimraf = require('rimraf')
-const equals = require('uint8arrays/equals')
 
 import { CarReader } from '@ipld/car'
 

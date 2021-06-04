@@ -4,7 +4,6 @@ import all from 'it-all'
 import { CarReader } from '@ipld/car'
 
 import { pack } from '../../dist/pack'
-import { packToBlob } from '../../dist/pack/blob'
 import { unpack } from '../../dist/unpack'
 
 import { MemoryBlockStore } from '../../dist/blockstore/memory'

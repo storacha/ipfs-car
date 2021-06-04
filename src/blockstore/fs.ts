@@ -38,7 +38,7 @@ export class FsBlockStore implements Blockstore {
     }
 
     const cidStr = cid.toString()
-    const location = `${os.tmpdir()}/${cidStr}`
+    const location = `${this.path}/${cidStr}`
     const bytes = await fs.promises.readFile(location)
 
     return { cid, bytes }
