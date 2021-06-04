@@ -70,32 +70,129 @@ $ ipfs-car --list-cids path/to/my.ca
 
 ## API
 
-Use `ipfs-car/to-car` for functions to pack files into content-addressable archives
-Use `ipfs-car/from-car` for functions to unpack content-addressable archives to files
+To pack files into content-addressable archives, you can use the functions provided in:
+- `ipfs-car/pack` for consuming a [CAR writer](https://github.com/ipld/js-car#carwriter) async iterable
+- `ipfs-car/pack/blob` for getting a blob with the CAR file (**browser only**)
+- `ipfs-car/pack/fs` for storing in the local file system (**Node.js only**)
+- `ipfs-car/pack/stream` for writing to a writable stream (**Node.js only**)
 
-### `packFileToCarFs`
+⚠️ While packing files into CAR files, a [Blockstore](./src/blockstore) is used for temporary storage. All pack functions provide a default, but you can use other options (if supported on your runtime).
 
-Take a path on disk and write it to car file
+To unpack content-addressable archives to files, you can use the functions provided in:
+
+- `ipfs-car/unpack` for getting an async iterable of the UnixFS entries stored in the CAR file
+- `ipfs-car/unpack/fs` for writing the unpacked files to disk (**Node.js only**)
+
+### `ipfs-car/pack`
+
+Takes an [ImportCandidateStream](https://github.com/ipfs/js-ipfs/blob/master/packages/ipfs-core-types/src/utils.d.ts#L27) and return a a [CAR writer](https://github.com/ipld/js-car#carwriter) async iterable.
 
 ```js
-import { packFileToCarFs } from 'ipfs-car/to-car'
+import { pack } from 'ipfs-car/pack'
+import { LevelBlockStore } from 'ipfs-car/blockstore/level'
 
-await packFileToCarFs({
+const { root, out } = await pack({
+  input: [new Uint8Array([21, 31, 41])],
+  blockstore: new LevelBlockStore()
+})
+
+const carParts = []
+for await (const part of out) {
+  carParts.push(part)
+}
+```
+
+### `ipfs-car/pack/blob`
+
+Takes an [ImportCandidateStream](https://github.com/ipfs/js-ipfs/blob/master/packages/ipfs-core-types/src/utils.d.ts#L27) and write it to a Blob (**Browser only**).
+
+```js
+import { packToBlob } from 'ipfs-car/pack/blob'
+import { LevelBlockStore } from 'ipfs-car/blockstore/level'
+
+const { root, car } = await packToBlob({
+  input: [new Uint8Array([21, 31, 41])],
+  blockstore: new LevelBlockStore()
+})
+```
+
+### `ipfs-car/pack/fs`
+
+Takes a path on disk and write it to CAR file (**Node.js only**).
+
+```js
+import { packToFs } from 'ipfs-car/pack/fs'
+import { FsBlockStore } from 'ipfs-car/blockstore/fs'
+
+await packToFs({
   input: `${process.cwd()}/path/to/files`,
-  output: `${process.cwd()}/output.car`
+  output: `${process.cwd()}/output.car`,
+  blockstore: new FsBlockStore()
 })
 // output.car file now exists in process.cwd()
 ```
 
-### `unpackCarToFs`
+### `ipfs-car/pack/stream`
 
-Take a path to a car file on disk and unpack it to a given path
+Takes a writable stream and pipes the CAR Writer stream to it (**Node.js only**).
 
 ```js
-import { unpackCarToFs } from 'ipfs-car/from-car'
+import fs from 'fs'
+import { packToStream } from 'ipfs-car/pack/stream'
+import { FsBlockStore } from 'ipfs-car/blockstore/fs'
 
-await unpackCarToFs({
+const writable = fs.createWriteStream(`${process.cwd()}/output.car`)
+
+await packToStream({
+  input: `${process.cwd()}/path/to/files`,
+  writable,
+  blockstore: new FsBlockStore()
+})
+// output.car file now exists in process.cwd()
+```
+
+### `ipfs-car/unpack`
+
+Takes a CAR reader and yields files to be consumed.
+
+```js
+import fs from 'fs'
+import { unpack } from 'ipfs-car/unpack'
+
+const inStream = fs.createReadStream(`${process.cwd()}/output.car`)
+const carReader = await CarReader.fromIterable(inStream)
+
+const files = []
+for await (const file of unpack(carReader)) {
+  // Iterate over files
+}
+```
+
+### `ipfs-car/unpack/fs`
+
+Takes a path to a CAR file on disk and unpacks it to a given path
+
+```js
+import { unpackToFs } from 'ipfs-car/unpack/fs'
+
+await unpackToFs({
   input: `${process.cwd()}/my.car`,
+  output: `${process.cwd()}/foo`
+})
+// foo now exists in process.cwd()
+// it is either a file or a directory depending on the contents of the .car
+```
+
+Takes a stream to a CAR file and unpacks it to a given path on disc
+
+```js
+import fs from 'fs'
+import { unpackStreamToFs } from 'ipfs-car/unpack/fs'
+
+const input = fs.createReadStream(`${process.cwd()}/my.car`)
+
+await unpackStreamToFs({
+  input,
   output: `${process.cwd()}/foo`
 })
 // foo now exists in process.cwd()
