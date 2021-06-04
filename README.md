@@ -85,7 +85,7 @@ To unpack content-addressable archives to files, you can use the functions provi
 
 ### `ipfs-car/pack`
 
-Takes an [ImportCandidateStream](https://github.com/ipfs/js-ipfs/blob/master/packages/ipfs-core-types/src/utils.d.ts#L27) and return a a [CAR writer](https://github.com/ipld/js-car#carwriter) async iterable.
+Takes an [ImportCandidateStream](https://github.com/ipfs/js-ipfs/blob/master/packages/ipfs-core-types/src/utils.d.ts#L27) and returns a a [CAR writer](https://github.com/ipld/js-car#carwriter) async iterable.
 
 ```js
 import { pack } from 'ipfs-car/pack'
@@ -104,7 +104,7 @@ for await (const part of out) {
 
 ### `ipfs-car/pack/blob`
 
-Takes an [ImportCandidateStream](https://github.com/ipfs/js-ipfs/blob/master/packages/ipfs-core-types/src/utils.d.ts#L27) and write it to a Blob (**Browser only**).
+Takes an [ImportCandidateStream](https://github.com/ipfs/js-ipfs/blob/master/packages/ipfs-core-types/src/utils.d.ts#L27) and writes it to a Blob (**Browser only**).
 
 ```js
 import { packToBlob } from 'ipfs-car/pack/blob'
@@ -118,7 +118,7 @@ const { root, car } = await packToBlob({
 
 ### `ipfs-car/pack/fs`
 
-Takes a path on disk and write it to CAR file (**Node.js only**).
+Takes a path on disk and writes it to CAR file (**Node.js only**).
 
 ```js
 import { packToFs } from 'ipfs-car/pack/fs'
