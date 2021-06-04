@@ -18,6 +18,18 @@
     "test:node": "npm run build && mocha -r ts-node/register test/**/*.node.test.ts",
     "test:browser": "npm run build && playwright-test test/**/*.browser.test.ts"
   },
+  "exports": {
+    "./pack": "./dist/pack/index.js",
+    "./pack/blob": "./dist/pack/blob.js",
+    "./pack/fs": "./dist/pack/fs.js",
+    "./pack/stream": "./dist/pack/stream.js",
+    "./unpack": "./dist/unpack/index.js",
+    "./unpack/stream": "./dist/unpack/stream.js",
+    "./blockstore": "./dist/blockstore/index.js",
+    "./blockstore/fs": "./dist/blockstore/fs.js",
+    "./blockstore/level": "./dist/blockstore/level.js",
+    "./blockstore/memory": "./dist/blockstore/memory.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vasco-santos/ipfs-car.git"
