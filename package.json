@@ -31,9 +31,6 @@
     "url": "https://github.com/vasco-santos/ipfs-car/issues"
   },
   "homepage": "https://github.com/vasco-santos/ipfs-car#readme",
-  "browser": {
-    "stream": "stream-browserify"
-  },
   "dependencies": {
     "@ipld/car": "^2.1.0",
     "bl": "^5.0.0",
@@ -47,7 +44,6 @@
     "level": "^7.0.0",
     "meow": "^9.0.0",
     "multiformats": "^8.0.4",
-    "stream-browserify": "^3.0.0",
     "stream-to-it": "^0.2.3",
     "streaming-iterables": "^5.0.4",
     "uint8arrays": "^2.1.5"
