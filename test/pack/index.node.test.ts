@@ -30,13 +30,16 @@ describe('pack', () => {
       })
 
       it('pack dir to car with filesystem output with iterable input', async () => {
+        const blockstore = new Blockstore()
         const writable = fs.createWriteStream(`${__dirname}/tmp/dir.car`)
         // Create car from file
         await packToStream({
           input: `${__dirname}/../fixtures/dir`,
           writable,
-          blockstore: new Blockstore()
+          blockstore
         })
+
+        await blockstore.destroy()
 
         const inStream = fs.createReadStream(`${__dirname}/tmp/dir.car`)
         const carReader = await CarReader.fromIterable(inStream)
@@ -46,12 +49,15 @@ describe('pack', () => {
       })
 
       it('pack dir to car with filesystem output', async () => {
+        const blockstore = new Blockstore()
         // Create car from file
         await packToFs({
           input: `${__dirname}/../fixtures/dir`,
           output: `${__dirname}/tmp/dir.car`,
-          blockstore: new Blockstore()
+          blockstore
         })
+
+        await blockstore.destroy()
 
         const inStream = fs.createReadStream(`${__dirname}/tmp/dir.car`)
         const carReader = await CarReader.fromIterable(inStream)
@@ -61,12 +67,15 @@ describe('pack', () => {
       })
 
       it('pack raw file to car with filesystem output', async () => {
+        const blockstore = new Blockstore()
         // Create car from file
         await packToFs({
           input: `${__dirname}/../fixtures/file.raw`,
           output: `${__dirname}/tmp/raw.car`,
-          blockstore: new Blockstore()
+          blockstore
         })
+
+        await blockstore.destroy()
 
         const inStream = fs.createReadStream(`${__dirname}/tmp/raw.car`)
         const carReader = await CarReader.fromIterable(inStream)
@@ -81,11 +90,15 @@ describe('pack', () => {
       })
 
       it('pack raw file to car without output', async () => {
+        const blockstore = new Blockstore()
+
         // Create car from file
         await packToFs({
           input: `${__dirname}/../fixtures/file.raw`,
-          blockstore: new Blockstore()
+          blockstore
         })
+        await blockstore.destroy()
+
         const newCarPath = `${process.cwd()}/file.car`
 
         const inStream = fs.createReadStream(newCarPath)
@@ -104,14 +117,16 @@ describe('pack', () => {
       })
 
       it('pack raw file to car with writable stream', async () => {
+        const blockstore = new Blockstore()
         const writable = fs.createWriteStream(`${__dirname}/tmp/raw.car`)
 
         // Create car from file
         await packToStream({
           input: `${__dirname}/../fixtures/file.raw`,
           writable,
-          blockstore: new Blockstore()
+          blockstore
         })
+        await blockstore.destroy()
 
         const inStream = fs.createReadStream(`${__dirname}/tmp/raw.car`)
         const carReader = await CarReader.fromIterable(inStream)
