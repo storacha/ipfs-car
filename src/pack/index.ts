@@ -1,4 +1,4 @@
-import all from 'it-all'
+import last from 'it-last'
 import pipe from 'it-pipe'
 
 import { CarWriter } from '@ipld/car'
@@ -12,7 +12,7 @@ import { MemoryBlockStore } from '../blockstore/memory'
 
 export async function pack ({ input, blockstore = new MemoryBlockStore() }: { input: ImportCandidateStream, blockstore: Blockstore }) {
   // Consume the source
-  const unixFsEntries = await all(pipe(
+  const rootEntry = await last(pipe(
     normalizeAddInput(input),
     (source: any) => importer(source, blockstore, {
       cidVersion: 1,
@@ -24,7 +24,11 @@ export async function pack ({ input, blockstore = new MemoryBlockStore() }: { in
     })
   ))
 
-  const root = unixFsEntries[unixFsEntries.length - 1].cid
+  if (!rootEntry || !rootEntry.cid) {
+    throw new Error('given input could not be parsed correctly')
+  }
+
+  const root = rootEntry.cid
 
   const { writer, out } = await CarWriter.create([root])
 

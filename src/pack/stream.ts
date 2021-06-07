@@ -1,6 +1,6 @@
 import { Readable, Writable } from 'stream'
 
-import all from 'it-all'
+import last from 'it-last'
 import pipe from 'it-pipe'
 
 import { CarWriter } from '@ipld/car'
@@ -14,7 +14,7 @@ import { Blockstore } from '../blockstore'
 // Node version of toCar with Node Stream Writable
 export async function packToStream ({ input, writable, blockstore }: { input: string | Iterable<string> | AsyncIterable<string>, writable: Writable, blockstore: Blockstore }) {
   // Consume the source
-  const unixFsEntries = await all(pipe(
+  const rootEntry = await last(pipe(
     normalizeAddInput(globSource(input, {
       recursive: true
     }),),
@@ -28,7 +28,11 @@ export async function packToStream ({ input, writable, blockstore }: { input: st
     })
   ))
 
-  const root = unixFsEntries[unixFsEntries.length - 1].cid
+  if (!rootEntry || !rootEntry.cid) {
+    throw new Error('given input could not be parsed correctly')
+  }
+
+  const root = rootEntry.cid
 
   const { writer, out } = await CarWriter.create([root])
   Readable.from(out).pipe(writable)

@@ -52,6 +52,7 @@
     "ipfs-unixfs-importer": "https://gitpkg.now.sh/ipfs/js-ipfs-unixfs/packages/ipfs-unixfs-importer?js-dag-pb-with-dist",
     "ipfs-utils": "^8.0.0",
     "it-all": "^1.0.5",
+    "it-last": "^1.0.5",
     "it-pipe": "^1.1.0",
     "level": "^7.0.0",
     "meow": "^9.0.0",
