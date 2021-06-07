@@ -59,8 +59,8 @@
     "it-last": "^1.0.5",
     "it-pipe": "^1.1.0",
     "meow": "^9.0.0",
+    "move-file": "^2.0.0",
     "multiformats": "^8.0.4",
-    "mv": "^2.1.1",
     "stream-to-it": "^0.2.3",
     "streaming-iterables": "^5.0.4",
     "uint8arrays": "^2.1.5"
@@ -69,7 +69,6 @@
     "@types/bl": "^5.0.1",
     "@types/chai": "^4.2.18",
     "@types/mocha": "^8.2.2",
-    "@types/mv": "^2.1.1",
     "assert": "^2.0.0",
     "chai": "^4.3.4",
     "mocha": "^8.4.0",

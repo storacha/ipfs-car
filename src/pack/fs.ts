@@ -1,15 +1,12 @@
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
-import mv from 'mv'
-import util from 'util'
+import moveFile from 'move-file'
 
 import { packToStream } from './stream'
 
 import { Blockstore } from '../blockstore'
 import { FsBlockStore } from '../blockstore/fs'
-
-const mvP = util.promisify(mv)
 
 export async function packToFs ({ input, output, blockstore: userBlockstore }: { input: string | Iterable<string> | AsyncIterable<string>, output?: string, blockstore?: Blockstore }) {
   const blockstore = userBlockstore ? userBlockstore : new FsBlockStore()
@@ -25,6 +22,6 @@ export async function packToFs ({ input, output, blockstore: userBlockstore }: {
   // Move to work dir
   if (!output) {
     const inputName = typeof input === 'string' ? path.parse(path.basename(input)).name : root.toString()
-    await mvP(location, `${process.cwd()}/${inputName}.car`)
+    await moveFile(location, `${process.cwd()}/${inputName}.car`)
   }
 }
