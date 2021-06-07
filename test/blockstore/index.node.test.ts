@@ -7,10 +7,9 @@ import all from 'it-all'
 import { Blockstore as BlockstoreInterface } from '../../dist/blockstore'
 import { MemoryBlockStore } from '../../dist/blockstore/memory'
 import { FsBlockStore } from '../../dist/blockstore/fs'
-import { LevelBlockStore } from '../../dist/blockstore/level'
 
 describe('blockstore', () => {
-  [MemoryBlockStore, FsBlockStore, LevelBlockStore].map((Blockstore) => {
+  [MemoryBlockStore, FsBlockStore].map((Blockstore) => {
     describe(`with ${Blockstore.name}`, () => {
       let blockstore: BlockstoreInterface
       const cid = CID.parse('bafkreifidl2jnal7ycittjrnbki6jasdxwwvpf7fj733vnyhidtusxby4y')

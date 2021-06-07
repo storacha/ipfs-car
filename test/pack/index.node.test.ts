@@ -4,8 +4,6 @@ import process from 'process'
 import all from 'it-all'
 import equals from 'uint8arrays/equals'
 
-const rimraf = require('rimraf')
-
 import { CarReader } from '@ipld/car'
 
 import { unpack } from '../../dist/unpack'
@@ -14,12 +12,11 @@ import { packToStream } from '../../dist/pack/stream'
 
 import { MemoryBlockStore } from '../../dist/blockstore/memory'
 import { FsBlockStore } from '../../dist/blockstore/fs'
-import { LevelBlockStore } from '../../dist/blockstore/level'
 
 const dirTmp = `${__dirname}/tmp`
 
 describe('pack', () => {
-  ;[MemoryBlockStore, FsBlockStore, LevelBlockStore].map((Blockstore) => {
+  ;[MemoryBlockStore, FsBlockStore].map((Blockstore) => {
     describe(`with ${Blockstore.name}`, () => {
       beforeEach(() => {
         if(!fs.existsSync(dirTmp)) {
@@ -30,12 +27,6 @@ describe('pack', () => {
       afterEach(() => {
         fs.rmSync(dirTmp, { recursive: true })
       })
-
-      if (Blockstore.name === 'LevelBlockStore') {
-        afterEach(() => {
-          rimraf.sync(`.blockstore*`)
-        })
-      }
 
       it('pack dir to car with filesystem output with iterable input', async () => {
         const writable = fs.createWriteStream(`${__dirname}/tmp/dir.car`)

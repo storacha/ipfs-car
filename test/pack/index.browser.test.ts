@@ -4,10 +4,9 @@ import { pack } from '../../dist/pack'
 import { packToBlob } from '../../dist/pack/blob'
 
 import { MemoryBlockStore } from '../../dist/blockstore/memory'
-import { LevelBlockStore } from '../../dist/blockstore/level'
 
 describe('pack', () => {
-  [MemoryBlockStore, LevelBlockStore].map((Blockstore) => {
+  [MemoryBlockStore].map((Blockstore) => {
     describe(`with ${Blockstore.name}`, () => {
       it('with iterable input', async () => {
         const { root, out } = await pack({
