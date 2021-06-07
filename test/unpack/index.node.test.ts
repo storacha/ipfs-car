@@ -3,24 +3,21 @@ import { expect } from 'chai'
 import { CID } from 'multiformats'
 import { CarReader } from '@ipld/car'
 
-import {
-  fromCar,
-  unpackCarToFs,
-  unpackCarStreamToFs
-} from '../dist/from-car'
+import { unpack } from '../../dist/unpack'
+import { unpackToFs, unpackStreamToFs } from '../../dist/unpack/fs'
 
 const rawCidString = 'bafkreigk2mcysiwgmacvilb3q6lcdaq53zlwu3jn4pj6qev2lylyfbqfdm'
 const rawCid = CID.parse(rawCidString)
 
 const dirTmp = `${__dirname}/tmp`
 
-describe('fromCar', () => {
+describe('unpack', () => {
   it('file system stream', async () => {
-    const inStream = fs.createReadStream(`${__dirname}/fixtures/raw.car`)
+    const inStream = fs.createReadStream(`${__dirname}/../fixtures/raw.car`)
     const carReader = await CarReader.fromIterable(inStream)
     const files = []
 
-    for await (const file of fromCar(carReader)) {
+    for await (const file of unpack(carReader)) {
       expect(file.path).to.eql(rawCidString)
       expect(rawCid.equals(file.cid)).to.eql(true)
       files.push(file)
@@ -30,7 +27,7 @@ describe('fromCar', () => {
   })
 })
 
-describe('unpackCarStreamToFs', () => {
+describe('unpackStreamToFs', () => {
   beforeEach(() => {
     if (!fs.existsSync(dirTmp)) {
       fs.mkdirSync(dirTmp)
@@ -38,14 +35,14 @@ describe('unpackCarStreamToFs', () => {
   })
 
   afterEach(() => {
-    fs.rmdirSync(dirTmp, { recursive: true })
+    fs.rmSync(dirTmp, { recursive: true })
   })
 
   it('raw file stream', async () => {
-    const input = fs.createReadStream(`${__dirname}/fixtures/raw.car`)
+    const input = fs.createReadStream(`${__dirname}/../fixtures/raw.car`)
     const output = `${__dirname}/tmp/raw`
 
-    await unpackCarStreamToFs({
+    await unpackStreamToFs({
       input,
       output
     })
@@ -54,10 +51,10 @@ describe('unpackCarStreamToFs', () => {
   })
 
   it('file system dir', async () => {
-    const input = fs.createReadStream(`${__dirname}/fixtures/dir.car`)
+    const input = fs.createReadStream(`${__dirname}/../fixtures/dir.car`)
     const output = `${__dirname}/tmp/dir`
 
-    await unpackCarStreamToFs({
+    await unpackStreamToFs({
       input,
       output
     })
@@ -66,7 +63,7 @@ describe('unpackCarStreamToFs', () => {
   })
 })
 
-describe('unpackCarToFs', () => {
+describe('unpackToFs', () => {
   beforeEach(() => {
     if (!fs.existsSync(dirTmp)) {
       fs.mkdirSync(dirTmp)
@@ -74,14 +71,14 @@ describe('unpackCarToFs', () => {
   })
 
   afterEach(() => {
-    fs.rmdirSync(dirTmp, { recursive: true })
+    fs.rmSync(dirTmp, { recursive: true })
   })
 
   it('file system raw', async () => {
     const output = `${__dirname}/tmp/raw`
 
-    await unpackCarToFs({
-      input: `${__dirname}/fixtures/raw.car`,
+    await unpackToFs({
+      input: `${__dirname}/../fixtures/raw.car`,
       output
     })
 
@@ -91,8 +88,8 @@ describe('unpackCarToFs', () => {
   it('file system dir', async () => {
     const output = `${__dirname}/tmp/dir`
 
-    await unpackCarToFs({
-      input: `${__dirname}/fixtures/dir.car`,
+    await unpackToFs({
+      input: `${__dirname}/../fixtures/dir.car`,
       output
     })
 

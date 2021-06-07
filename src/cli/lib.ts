@@ -1,10 +1,10 @@
 import fs from 'fs'
 import { CarIndexedReader, CarCIDIterator } from '@ipld/car'
-import { fromCar } from '../from-car'
+import { unpack } from '../unpack'
 
 export async function listFilesInCar ({input}: {input: string}) {
   const carReader = await CarIndexedReader.fromFile(input)
-  for await (const file of fromCar(carReader)) {
+  for await (const file of unpack(carReader)) {
     // tslint:disable-next-line: no-console
     console.log(file.path)
   }
