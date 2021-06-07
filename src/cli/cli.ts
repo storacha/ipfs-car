@@ -96,7 +96,11 @@ const cli = meow(`
 
 async function handleInput ({ flags }: { flags: Flags }) {
   if (flags.pack) {
-    return packToFs({input: flags.pack, output: flags.output})
+    const { root, filename } = await packToFs({input: flags.pack, output: flags.output})
+    // tslint:disable-next-line: no-console
+    console.log(`root CID: ${root.toString()}`)
+    // tslint:disable-next-line: no-console
+    console.log(`output: ${filename}`)
   } else if (flags.unpack !== undefined) {
     const roots = (flags.root || []).map(r => CID.parse(r))
 

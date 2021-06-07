@@ -50,5 +50,5 @@ export async function packToStream ({ input, writable, blockstore: userBlockstor
     await blockstore.destroy()
   }
 
-  return root
+  return { root }
 }
