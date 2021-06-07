@@ -10,7 +10,9 @@ import { sha256 } from 'multiformats/hashes/sha2'
 import { Blockstore } from '../blockstore'
 import { MemoryBlockStore } from '../blockstore/memory'
 
-export async function pack ({ input, blockstore = new MemoryBlockStore() }: { input: ImportCandidateStream, blockstore: Blockstore }) {
+export async function pack ({ input, blockstore: userBlockstore }: { input: ImportCandidateStream, blockstore?: Blockstore }) {
+  const blockstore = userBlockstore ? userBlockstore : new MemoryBlockStore()
+
   // Consume the source
   const rootEntry = await last(pipe(
     normalizeAddInput(input),
@@ -36,8 +38,11 @@ export async function pack ({ input, blockstore = new MemoryBlockStore() }: { in
     writer.put(block)
   }
 
-  writer.close(),
-  await blockstore.destroy()
+  writer.close()
+
+  if (!userBlockstore) {
+    await blockstore.destroy()
+  }
 
   return { root, out }
 }

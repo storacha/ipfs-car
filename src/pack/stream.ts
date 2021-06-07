@@ -10,9 +10,12 @@ import globSource from 'ipfs-utils/src/files/glob-source'
 import { sha256 } from 'multiformats/hashes/sha2'
 
 import { Blockstore } from '../blockstore'
+import { MemoryBlockStore } from '../blockstore/memory'
 
 // Node version of toCar with Node Stream Writable
-export async function packToStream ({ input, writable, blockstore }: { input: string | Iterable<string> | AsyncIterable<string>, writable: Writable, blockstore: Blockstore }) {
+export async function packToStream ({ input, writable, blockstore: userBlockstore }: { input: string | Iterable<string> | AsyncIterable<string>, writable: Writable, blockstore?: Blockstore }) {
+  const blockstore = userBlockstore ? userBlockstore : new MemoryBlockStore()
+
   // Consume the source
   const rootEntry = await last(pipe(
     normalizeAddInput(globSource(input, {
@@ -41,10 +44,11 @@ export async function packToStream ({ input, writable, blockstore }: { input: st
     await writer.put(block)
   }
 
-  await Promise.all([
-    writer.close(),
-    blockstore.destroy()
-  ])
+  await writer.close()
+
+  if (!userBlockstore) {
+    await blockstore.destroy()
+  }
 
   return root
 }

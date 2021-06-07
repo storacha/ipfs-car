@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import sinon from 'sinon'
 import fs from 'fs'
 import process from 'process'
 import all from 'it-all'
@@ -122,6 +123,38 @@ describe('pack', () => {
         const rawContent = (await all(files[0].content()))[0]
 
         expect(equals(rawOriginalContent, rawContent)).to.eql(true)
+      })
+
+      it('packToStream does not destroy provided blockstore', async () => {
+        const writable = fs.createWriteStream(`${__dirname}/tmp/raw.car`)
+        const blockstore = new Blockstore()
+
+        const spy = sinon.spy(blockstore, 'destroy')
+
+        // Create car from file
+        await packToStream({
+          input: `${__dirname}/../fixtures/dir`,
+          writable,
+          blockstore
+        })
+
+        expect(spy.callCount).to.eql(0)
+        await blockstore.destroy()
+      })
+
+      it('packToFs does not destroy provided blockstore', async () => {
+        const blockstore = new Blockstore()
+        const spy = sinon.spy(blockstore, 'destroy')
+
+        // Create car from file
+        await packToFs({
+          input: `${__dirname}/../fixtures/file.raw`,
+          output: `${__dirname}/tmp/dir.car`,
+          blockstore
+        })
+
+        expect(spy.callCount).to.eql(0)
+        await blockstore.destroy()
       })
     })
   })

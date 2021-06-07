@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import sinon from 'sinon'
 
 import { pack } from '../../dist/pack'
 import { packToBlob } from '../../dist/pack/blob'
@@ -30,6 +31,32 @@ describe('pack', () => {
         })
 
         expect(root.toString()).to.eql('bafkreifidl2jnal7ycittjrnbki6jasdxwwvpf7fj733vnyhidtusxby4y')
+      })
+
+      it('pack does not destroy provided blockstore', async () => {
+        const blockstore = new Blockstore()
+        const spy = sinon.spy(blockstore, 'destroy')
+
+        await pack({
+          input: [new Uint8Array([21, 31])],
+          blockstore
+        })
+
+        expect(spy.callCount).to.eql(0)
+        await blockstore.destroy()
+      })
+
+      it('packToBlob does not destroy provided blockstore', async () => {
+        const blockstore = new Blockstore()
+        const spy = sinon.spy(blockstore, 'destroy')
+
+        await packToBlob({
+          input: [new Uint8Array([21, 31])],
+          blockstore
+        })
+
+        expect(spy.callCount).to.eql(0)
+        await blockstore.destroy()
       })
     })
   })

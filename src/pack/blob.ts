@@ -6,11 +6,16 @@ import { MemoryBlockStore } from '../blockstore/memory'
 
 import { pack } from './'
 
-export async function packToBlob ({ input, blockstore = new MemoryBlockStore() }: { input: ImportCandidateStream, blockstore: Blockstore }) {
+export async function packToBlob ({ input, blockstore: userBlockstore }: { input: ImportCandidateStream, blockstore?: Blockstore }) {
+  const blockstore = userBlockstore ? userBlockstore : new MemoryBlockStore()
   const { root, out } = await pack({
     input,
     blockstore
   })
+
+  if (!userBlockstore) {
+    await blockstore.destroy()
+  }
 
   const carParts = await all(out)
   const car = new Blob(carParts, {
