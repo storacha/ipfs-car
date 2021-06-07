@@ -7,5 +7,25 @@ While packing files into [Content Addressable aRchives (CAR)](https://github.com
 The Blockstore implementations follows the [Blockstore Interface](./index.d.ts). The available implementations are:
 
 - [FsBlockStore](./fs.ts) with a local file system backend (Node.js environments)
-- [LevelBlockStore](./level.ts) with a [level](https://www.npmjs.com/package/level) backend (Node.js, Electron and browser environments)
-- [Memory](./memory.ts) with an in-memory backend
+- [MemoryBlockStore](./memory.ts) with an in-memory backend
+- [LevelBlockStore](https://github.com/vasco-santos/level-blockstore) with a [level](https://www.npmjs.com/package/level) backend (Node.js, Electron and browser environments)
+
+## Usage
+
+- FsBlockStore
+
+```js
+import { FsBlockStore } from 'ipfs-car/blockstore/fs'
+```
+
+- MemoryBlockStore
+
+```js
+import { MemoryBlockStore } from 'ipfs-car/blockstore/memory'
+```
+
+- LevelBlockStore
+
+```js
+import { LevelBlockStore } from 'level-blockstore'
+```

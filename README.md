@@ -89,11 +89,11 @@ Takes an [ImportCandidateStream](https://github.com/ipfs/js-ipfs/blob/master/pac
 
 ```js
 import { pack } from 'ipfs-car/pack'
-import { LevelBlockStore } from 'ipfs-car/blockstore/level'
+import { MemoryBlockStore } from 'ipfs-car/blockstore/memory' // You can also use the `level-blockstore` module
 
 const { root, out } = await pack({
   input: [new Uint8Array([21, 31, 41])],
-  blockstore: new LevelBlockStore()
+  blockstore: new MemoryBlockStore()
 })
 
 const carParts = []
@@ -108,11 +108,11 @@ Takes an [ImportCandidateStream](https://github.com/ipfs/js-ipfs/blob/master/pac
 
 ```js
 import { packToBlob } from 'ipfs-car/pack/blob'
-import { LevelBlockStore } from 'ipfs-car/blockstore/level'
+import { MemoryBlockStore } from 'ipfs-car/blockstore/memory' // You can also use the `level-blockstore` module
 
 const { root, car } = await packToBlob({
   input: [new Uint8Array([21, 31, 41])],
-  blockstore: new LevelBlockStore()
+  blockstore: new MemoryBlockStore()
 })
 ```
 
