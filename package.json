@@ -37,7 +37,7 @@
     "./pack/fs": "./dist/pack/fs.js",
     "./pack/stream": "./dist/pack/stream.js",
     "./unpack": "./dist/unpack/index.js",
-    "./unpack/stream": "./dist/unpack/stream.js",
+    "./unpack/fs": "./dist/unpack/fs.js",
     "./blockstore": "./dist/blockstore/index.js",
     "./blockstore/fs": "./dist/blockstore/fs.js",
     "./blockstore/memory": "./dist/blockstore/memory.js"

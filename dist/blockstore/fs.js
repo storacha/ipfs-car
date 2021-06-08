@@ -13,8 +13,14 @@ class FsBlockStore {
         this._opened = false;
     }
     async _open() {
-        await fs_1.default.promises.mkdir(this.path);
-        this._opened = true;
+        if (this._opening) {
+            await this._opening;
+        }
+        else {
+            this._opening = fs_1.default.promises.mkdir(this.path);
+            await this._opening;
+            this._opened = true;
+        }
     }
     async put({ cid, bytes }) {
         if (!this._opened) {

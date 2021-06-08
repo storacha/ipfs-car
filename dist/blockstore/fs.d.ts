@@ -5,6 +5,7 @@ import { Blockstore } from './';
 export declare class FsBlockStore implements Blockstore {
     path: string;
     _opened: boolean;
+    _opening?: Promise<void>;
     constructor();
     _open(): Promise<void>;
     put({ cid, bytes }: {
