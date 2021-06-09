@@ -37,6 +37,20 @@ describe('blockstore', () => {
         expect(cid.equals(blocks[0].cid)).eql(true)
         expect(equals(bytes, blocks[0].bytes)).eql(true)
       })
+
+      it('can put several blocks in parallel', async () => {
+        const cid2 = CID.parse('bafkreifidl2jnal7ycittjrnbki6jasdxwwvpf7fj733vnyhidtusxby5y')
+        const cid3 = CID.parse('bafkreifidl2jnal7ycittjrnbki6jasdxwwvpf7fj733vnyhidtusxby6y')
+
+        await Promise.all([
+          blockstore.put({ cid, bytes }),
+          blockstore.put({ cid: cid2, bytes }),
+          blockstore.put({ cid: cid3, bytes })
+        ])
+
+        const blocks = await all(blockstore.blocks())
+        expect(blocks.length).eql(3)
+      })
     })
   })
 })

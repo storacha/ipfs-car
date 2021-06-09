@@ -9,6 +9,7 @@ import { Blockstore } from './'
 export class FsBlockStore implements Blockstore {
   path: string
   _opened: boolean
+  _opening?: Promise<void>
 
   constructor () {
     this.path = `${os.tmpdir()}/${(parseInt(String(Math.random() * 1e9), 10)).toString() + Date.now()}`
@@ -16,8 +17,13 @@ export class FsBlockStore implements Blockstore {
   }
 
   async _open () {
-    await fs.promises.mkdir(this.path)
-    this._opened = true
+    if (this._opening) {
+      await this._opening
+    } else {
+      this._opening = fs.promises.mkdir(this.path)
+      await this._opening
+      this._opened = true
+    }
   }
 
   async put ({ cid, bytes }: { cid: CID, bytes: Uint8Array }) {
