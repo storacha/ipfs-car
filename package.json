@@ -11,6 +11,18 @@
     "🚘": "./dist/cli/cli.js",
     "ipfs-car": "./dist/cli/cli.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vasco-santos/ipfs-car.git"
+  },
+  "keywords": [
+    "ipfs",
+    "content-addressable",
+    "cid",
+    "car"
+  ],
+  "author": "vasco-santos",
+  "license": "MIT",
   "scripts": {
     "prepare": "tsc",
     "build": "tsc",
@@ -25,23 +37,42 @@
     "./pack/fs": "./dist/pack/fs.js",
     "./pack/stream": "./dist/pack/stream.js",
     "./unpack": "./dist/unpack/index.js",
-    "./unpack/stream": "./dist/unpack/stream.js",
+    "./unpack/fs": "./dist/unpack/fs.js",
     "./blockstore": "./dist/blockstore/index.js",
     "./blockstore/fs": "./dist/blockstore/fs.js",
     "./blockstore/memory": "./dist/blockstore/memory.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/vasco-santos/ipfs-car.git"
+  "typesVersions": {
+    "*": {
+      "pack": [
+        "dist/pack/index.d.ts"
+      ],
+      "pack/blob": [
+        "dist/pack/blob.d.ts"
+      ],
+      "pack/fs": [
+        "dist/pack/fs.d.ts"
+      ],
+      "pack/stream": [
+        "dist/pack/stream.d.ts"
+      ],
+      "unpack": [
+        "dist/unpack/index.d.ts"
+      ],
+      "unpack/fs": [
+        "dist/unpack/fs.d.ts"
+      ],
+      "blockstore": [
+        "dist/blockstore/index.d.ts"
+      ],
+      "blockstore/fs": [
+        "dist/blockstore/fs.d.ts"
+      ],
+      "blockstore/memory": [
+        "dist/blockstore/memory.d.ts"
+      ]
+    }
   },
-  "keywords": [
-    "ipfs",
-    "content-addressable",
-    "cid",
-    "car"
-  ],
-  "author": "vasco-santos",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/vasco-santos/ipfs-car/issues"
   },
