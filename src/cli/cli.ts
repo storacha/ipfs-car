@@ -100,7 +100,7 @@ async function handleInput ({ flags }: { flags: Flags }) {
     // tslint:disable-next-line: no-console
     console.log(`root CID: ${root.toString()}`)
     // tslint:disable-next-line: no-console
-    console.log(`  output: ${filename}`)   
+    console.log(`  output: ${filename}`)
   } else if (flags.unpack !== undefined) {
     const roots = (flags.root || []).map(r => CID.parse(r))
 
