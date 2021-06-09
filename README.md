@@ -20,6 +20,12 @@ or unpack files from a .car, and verify that every block matches it's CID
 $ ipfs-car --unpack my-files.car --output path/to/write/to
 ```
 
+Fetch and locally verify files from a IPFS gateway over http
+
+```sh
+curl -X POST "https://ipfs.io/api/v0/dag/export?arg=bafybeidd2gyhagleh47qeg77xqndy2qy3yzn4vkxmk775bg2t5lpuy7pcu" | 🚘
+```
+
 ## Install
 
 ```sh
