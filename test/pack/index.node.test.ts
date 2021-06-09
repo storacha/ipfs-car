@@ -7,6 +7,7 @@ import equals from 'uint8arrays/equals'
 
 import { CarReader } from '@ipld/car'
 
+import { pack } from '../../dist/pack'
 import { unpack } from '../../dist/unpack'
 import { packToFs } from '../../dist/pack/fs'
 import { packToStream } from '../../dist/pack/stream'
@@ -27,6 +28,19 @@ describe('pack', () => {
 
       afterEach(() => {
         fs.rmSync(dirTmp, { recursive: true })
+      })
+
+      it('can pack from a readable stream', async () => {
+        const { out } = await pack({
+          input: fs.createReadStream(`${__dirname}/../fixtures/file.raw`)
+        })
+
+        const carParts = []
+        for await (const part of out) {
+          carParts.push(part)
+        }
+
+        expect(carParts.length).to.not.eql(0)
       })
 
       it('pack dir to car with filesystem output with iterable input', async () => {
