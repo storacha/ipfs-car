@@ -80,13 +80,13 @@ const cli = meow(`
   Listing the contents of a .car
 
     # list the cids for all the blocks.
-    $ ipfs-car --list-cids path/to/my.ca
+    $ ipfs-car --list-cids path/to/my.car
 
     # list the cid roots.
-    $ ipfs-car --list-roots path/to/my.ca
+    $ ipfs-car --list-roots path/to/my.car
 
     # list the files.
-    $ ipfs-car --list path/to/my.ca
+    $ ipfs-car --list path/to/my.car
 
   TL;DR
   --pack <path> --output <my.car>
