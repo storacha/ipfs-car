@@ -21,8 +21,9 @@ export async function packToFs ({ input, output, blockstore: userBlockstore }: {
 
   // Move to work dir
   if (!output) {
-    const filename = typeof input === 'string' ? path.parse(path.basename(input)).name : root.toString()
-    await moveFile(location, `${process.cwd()}/${filename}.car`)
+    const basename = typeof input === 'string' ? path.parse(path.basename(input)).name : root.toString()
+    const filename = `${basename}.car`
+    await moveFile(location, `${process.cwd()}/${filename}`)
 
     return {root, filename}
   }
