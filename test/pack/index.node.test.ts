@@ -11,6 +11,7 @@ import { pack } from '../../dist/pack'
 import { unpack } from '../../dist/unpack'
 import { packToFs } from '../../dist/pack/fs'
 import { packToStream } from '../../dist/pack/stream'
+import { packToBlob } from '../../dist/pack/blob'
 
 import { MemoryBlockStore } from '../../dist/blockstore/memory'
 import { FsBlockStore } from '../../dist/blockstore/fs'
@@ -183,6 +184,19 @@ describe('pack', () => {
         })
 
         expect(spy.callCount).to.eql(0)
+        await blockstore.destroy()
+      })
+
+      it('can packToBlob', async () => {
+        const blockstore = new Blockstore()
+
+        const { car, root } = await packToBlob({
+          input: [new Uint8Array([21, 31])],
+          blockstore
+        })
+
+        expect(car).to.exist
+        expect(root.toString()).to.eql('bafkreifidl2jnal7ycittjrnbki6jasdxwwvpf7fj733vnyhidtusxby4y')
         await blockstore.destroy()
       })
     })
