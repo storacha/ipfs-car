@@ -100,6 +100,7 @@
     "@types/bl": "^5.0.1",
     "@types/chai": "^4.2.18",
     "@types/mocha": "^8.2.2",
+    "@types/sinon": "^10.0.2",
     "assert": "^2.0.0",
     "chai": "^4.3.4",
     "mocha": "^8.4.0",
