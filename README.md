@@ -78,7 +78,7 @@ $ ipfs-car --list-cids path/to/my.car
 
 To pack files into content-addressable archives, you can use the functions provided in:
 - `ipfs-car/pack` for consuming a [CAR writer](https://github.com/ipld/js-car#carwriter) async iterable
-- `ipfs-car/pack/blob` for getting a blob with the CAR file (**browser only**)
+- `ipfs-car/pack/blob` for getting a blob with the CAR file
 - `ipfs-car/pack/fs` for storing in the local file system (**Node.js only**)
 - `ipfs-car/pack/stream` for writing to a writable stream (**Node.js only**)
 
@@ -110,7 +110,7 @@ for await (const part of out) {
 
 ### `ipfs-car/pack/blob`
 
-Takes an [ImportCandidateStream](https://github.com/ipfs/js-ipfs/blob/master/packages/ipfs-core-types/src/utils.d.ts#L27) and writes it to a Blob (**Browser only**).
+Takes an [ImportCandidateStream](https://github.com/ipfs/js-ipfs/blob/master/packages/ipfs-core-types/src/utils.d.ts#L27) and writes it to a [Blob](https://github.com/web-std/io/tree/main/blob).
 
 ```js
 import { packToBlob } from 'ipfs-car/pack/blob'
