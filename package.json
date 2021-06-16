@@ -83,40 +83,31 @@
   "typesVersions": {
     "*": {
       "pack": [
-        "dist/cjs/pack/index.d.ts",
-        "dist/esm/pack/index.d.ts"
+        "dist/types/pack/index.d.ts"
       ],
       "pack/blob": [
-        "dist/cjs/pack/blob.d.ts",
-        "dist/esm/pack/blob.d.ts"
+        "dist/types/pack/blob.d.ts"
       ],
       "pack/fs": [
-        "dist/cjs/pack/fs.d.ts",
-        "dist/esm/pack/fs.d.ts"
+        "dist/types/pack/fs.d.ts"
       ],
       "pack/stream": [
-        "dist/cjs/pack/stream.d.ts",
-        "dist/esm/pack/stream.d.ts"
+        "dist/types/pack/stream.d.ts"
       ],
       "unpack": [
-        "dist/cjs/unpack/index.d.ts",
-        "dist/esm/unpack/index.d.ts"
+        "dist/types/unpack/index.d.ts"
       ],
       "unpack/fs": [
-        "dist/cjs/unpack/fs.d.ts",
-        "dist/esm/unpack/fs.d.ts"
+        "dist/types/unpack/fs.d.ts"
       ],
       "blockstore": [
-        "dist/cjs/blockstore/index.d.ts",
-        "dist/esm/blockstore/index.d.ts"
+        "dist/types/blockstore/index.d.ts"
       ],
       "blockstore/fs": [
-        "dist/cjs/blockstore/fs.d.ts",
-        "dist/esm/blockstore/fs.d.ts"
+        "dist/types/blockstore/fs.d.ts"
       ],
       "blockstore/memory": [
-        "dist/cjs/blockstore/memory.d.ts",
-        "dist/esm/blockstore/memory.d.ts"
+        "dist/types/blockstore/memory.d.ts"
       ]
     }
   },
