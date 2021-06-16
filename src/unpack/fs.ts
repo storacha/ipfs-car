@@ -5,7 +5,7 @@ import { map } from 'streaming-iterables'
 
 import { CarIndexedReader, CarReader } from '@ipld/car'
 import { CID } from 'multiformats'
-import { UnixFSEntry } from 'ipfs-unixfs-exporter'
+import { UnixFSEntry } from '@vascosantos/ipfs-unixfs-exporter'
 
 // tslint:disable-next-line: no-var-requires needs types
 const toIterable = require('stream-to-it')
