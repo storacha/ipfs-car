@@ -24,7 +24,6 @@
   "author": "vasco-santos",
   "license": "MIT",
   "scripts": {
-    "prepare": "npm run build",
     "build": "npm run compile:esm && npm run compile:cjs",
     "compile:esm": "tsc -p tsconfig.json",
     "compile:cjs": "tsc -p tsconfig-cjs.json",
