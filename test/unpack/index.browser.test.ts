@@ -3,10 +3,10 @@ import concat from 'uint8arrays/concat'
 import all from 'it-all'
 import { CarReader } from '@ipld/car'
 
-import { pack } from '../../dist/pack'
-import { unpack } from '../../dist/unpack'
+import { pack } from 'ipfs-car/pack'
+import { unpack } from 'ipfs-car/unpack'
 
-import { MemoryBlockStore } from '../../dist/blockstore/memory'
+import { MemoryBlockStore } from 'ipfs-car/blockstore/memory'
 
 describe('unpack', () => {
   [MemoryBlockStore].map((Blockstore) => {

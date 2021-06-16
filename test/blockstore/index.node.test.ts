@@ -4,9 +4,9 @@ import { CID } from 'multiformats'
 import equals from 'uint8arrays/equals'
 import all from 'it-all'
 
-import { Blockstore as BlockstoreInterface } from '../../dist/blockstore'
-import { MemoryBlockStore } from '../../dist/blockstore/memory'
-import { FsBlockStore } from '../../dist/blockstore/fs'
+import { Blockstore as BlockstoreInterface } from 'ipfs-car/blockstore'
+import { MemoryBlockStore } from 'ipfs-car/blockstore/memory'
+import { FsBlockStore } from 'ipfs-car/blockstore/fs'
 
 describe('blockstore', () => {
   [MemoryBlockStore, FsBlockStore].map((Blockstore) => {

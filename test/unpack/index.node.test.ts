@@ -3,8 +3,8 @@ import { expect } from 'chai'
 import { CID } from 'multiformats'
 import { CarReader } from '@ipld/car'
 
-import { unpack } from '../../dist/unpack'
-import { unpackToFs, unpackStreamToFs } from '../../dist/unpack/fs'
+import { unpack } from 'ipfs-car/unpack'
+import { unpackToFs, unpackStreamToFs } from 'ipfs-car/unpack/fs'
 
 const rawCidString = 'bafkreigk2mcysiwgmacvilb3q6lcdaq53zlwu3jn4pj6qev2lylyfbqfdm'
 const rawCid = CID.parse(rawCidString)
