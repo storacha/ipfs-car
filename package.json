@@ -8,8 +8,8 @@
     "/dist"
   ],
   "bin": {
-    "🚘": "./dist/cjs/cli/cli.js",
-    "ipfs-car": "./dist/cjs/cli/cli.js"
+    "🚘": "./src/cli/cli.ts",
+    "ipfs-car": "./src/cli/cli.ts"
   },
   "repository": {
     "type": "git",
@@ -24,6 +24,7 @@
   "author": "vasco-santos",
   "license": "MIT",
   "scripts": {
+    "prepare": "npm run build",
     "build": "npm run compile:esm && npm run compile:cjs",
     "compile:esm": "tsc -p tsconfig.json",
     "compile:cjs": "tsc -p tsconfig-cjs.json",
