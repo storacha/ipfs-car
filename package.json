@@ -8,8 +8,8 @@
     "/dist"
   ],
   "bin": {
-    "🚘": "./src/cli/cli.ts",
-    "ipfs-car": "./src/cli/cli.ts"
+    "🚘": "./dist/cjs/cli/cli.ts",
+    "ipfs-car": "./dist/cjs/cli/cli.ts"
   },
   "repository": {
     "type": "git",
@@ -141,7 +141,6 @@
     "@types/sinon": "^10.0.2",
     "assert": "^2.0.0",
     "chai": "^4.3.4",
-    "ipfs-car": ".",
     "mocha": "^8.4.0",
     "nyc": "^15.1.0",
     "playwright-test": "^5.0.0",

@@ -7,14 +7,14 @@ import equals from 'uint8arrays/equals'
 
 import { CarReader } from '@ipld/car'
 
-import { pack } from 'ipfs-car/pack'
-import { unpack } from 'ipfs-car/unpack'
-import { packToFs } from 'ipfs-car/pack/fs'
-import { packToStream } from 'ipfs-car/pack/stream'
-import { packToBlob } from 'ipfs-car/pack/blob'
+import { pack } from '../../src/pack'
+import { unpack } from '../../src/unpack'
+import { packToFs } from '../../src/pack/fs'
+import { packToStream } from '../../src/pack/stream'
+import { packToBlob } from '../../src/pack/blob'
 
-import { MemoryBlockStore } from 'ipfs-car/blockstore/memory'
-import { FsBlockStore } from 'ipfs-car/blockstore/fs'
+import { MemoryBlockStore } from '../../src/blockstore/memory'
+import { FsBlockStore } from '../../src/blockstore/fs'
 
 const dirTmp = `${__dirname}/tmp`
 

@@ -1,10 +1,10 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
 
-import { pack } from 'ipfs-car/pack'
-import { packToBlob } from 'ipfs-car/pack/blob'
+import { pack } from '../../src/pack'
+import { packToBlob } from '../../src/pack/blob'
 
-import { MemoryBlockStore } from 'ipfs-car/blockstore/memory'
+import { MemoryBlockStore } from '../../src/blockstore/memory'
 
 describe('pack', () => {
   [MemoryBlockStore].map((Blockstore) => {
