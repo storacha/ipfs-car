@@ -1,10 +1,10 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
 
-import { pack } from '../../dist/pack'
-import { packToBlob } from '../../dist/pack/blob'
+import { pack } from '../../src/pack'
+import { packToBlob } from '../../src/pack/blob'
 
-import { MemoryBlockStore } from '../../dist/blockstore/memory'
+import { MemoryBlockStore } from '../../src/blockstore/memory'
 
 describe('pack', () => {
   [MemoryBlockStore].map((Blockstore) => {
