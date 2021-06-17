@@ -4,8 +4,8 @@ import { sha256 } from 'multiformats/hashes/sha2'
 import { CarIndexedReader, CarReader } from '@ipld/car'
 import { Block } from '@ipld/car/api'
 import { CID } from 'multiformats'
-import exporter from 'ipfs-unixfs-exporter'
-import { UnixFSEntry } from 'ipfs-unixfs-exporter'
+import exporter from '@vascosantos/ipfs-unixfs-exporter'
+import { UnixFSEntry } from '@vascosantos/ipfs-unixfs-exporter'
 
 // Export unixfs entries from car file
 export async function* unpack (carReader: CarReader|CarIndexedReader, roots?: CID[]): AsyncIterable<UnixFSEntry> {

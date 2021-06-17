@@ -2,7 +2,7 @@ import last from 'it-last'
 import pipe from 'it-pipe'
 
 import { CarWriter } from '@ipld/car'
-import { importer } from 'ipfs-unixfs-importer'
+import { importer } from '@vascosantos/ipfs-unixfs-importer'
 import normalizeAddInput from 'ipfs-core-utils/src/files/normalise-input/index'
 import { ImportCandidateStream } from 'ipfs-core-types/src/utils'
 import { sha256 } from 'multiformats/hashes/sha2'
