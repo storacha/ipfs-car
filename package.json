@@ -8,8 +8,8 @@
     "/dist"
   ],
   "bin": {
-    "🚘": "./dist/cjs/cli/cli.ts",
-    "ipfs-car": "./dist/cjs/cli/cli.ts"
+    "🚘": "./dist/cjs/cli/cli.js",
+    "ipfs-car": "./dist/cjs/cli/cli.js"
   },
   "repository": {
     "type": "git",
