@@ -5,7 +5,7 @@ import moveFile from 'move-file'
 
 import { packToStream } from './stream'
 
-import { Blockstore } from '../blockstore'
+import { Blockstore } from '../blockstore/index'
 import { FsBlockStore } from '../blockstore/fs'
 
 export async function packToFs ({ input, output, blockstore: userBlockstore }: { input: string | Iterable<string> | AsyncIterable<string>, output?: string, blockstore?: Blockstore }) {

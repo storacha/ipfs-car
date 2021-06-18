@@ -10,7 +10,7 @@ import { UnixFSEntry } from '@vascosantos/ipfs-unixfs-exporter'
 // tslint:disable-next-line: no-var-requires needs types
 const toIterable = require('stream-to-it')
 
-import { unpack } from '.'
+import { unpack } from './index'
 
 // Node only, read a car from fs, write files to fs
 export async function unpackToFs ({input, roots, output}: {input: string, roots?: CID[], output?: string}) {

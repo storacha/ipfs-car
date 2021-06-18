@@ -7,7 +7,7 @@ import normalizeAddInput from 'ipfs-core-utils/src/files/normalise-input/index'
 import { ImportCandidateStream } from 'ipfs-core-types/src/utils'
 import { sha256 } from 'multiformats/hashes/sha2'
 
-import { Blockstore } from '../blockstore'
+import { Blockstore } from '../blockstore/index'
 import { MemoryBlockStore } from '../blockstore/memory'
 
 export async function pack ({ input, blockstore: userBlockstore }: { input: ImportCandidateStream, blockstore?: Blockstore }) {
