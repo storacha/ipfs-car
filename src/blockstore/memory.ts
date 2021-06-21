@@ -1,7 +1,7 @@
 import { CID } from 'multiformats'
 import { Block } from '@ipld/car/api'
 
-import { Blockstore } from './'
+import { Blockstore } from './index'
 
 export class MemoryBlockStore implements Blockstore {
   store: Map<string, Uint8Array>

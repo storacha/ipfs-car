@@ -4,7 +4,7 @@ import os from 'os'
 import { CID } from 'multiformats'
 import { Block } from '@ipld/car/api'
 
-import { Blockstore } from './'
+import { Blockstore } from './index'
 
 export class FsBlockStore implements Blockstore {
   path: string

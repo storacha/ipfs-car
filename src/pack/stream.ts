@@ -9,7 +9,7 @@ import normalizeAddInput from 'ipfs-core-utils/src/files/normalise-input/index'
 import globSource from 'ipfs-utils/src/files/glob-source'
 import { sha256 } from 'multiformats/hashes/sha2'
 
-import { Blockstore } from '../blockstore'
+import { Blockstore } from '../blockstore/index'
 import { MemoryBlockStore } from '../blockstore/memory'
 
 // Node version of toCar with Node Stream Writable

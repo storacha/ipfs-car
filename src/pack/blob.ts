@@ -5,7 +5,7 @@ import { ImportCandidateStream } from 'ipfs-core-types/src/utils'
 import { Blockstore } from '../blockstore'
 import { MemoryBlockStore } from '../blockstore/memory'
 
-import { pack } from './'
+import { pack } from './index'
 
 export async function packToBlob ({ input, blockstore: userBlockstore }: { input: ImportCandidateStream, blockstore?: Blockstore }) {
   const blockstore = userBlockstore ? userBlockstore : new MemoryBlockStore()
