@@ -1,13 +1,12 @@
 import { Blob } from "@web-std/blob"
 import all from 'it-all'
-import { ImportCandidateStream as ImportCandidateStreamT } from 'ipfs-core-types/src/utils'
+import type { ImportCandidateStream } from 'ipfs-core-types/src/utils'
+export type { ImportCandidateStream }
 
 import { Blockstore } from '../blockstore'
 import { MemoryBlockStore } from '../blockstore/memory'
 
 import { pack } from './index'
-
-export type ImportCandidateStream = ImportCandidateStreamT
 
 export async function packToBlob ({ input, blockstore: userBlockstore }: { input: ImportCandidateStream, blockstore?: Blockstore }) {
   const blockstore = userBlockstore ? userBlockstore : new MemoryBlockStore()
