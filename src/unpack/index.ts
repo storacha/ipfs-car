@@ -1,4 +1,4 @@
-import equals from 'uint8arrays/equals'
+import { equals } from 'uint8arrays'
 import { sha256 } from 'multiformats/hashes/sha2'
 
 import { CarReader } from '@ipld/car/api'
