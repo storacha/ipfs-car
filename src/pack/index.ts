@@ -4,7 +4,8 @@ import pipe from 'it-pipe'
 import { CarWriter } from '@ipld/car'
 import { importer } from '@vascosantos/ipfs-unixfs-importer'
 import normalizeAddInput from 'ipfs-core-utils/src/files/normalise-input/index.js'
-import { ImportCandidateStream } from 'ipfs-core-types/src/utils'
+import type { ImportCandidateStream } from 'ipfs-core-types/src/utils'
+export type { ImportCandidateStream }
 import { sha256 } from 'multiformats/hashes/sha2'
 
 import { Blockstore } from '../blockstore/index'

@@ -1,6 +1,7 @@
 import { Blob } from "@web-std/blob"
 import all from 'it-all'
-import { ImportCandidateStream } from 'ipfs-core-types/src/utils'
+import type { ImportCandidateStream } from 'ipfs-core-types/src/utils'
+export type { ImportCandidateStream }
 
 import { Blockstore } from '../blockstore'
 import { MemoryBlockStore } from '../blockstore/memory'
