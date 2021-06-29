@@ -5,10 +5,12 @@ import { CarIndexedReader, CarReader } from '@ipld/car'
 import { Block } from '@ipld/car/api'
 import { CID } from 'multiformats'
 import exporter from '@vascosantos/ipfs-unixfs-exporter'
-import { UnixFSEntry } from '@vascosantos/ipfs-unixfs-exporter'
+import { UnixFSEntry as UnixFSEntryT } from '@vascosantos/ipfs-unixfs-exporter'
+
+export type UnixFSEntry = UnixFSEntryT
 
 // Export unixfs entries from car file
-export async function* unpack (carReader: CarReader|CarIndexedReader, roots?: CID[]): AsyncIterable<UnixFSEntry> {
+export async function* unpack(carReader: CarReader | CarIndexedReader, roots?: CID[]): AsyncIterable<UnixFSEntry> {
   const verifyingBlockService = {
     get: async (cid: CID) => {
       const res = await carReader.get(cid)
