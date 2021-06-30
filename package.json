@@ -121,6 +121,7 @@
     "@vascosantos/ipfs-unixfs-importer": "^9.0.0",
     "@web-std/blob": "^2.1.1",
     "bl": "^5.0.0",
+    "idb-keyval": "^5.0.6",
     "ipfs-core-types": "^0.5.0",
     "ipfs-core-utils": "^0.8.0",
     "ipfs-utils": "^8.0.0",

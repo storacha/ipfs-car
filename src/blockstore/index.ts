@@ -3,7 +3,7 @@ import { CID } from 'multiformats'
 
 export interface Blockstore {
   put(block: Block): Promise<Block>
-  get(cid: CID): Promise<Block>
+  get(cid: CID): Promise<Block | undefined>
   blocks(): AsyncGenerator<Block, void, unknown>
   destroy(): Promise<void>
 }
