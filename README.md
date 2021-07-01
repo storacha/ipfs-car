@@ -175,8 +175,6 @@ for await (const file of unpack(carReader)) {
 }
 ```
 
-### `ipfs-car/unpackStream`
-
 Takes an AsyncIterable and yields files to be consumed.
 
 ```js
@@ -190,6 +188,30 @@ for await (const file of unpackStream(inStream)) {
   // Iterate over files
 }
 ```
+
+`unpackStream` takes an options object, allowing you to pass in a `BlockStore` implementation. The blocks are unpacked from the stream in the order they appear, which may not be the order needed to reassemble them into the Files and Directories they represent. The blockstore is used to store the blocks as they are consumed from the stream. Once the stream is consumed, the blockstore provides the random access by CID to the blocks, needed to assemble the tree.
+
+The default is a [`MemoryBlockStore`](./src/blockstore/memory.ts), that will store all the blocks in memory.
+For larger CARs in the browser you can use IndexedDB by passing in an [IdbBlocksStore]('./src/blockstore/idb.ts'), and in Node.js you can provide a [FsBlockStore] instance to write blocks to the tmp dir.
+
+```js
+/* browser */
+import { unpackStream } from 'ipfs-car/unpack'
+import { IdbBlockStore } from 'ipfs-car/blockstore/idb'
+
+const res = fetch(
+  'https://ipfs.io/api/v0/dag/export?arg=bafkreigh2akiscaildcqabsyg3dfr6chu3fgpregiymsck7e7aqa4s52zy',
+  { method: 'POST' }
+)
+const files = []
+const blockstore = new IdbBlockStore()
+for await (const file of unpackStream(res.body, { blockstore })) {
+  // Iterate over files
+}
+blockstore.destroy()
+```
+
+When providing a custom Blockstore, it is your responsibiltiy to call `blockstore.destroy()` when you're finished. Failing to do so will fill up the users storage.
 
 ### `ipfs-car/unpack/fs`
 
