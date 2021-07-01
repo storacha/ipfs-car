@@ -29,9 +29,9 @@
     "compile:esm": "ttsc -p tsconfig.json && echo '{ \"type\" : \"module\" }' > dist/esm/package.json",
     "compile:cjs": "tsc -p tsconfig-cjs.json",
     "lint": "tslint 'src/**/*.ts?(x)'",
-    "test": "npm run test:node && npm run test:browser",
-    "test:node": "npm run build && mocha -r ts-node/register test/**/*.node.test.ts",
-    "test:browser": "npm run build && playwright-test test/**/*.browser.test.ts"
+    "test": "npm run lint && npm run build && npm run test:node && npm run test:browser",
+    "test:node": "mocha -r ts-node/register test/**/*.node.test.ts",
+    "test:browser": "playwright-test test/**/*.browser.test.ts"
   },
   "exports": {
     "./pack": {
@@ -117,10 +117,11 @@
   "homepage": "https://github.com/vasco-santos/ipfs-car#readme",
   "dependencies": {
     "@ipld/car": "^3.0.3",
-    "@vascosantos/ipfs-unixfs-exporter": "^7.0.0",
-    "@vascosantos/ipfs-unixfs-importer": "^9.0.0",
+    "@vascosantos/ipfs-unixfs-exporter": "^8.0.0",
+    "@vascosantos/ipfs-unixfs-importer": "^10.0.0",
     "@web-std/blob": "^2.1.1",
     "bl": "^5.0.0",
+    "idb-keyval": "^5.0.6",
     "ipfs-core-types": "^0.5.0",
     "ipfs-core-utils": "^0.8.0",
     "ipfs-utils": "^8.0.0",

@@ -6,10 +6,10 @@ import all from 'it-all'
 
 import { Blockstore as BlockstoreInterface } from '../../src/blockstore'
 import { MemoryBlockStore } from '../../src/blockstore/memory'
-import { FsBlockStore } from '../../src/blockstore/fs'
+import { IdbBlockStore } from '../../src/blockstore/idb'
 
 describe('blockstore', () => {
-  [MemoryBlockStore, FsBlockStore].map((Blockstore) => {
+  [IdbBlockStore, MemoryBlockStore].map((Blockstore) => {
     describe(`with ${Blockstore.name}`, () => {
       let blockstore: BlockstoreInterface
       const cid = CID.parse('bafkreifidl2jnal7ycittjrnbki6jasdxwwvpf7fj733vnyhidtusxby4y')
