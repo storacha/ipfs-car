@@ -3,8 +3,11 @@ import { expect } from 'chai'
 import { CID } from 'multiformats'
 import { CarReader } from '@ipld/car'
 
-import { unpack } from '../../src/unpack'
+import { unpack, unpackStream } from '../../src/unpack'
 import { unpackToFs, unpackStreamToFs } from '../../src/unpack/fs'
+
+import { MemoryBlockStore } from '../../src/blockstore/memory'
+import { FsBlockStore } from '../../src/blockstore/fs'
 
 const rawCidString = 'bafkreigk2mcysiwgmacvilb3q6lcdaq53zlwu3jn4pj6qev2lylyfbqfdm'
 const rawCid = CID.parse(rawCidString)
@@ -24,6 +27,22 @@ describe('unpack', () => {
     }
 
     expect(files).to.have.lengthOf(1)
+  })
+})
+
+describe('unpackStream', () => {
+  [FsBlockStore, MemoryBlockStore].map((Blockstore) => {
+    it('file system stream', async () => {
+      const inStream = fs.createReadStream(`${__dirname}/../fixtures/raw.car`)
+      const files = []
+
+      for await (const file of unpackStream(inStream, {blockstore: new Blockstore()})) {
+        expect(file.path).to.eql(rawCidString)
+        expect(rawCid.equals(file.cid)).to.eql(true)
+        files.push(file)
+      }
+      expect(files).to.have.lengthOf(1)
+    })
   })
 })
 

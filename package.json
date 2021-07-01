@@ -74,6 +74,11 @@
       "import": "./dist/esm/blockstore/fs.js",
       "require": "./dist/cjs/blockstore/fs.js"
     },
+    "./blockstore/idb": {
+      "browser": "./dist/esm/blockstore/idb.js",
+      "import": null,
+      "require": null
+    },
     "./blockstore/memory": {
       "browser": "./dist/esm/blockstore/memory.js",
       "import": "./dist/esm/blockstore/memory.js",
@@ -105,6 +110,9 @@
       ],
       "blockstore/fs": [
         "dist/types/blockstore/fs.d.ts"
+      ],
+      "blockstore/idb": [
+        "dist/types/blockstore/idb.d.ts"
       ],
       "blockstore/memory": [
         "dist/types/blockstore/memory.d.ts"
