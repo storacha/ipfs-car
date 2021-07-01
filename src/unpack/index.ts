@@ -42,7 +42,7 @@ export async function* unpack(carReader: CarReader, roots?: CID[]): AsyncIterabl
 export async function* unpackStream(readable: ReadableStream<Uint8Array> | AsyncIterable<Uint8Array>, { roots, blockstore: userBlockstore }: { roots?: CID[], blockstore?: Blockstore } = {}): AsyncIterable<UnixFSEntry> {
   const carIterator = await CarBlockIterator.fromIterable(asAsyncIterable(readable))
   const blockstore = userBlockstore || new MemoryBlockStore()
-  
+
   for await (const block of carIterator) {
     await blockstore.put(block)
   }
