@@ -14,21 +14,7 @@ import { MemoryBlockStore } from '../blockstore/memory'
 
 // Export unixfs entries from car file
 export async function* unpack(carReader: CarReader, roots?: CID[]): AsyncIterable<UnixFSEntry> {
-  const verifyingBlockService = {
-    get: async (cid: CID) => {
-      const res = await carReader.get(cid)
-      if (!res) {
-        throw new Error(`Incomplete CAR. Block missing for CID ${cid}`)
-      }
-      if (!isValid(res)) {
-        throw new Error(`Invalid CAR. Hash of block data does not match CID ${cid}`)
-      }
-      return res
-    },
-    put: ({ cid, bytes }: { cid: CID, bytes: Uint8Array }) => {
-      return Promise.reject(new Error('should not get blocks'))
-    }
-  }
+  const verifyingBlockService = asVerifyingGetOnlyBlockStore(carReader)
 
   if (!roots || roots.length === 0 ) {
     roots = await carReader.getRoots()
@@ -47,21 +33,7 @@ export async function* unpackStream(readable: ReadableStream<Uint8Array> | Async
     await blockstore.put(block)
   }
 
-  const verifyingBlockStore = {
-    get: async (cid: CID) => {
-      const res = await blockstore.get(cid)
-      if (!res) {
-        throw new Error(`Incomplete CAR. Block missing for CID ${cid}`)
-      }
-      if (!isValid(res)) {
-        throw new Error(`Invalid CAR. Hash of block data does not match CID ${cid}`)
-      }
-      return res
-    },
-    put: ({ cid, bytes }: { cid: CID, bytes: Uint8Array }) => {
-      return Promise.reject(new Error('should not put blocks'))
-    }
-  }
+  const verifyingBlockStore = asVerifyingGetOnlyBlockStore(blockstore)
 
   if (!roots || roots.length === 0 ) {
     roots = await carIterator.getRoots()
@@ -86,4 +58,22 @@ async function isValid ({ cid, bytes }: Block) {
  function asAsyncIterable(readable: ReadableStream<Uint8Array> | AsyncIterable<Uint8Array>): AsyncIterable<Uint8Array> {
   // @ts-ignore how to convince tsc that we are checking the type here?
    return Symbol.asyncIterator in readable ? readable : toIterable(readable)
+}
+
+function asVerifyingGetOnlyBlockStore(blockstore: { get: (cid: CID) => Promise<Block | undefined> }) {
+  return {
+    get: async (cid: CID) => {
+      const res = await blockstore.get(cid)
+      if (!res) {
+        throw new Error(`Incomplete CAR. Block missing for CID ${cid}`)
+      }
+      if (!isValid(res)) {
+        throw new Error(`Invalid CAR. Hash of block data does not match CID ${cid}`)
+      }
+      return res
+    },
+    put: ({ cid, bytes }: { cid: CID, bytes: Uint8Array }) => {
+      return Promise.reject(new Error('should not put blocks'))
+    }
+  }
 }

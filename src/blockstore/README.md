@@ -8,6 +8,7 @@ The Blockstore implementations follows the [Blockstore Interface](./index.d.ts).
 
 - [FsBlockStore](./fs.ts) with a local file system backend (Node.js environments)
 - [MemoryBlockStore](./memory.ts) with an in-memory backend
+- [IdbBlockStore](./idb.ts) for browsers with IndexedDb via `idb-keyval`
 - [LevelBlockStore](https://github.com/vasco-santos/level-blockstore) with a [level](https://www.npmjs.com/package/level) backend (Node.js, Electron and browser environments)
 
 ## Usage
@@ -16,6 +17,12 @@ The Blockstore implementations follows the [Blockstore Interface](./index.d.ts).
 
 ```js
 import { FsBlockStore } from 'ipfs-car/blockstore/fs'
+```
+
+- IdbBlockStore
+
+```js
+import { IdbBlockStore } from 'ipfs-car/blockstore/idb'
 ```
 
 - MemoryBlockStore
