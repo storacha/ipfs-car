@@ -117,8 +117,8 @@
   "homepage": "https://github.com/vasco-santos/ipfs-car#readme",
   "dependencies": {
     "@ipld/car": "^3.0.3",
-    "@vascosantos/ipfs-unixfs-exporter": "^7.0.0",
-    "@vascosantos/ipfs-unixfs-importer": "^9.0.0",
+    "@vascosantos/ipfs-unixfs-exporter": "^8.0.0",
+    "@vascosantos/ipfs-unixfs-importer": "^10.0.0",
     "@web-std/blob": "^2.1.1",
     "bl": "^5.0.0",
     "idb-keyval": "^5.0.6",

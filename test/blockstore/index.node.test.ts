@@ -24,7 +24,9 @@ describe('blockstore', () => {
       it('can put and get', async () => {
         await blockstore.put({ cid, bytes })
         const storedBlock = await blockstore.get(cid)
-
+        if (!storedBlock) {
+          expect.fail("should return a block");
+        }
         expect(cid.equals(storedBlock.cid)).eql(true)
         expect(equals(bytes, storedBlock.bytes)).eql(true)
       })

@@ -15,12 +15,12 @@ export class IdbBlockStore implements Blockstore {
   private store: idb.UseStore
 
   constructor () {
-    const dbName = `${Date.now()}-${Math.random()}`
+    const dbName = `IdbBlockStore-${Date.now()}-${Math.random()}`
     this.store = idb.createStore(dbName, `IdbBlockStore`)
   }
 
   async * blocks () {
-    const keys = await idb.keys()
+    const keys = await idb.keys(this.store)
     for (const key of keys) {
       yield idb.get(key, this.store)
     }

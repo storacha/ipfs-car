@@ -9,7 +9,7 @@ import { MemoryBlockStore } from '../../src/blockstore/memory'
 import { IdbBlockStore } from '../../src/blockstore/idb'
 
 describe('blockstore', () => {
-  [MemoryBlockStore, IdbBlockStore].map((Blockstore) => {
+  [IdbBlockStore, MemoryBlockStore].map((Blockstore) => {
     describe(`with ${Blockstore.name}`, () => {
       let blockstore: BlockstoreInterface
       const cid = CID.parse('bafkreifidl2jnal7ycittjrnbki6jasdxwwvpf7fj733vnyhidtusxby4y')
@@ -24,7 +24,9 @@ describe('blockstore', () => {
       it('can put and get', async () => {
         await blockstore.put({ cid, bytes })
         const storedBlock = await blockstore.get(cid)
-
+        if (!storedBlock) {
+          expect.fail("should return a block");
+        }
         expect(cid.equals(storedBlock.cid)).eql(true)
         expect(equals(bytes, storedBlock.bytes)).eql(true)
       })
