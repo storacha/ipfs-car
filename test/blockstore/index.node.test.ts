@@ -53,6 +53,10 @@ describe('blockstore', () => {
         const blocks = await all(blockstore.blocks())
         expect(blocks.length).eql(3)
       })
+
+      it('can destroy immediately after creating', () => {
+        // Do nothing, rely on beforeEach and afterEach
+      })
     })
   })
 })

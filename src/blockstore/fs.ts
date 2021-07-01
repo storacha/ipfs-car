@@ -66,6 +66,9 @@ export class FsBlockStore implements Blockstore {
   }
 
   async destroy () {
-    await fs.promises.rm(this.path, { recursive: true })
+    if (this._opened) {
+      await fs.promises.rm(this.path, { recursive: true })
+    }
+    this._opened = false
   }
 }
