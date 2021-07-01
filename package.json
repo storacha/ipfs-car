@@ -29,9 +29,9 @@
     "compile:esm": "ttsc -p tsconfig.json && echo '{ \"type\" : \"module\" }' > dist/esm/package.json",
     "compile:cjs": "tsc -p tsconfig-cjs.json",
     "lint": "tslint 'src/**/*.ts?(x)'",
-    "test": "npm run test:node && npm run test:browser",
-    "test:node": "npm run build && mocha -r ts-node/register test/**/*.node.test.ts",
-    "test:browser": "npm run build && playwright-test test/**/*.browser.test.ts"
+    "test": "npm run lint && npm run build && npm run test:node && npm run test:browser",
+    "test:node": "mocha -r ts-node/register test/**/*.node.test.ts",
+    "test:browser": "playwright-test test/**/*.browser.test.ts"
   },
   "exports": {
     "./pack": {

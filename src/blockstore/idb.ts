@@ -7,8 +7,8 @@ import { Blockstore } from './index'
 
 /**
  * Save blocks to IndexedDB in the browser via idb-keyval
- * Creates a probably unique indexed db per instance to ensure that the 
- * blocks iteration method only returns blocks from this invocation, 
+ * Creates a probably unique indexed db per instance to ensure that the
+ * blocks iteration method only returns blocks from this invocation,
  * and so that the caller can destory it without affecting others.
  */
 export class IdbBlockStore implements Blockstore {
