@@ -12,7 +12,7 @@ import { FsBlockStore } from '../blockstore/fs'
 const toIterable = require('stream-to-it')
 
 import { unpack, unpackStream } from './index'
-import { Blockstore } from '../blockstore'
+import { Blockstore } from '../blockstore/index'
 
 // Node only, read a car from fs, write files to fs
 export async function unpackToFs ({input, roots, output}: {input: string, roots?: CID[], output?: string}) {
