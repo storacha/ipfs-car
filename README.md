@@ -77,6 +77,7 @@ $ ipfs-car --list-cids path/to/my.car
 ## API
 
 To pack files into content-addressable archives, you can use the functions provided in:
+
 - `ipfs-car/pack` for consuming a [CAR writer](https://github.com/ipld/js-car#carwriter) async iterable
 - `ipfs-car/pack/blob` for getting a blob with the CAR file
 - `ipfs-car/pack/fs` for storing in the local file system (**Node.js only**)
@@ -170,6 +171,22 @@ const carReader = await CarReader.fromIterable(inStream)
 
 const files = []
 for await (const file of unpack(carReader)) {
+  // Iterate over files
+}
+```
+
+### `ipfs-car/unpackStream`
+
+Takes an AsyncIterable and yields files to be consumed.
+
+```js
+import fs from 'fs'
+import { unpackStream } from 'ipfs-car/unpack'
+
+const inStream = fs.createReadStream(`${process.cwd()}/output.car`)
+
+const files = []
+for await (const file of unpackStream(inStream)) {
   // Iterate over files
 }
 ```

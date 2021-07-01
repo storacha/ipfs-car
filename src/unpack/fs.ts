@@ -6,11 +6,13 @@ import { map } from 'streaming-iterables'
 import { CarIndexedReader, CarReader } from '@ipld/car'
 import { CID } from 'multiformats'
 import { UnixFSEntry } from '@vascosantos/ipfs-unixfs-exporter'
+import { FsBlockStore } from '../blockstore/fs'
 
 // tslint:disable-next-line: no-var-requires needs types
 const toIterable = require('stream-to-it')
 
-import { unpack } from './index'
+import { unpack, unpackStream } from './index'
+import { Blockstore } from '../blockstore'
 
 // Node only, read a car from fs, write files to fs
 export async function unpackToFs ({input, roots, output}: {input: string, roots?: CID[], output?: string}) {
@@ -19,11 +21,12 @@ export async function unpackToFs ({input, roots, output}: {input: string, roots?
 }
 
 // Node only, read a stream, write files to fs
-export async function unpackStreamToFs ({input, roots, output}: {input: AsyncIterable<Uint8Array>, roots?: CID[], output?: string}) {
-  // This stores blocks in memory, which is bad for large car files.
-  // Could write the stream to a BlockStore impl first and make it abuse the disk instead.
-  const carReader = await CarReader.fromIterable(input)
-  await writeFiles(unpack(carReader, roots), output)
+export async function unpackStreamToFs ({input, roots, output, blockstore: userBlockstore}: {input: AsyncIterable<Uint8Array>, roots?: CID[], output?: string, blockstore?: Blockstore}) {
+  const blockstore = userBlockstore ? userBlockstore : new FsBlockStore()
+  await writeFiles(unpackStream(input, { roots, blockstore }), output)
+  if (!userBlockstore) {
+    await blockstore.destroy()
+  }
 }
 
 export async function writeFiles (source: AsyncIterable<UnixFSEntry>, output?: string) {
