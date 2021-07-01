@@ -10,7 +10,7 @@ import { MemoryBlockStore } from '../../src/blockstore/memory'
 import { IdbBlockStore } from '../../src/blockstore/idb'
 
 describe('unpack', () => {
-  it('with iterable input', async () => {
+  it('with CarReader input', async () => {
     const { out } = await pack({
       input: [new Uint8Array([21, 31])],
       blockstore: new MemoryBlockStore()
