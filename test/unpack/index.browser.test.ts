@@ -43,6 +43,24 @@ describe('unpackStream', () => {
         expect(files[0].type).to.eql('raw')
         expect(files[0].name).to.eql('bafkreifidl2jnal7ycittjrnbki6jasdxwwvpf7fj733vnyhidtusxby4y')
       })
+      it('with readablestream input', async () => {
+        const { out } = await pack({
+          input: [new Uint8Array([21, 31])],
+          blockstore: new MemoryBlockStore()
+        })
+        const stream = new ReadableStream({
+          async pull(controller) {
+            for await (const chunk of out) {
+              controller.enqueue(chunk)
+            }
+            controller.close()
+          }
+        })
+        const files = await all(unpackStream(stream, {blockstore: new Blockstore()}))
+        expect(files.length).to.eql(1)
+        expect(files[0].type).to.eql('raw')
+        expect(files[0].name).to.eql('bafkreifidl2jnal7ycittjrnbki6jasdxwwvpf7fj733vnyhidtusxby4y')
+      })
     })
   })
 })
