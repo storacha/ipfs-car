@@ -3,13 +3,13 @@ import pipe from 'it-pipe'
 import BufferList from 'bl'
 import { map } from 'streaming-iterables'
 
-import { CarIndexedReader, CarReader } from '@ipld/car'
+import { CarIndexedReader } from '@ipld/car'
 import { CID } from 'multiformats'
 import { UnixFSEntry } from '@vascosantos/ipfs-unixfs-exporter'
 import { FsBlockStore } from '../blockstore/fs'
 
-// tslint:disable-next-line: no-var-requires needs types
-const toIterable = require('stream-to-it')
+// @ts-ignore stream-to-it has no types exported
+import toIterable from 'stream-to-it'
 
 import { unpack, unpackStream } from './index'
 import { Blockstore } from '../blockstore/index'
