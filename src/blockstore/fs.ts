@@ -26,7 +26,7 @@ export class FsBlockStore implements Blockstore {
     }
   }
 
-  async put ({ cid, bytes }: { cid: CID, bytes: Uint8Array }) {
+  async put ({ cid, bytes }: Block) {
     if (!this._opened) {
       await this._open()
     }

@@ -124,7 +124,7 @@
   },
   "homepage": "https://github.com/web3-storage/ipfs-car#readme",
   "dependencies": {
-    "@ipld/car": "^3.0.3",
+    "@ipld/car": "^3.1.4",
     "@vascosantos/ipfs-unixfs-exporter": "^8.0.0",
     "@vascosantos/ipfs-unixfs-importer": "^10.0.0",
     "@web-std/blob": "^2.1.1",
@@ -138,7 +138,7 @@
     "it-pipe": "^1.1.0",
     "meow": "^9.0.0",
     "move-file": "^2.0.0",
-    "multiformats": "^9.0.4",
+    "multiformats": "^9.1.2",
     "stream-to-it": "^0.2.3",
     "streaming-iterables": "^5.0.4",
     "uint8arrays": "^2.1.5"

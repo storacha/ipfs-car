@@ -16,16 +16,16 @@ export class MemoryBlockStore implements Blockstore {
     }
   }
 
-  put ({ cid, bytes }: { cid: CID, bytes: Uint8Array }) {
+  put ({ cid, bytes }: Block) {
     this.store.set(cid.toString(), bytes)
     return Promise.resolve({ cid, bytes })
   }
 
-  get (cid: CID) : Promise<Block> {
+  get (cid: CID) : Promise<Block|undefined> {
     const bytes = this.store.get(cid.toString())
 
     if (!bytes) {
-      return Promise.reject(new Error(`No blocks for the given CID: ${cid.toString()}`))
+      return Promise.resolve(undefined)
     }
 
     return Promise.resolve({
