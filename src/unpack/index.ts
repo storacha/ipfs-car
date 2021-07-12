@@ -15,6 +15,7 @@ import { MemoryBlockStore } from '../blockstore/memory'
 // Export unixfs entries from car file
 export async function* unpack(carReader: CarReader, roots?: CID[]): AsyncIterable<UnixFSEntry> {
   const verifyingBlockService = asVerifyingGetOnlyBlockStore({
+    // Return bytes in the same fashion as a Blockstore implementation
     get: async (cid: CID) => {
       const block = await carReader.get(cid)
 
