@@ -1,12 +1,12 @@
 import { CID } from 'multiformats'
-import { Block } from '@ipld/car/api'
-
+import { BlockstoreAdapter } from 'interface-blockstore'
 import { Blockstore } from './index'
 
-export class MemoryBlockStore implements Blockstore {
+export class MemoryBlockStore extends BlockstoreAdapter implements Blockstore {
   store: Map<string, Uint8Array>
 
   constructor () {
+    super()
     this.store = new Map()
   }
 
@@ -16,25 +16,23 @@ export class MemoryBlockStore implements Blockstore {
     }
   }
 
-  put ({ cid, bytes }: Block) {
+  put (cid: CID, bytes: Uint8Array) {
     this.store.set(cid.toString(), bytes)
-    return Promise.resolve({ cid, bytes })
+
+    return Promise.resolve()
   }
 
-  get (cid: CID) : Promise<Block|undefined> {
+  get (cid: CID) : Promise<Uint8Array> {
     const bytes = this.store.get(cid.toString())
 
     if (!bytes) {
-      return Promise.resolve(undefined)
+      throw new Error(`block with cid ${cid.toString()} no found`)
     }
 
-    return Promise.resolve({
-      bytes,
-      cid
-    })
+    return Promise.resolve(bytes)
   }
 
-  destroy () {
+  close () {
     this.store.clear()
     return Promise.resolve()
   }

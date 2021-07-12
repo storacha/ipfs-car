@@ -16,7 +16,7 @@ export async function packToFs ({ input, output, blockstore: userBlockstore }: {
   const { root } = await packToStream({ input, writable, blockstore })
 
   if (!userBlockstore) {
-    await blockstore.destroy()
+    await blockstore.close()
   }
 
   // Move to work dir

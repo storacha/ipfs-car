@@ -3,7 +3,7 @@ import all from 'it-all'
 import type { ImportCandidateStream } from 'ipfs-core-types/src/utils'
 export type { ImportCandidateStream }
 
-import { Blockstore } from '../blockstore'
+import { Blockstore } from '../blockstore/index'
 import { MemoryBlockStore } from '../blockstore/memory'
 
 import { pack } from './index'
@@ -16,7 +16,7 @@ export async function packToBlob ({ input, blockstore: userBlockstore }: { input
   })
 
   if (!userBlockstore) {
-    await blockstore.destroy()
+    await blockstore.close()
   }
 
   const carParts = await all(out)

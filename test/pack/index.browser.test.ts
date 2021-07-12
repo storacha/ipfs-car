@@ -33,9 +33,9 @@ describe('pack', () => {
         expect(root.toString()).to.eql('bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354')
       })
 
-      it('pack does not destroy provided blockstore', async () => {
+      it('pack does not close provided blockstore', async () => {
         const blockstore = new Blockstore()
-        const spy = sinon.spy(blockstore, 'destroy')
+        const spy = sinon.spy(blockstore, 'close')
 
         await pack({
           input: [new Uint8Array([21, 31])],
@@ -43,12 +43,12 @@ describe('pack', () => {
         })
 
         expect(spy.callCount).to.eql(0)
-        await blockstore.destroy()
+        await blockstore.close()
       })
 
-      it('packToBlob does not destroy provided blockstore', async () => {
+      it('packToBlob does not close provided blockstore', async () => {
         const blockstore = new Blockstore()
-        const spy = sinon.spy(blockstore, 'destroy')
+        const spy = sinon.spy(blockstore, 'close')
 
         await packToBlob({
           input: [new Uint8Array([21, 31])],
@@ -56,7 +56,7 @@ describe('pack', () => {
         })
 
         expect(spy.callCount).to.eql(0)
-        await blockstore.destroy()
+        await blockstore.close()
       })
     })
   })

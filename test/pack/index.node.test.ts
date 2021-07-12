@@ -54,7 +54,7 @@ describe('pack', () => {
           blockstore
         })
 
-        await blockstore.destroy()
+        await blockstore.close()
 
         const inStream = fs.createReadStream(`${__dirname}/tmp/dir.car`)
         const carReader = await CarReader.fromIterable(inStream)
@@ -72,7 +72,7 @@ describe('pack', () => {
           blockstore
         })
 
-        await blockstore.destroy()
+        await blockstore.close()
 
         const inStream = fs.createReadStream(`${__dirname}/tmp/dir.car`)
         const carReader = await CarReader.fromIterable(inStream)
@@ -90,7 +90,7 @@ describe('pack', () => {
           blockstore
         })
 
-        await blockstore.destroy()
+        await blockstore.close()
 
         const inStream = fs.createReadStream(`${__dirname}/tmp/raw.car`)
         const carReader = await CarReader.fromIterable(inStream)
@@ -112,7 +112,7 @@ describe('pack', () => {
           input: `${__dirname}/../fixtures/file.raw`,
           blockstore
         })
-        await blockstore.destroy()
+        await blockstore.close()
 
         const newCarPath = `${process.cwd()}/file.car`
 
@@ -141,7 +141,7 @@ describe('pack', () => {
           writable,
           blockstore
         })
-        await blockstore.destroy()
+        await blockstore.close()
 
         const inStream = fs.createReadStream(`${__dirname}/tmp/raw.car`)
         const carReader = await CarReader.fromIterable(inStream)
@@ -155,11 +155,11 @@ describe('pack', () => {
         expect(equals(rawOriginalContent, rawContent)).to.eql(true)
       })
 
-      it('packToStream does not destroy provided blockstore', async () => {
+      it('packToStream does not close provided blockstore', async () => {
         const writable = fs.createWriteStream(`${__dirname}/tmp/raw.car`)
         const blockstore = new Blockstore()
 
-        const spy = sinon.spy(blockstore, 'destroy')
+        const spy = sinon.spy(blockstore, 'close')
 
         // Create car from file
         await packToStream({
@@ -169,12 +169,12 @@ describe('pack', () => {
         })
 
         expect(spy.callCount).to.eql(0)
-        await blockstore.destroy()
+        await blockstore.close()
       })
 
-      it('packToFs does not destroy provided blockstore', async () => {
+      it('packToFs does not close provided blockstore', async () => {
         const blockstore = new Blockstore()
-        const spy = sinon.spy(blockstore, 'destroy')
+        const spy = sinon.spy(blockstore, 'close')
 
         // Create car from file
         await packToFs({
@@ -184,7 +184,7 @@ describe('pack', () => {
         })
 
         expect(spy.callCount).to.eql(0)
-        await blockstore.destroy()
+        await blockstore.close()
       })
 
       it('can packToBlob', async () => {
@@ -197,7 +197,7 @@ describe('pack', () => {
 
         expect(car).to.exist
         expect(root.toString()).to.eql('bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354')
-        await blockstore.destroy()
+        await blockstore.close()
       })
     })
   })

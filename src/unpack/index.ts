@@ -5,8 +5,8 @@ import { CarBlockIterator } from '@ipld/car/iterator'
 import { CarReader } from '@ipld/car/api'
 import { Block } from '@ipld/car/api'
 import { CID } from 'multiformats'
-import exporter from '@vascosantos/ipfs-unixfs-exporter'
-import type { UnixFSEntry } from '@vascosantos/ipfs-unixfs-exporter'
+import exporter from 'ipfs-unixfs-exporter'
+import type { UnixFSEntry } from 'ipfs-unixfs-exporter'
 export type { UnixFSEntry }
 
 import { Blockstore } from '../blockstore/index'
@@ -14,13 +14,20 @@ import { MemoryBlockStore } from '../blockstore/memory'
 
 // Export unixfs entries from car file
 export async function* unpack(carReader: CarReader, roots?: CID[]): AsyncIterable<UnixFSEntry> {
-  const verifyingBlockService = asVerifyingGetOnlyBlockStore(carReader)
+  const verifyingBlockService = asVerifyingGetOnlyBlockStore({
+    get: async (cid: CID) => {
+      const block = await carReader.get(cid)
+
+      return block?.bytes
+    }
+  })
 
   if (!roots || roots.length === 0 ) {
     roots = await carReader.getRoots()
   }
 
   for (const root of roots) {
+    // @ts-ignore blockstore type is a superset of the verify block service needed
     yield* exporter.recursive(root, verifyingBlockService, { /* options */ })
   }
 }
@@ -30,7 +37,7 @@ export async function* unpackStream(readable: ReadableStream<Uint8Array> | Async
   const blockstore = userBlockstore || new MemoryBlockStore()
 
   for await (const block of carIterator) {
-    await blockstore.put(block)
+    await blockstore.put(block.cid, block.bytes)
   }
 
   const verifyingBlockStore = asVerifyingGetOnlyBlockStore(blockstore)
@@ -40,6 +47,7 @@ export async function* unpackStream(readable: ReadableStream<Uint8Array> | Async
   }
 
   for (const root of roots) {
+    // @ts-ignore blockstore type is a superset of the verify block service needed
     yield* exporter.recursive(root, verifyingBlockStore)
   }
 }
@@ -60,14 +68,14 @@ async function isValid ({ cid, bytes }: Block) {
    return Symbol.asyncIterator in readable ? readable : toIterable(readable)
 }
 
-function asVerifyingGetOnlyBlockStore(blockstore: { get: (cid: CID) => Promise<Block | undefined> }) {
+function asVerifyingGetOnlyBlockStore(blockstore: { get: (cid: CID) => Promise<Uint8Array|undefined> }) {
   return {
     get: async (cid: CID) => {
       const res = await blockstore.get(cid)
       if (!res) {
         throw new Error(`Incomplete CAR. Block missing for CID ${cid}`)
       }
-      if (!isValid(res)) {
+      if (!isValid({ cid, bytes: res })) {
         throw new Error(`Invalid CAR. Hash of block data does not match CID ${cid}`)
       }
       return res

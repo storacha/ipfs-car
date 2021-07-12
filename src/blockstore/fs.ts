@@ -2,16 +2,16 @@ import fs from 'fs'
 import os from 'os'
 
 import { CID } from 'multiformats'
-import { Block } from '@ipld/car/api'
-
+import { BlockstoreAdapter } from 'interface-blockstore'
 import { Blockstore } from './index'
 
-export class FsBlockStore implements Blockstore {
+export class FsBlockStore extends BlockstoreAdapter implements Blockstore {
   path: string
   _opened: boolean
   _opening?: Promise<void>
 
   constructor () {
+    super()
     this.path = `${os.tmpdir()}/${(parseInt(String(Math.random() * 1e9), 10)).toString() + Date.now()}`
     this._opened = false
   }
@@ -26,7 +26,7 @@ export class FsBlockStore implements Blockstore {
     }
   }
 
-  async put ({ cid, bytes }: Block) {
+  async put (cid: CID, bytes: Uint8Array) {
     if (!this._opened) {
       await this._open()
     }
@@ -34,11 +34,9 @@ export class FsBlockStore implements Blockstore {
     const cidStr = cid.toString()
     const location = `${this.path}/${cidStr}`
     await fs.promises.writeFile(location, bytes)
-
-    return { cid, bytes }
   }
 
-  async get (cid: CID): Promise<Block> {
+  async get (cid: CID): Promise<Uint8Array> {
     if (!this._opened) {
       await this._open()
     }
@@ -47,7 +45,7 @@ export class FsBlockStore implements Blockstore {
     const location = `${this.path}/${cidStr}`
     const bytes = await fs.promises.readFile(location)
 
-    return { cid, bytes }
+    return bytes
   }
 
   async * blocks () {
@@ -65,7 +63,7 @@ export class FsBlockStore implements Blockstore {
     }
   }
 
-  async destroy () {
+  async close () {
     if (this._opened) {
       await fs.promises.rm(this.path, { recursive: true })
     }
