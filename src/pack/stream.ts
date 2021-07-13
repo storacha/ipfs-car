@@ -14,6 +14,10 @@ import { MemoryBlockStore } from '../blockstore/memory'
 
 // Node version of toCar with Node Stream Writable
 export async function packToStream ({ input, writable, blockstore: userBlockstore }: { input: string | Iterable<string> | AsyncIterable<string>, writable: Writable, blockstore?: Blockstore }) {
+  if (!input || (Array.isArray(input) && !input.length)) {
+    throw new Error('given input could not be parsed correctly')
+  }
+
   const blockstore = userBlockstore ? userBlockstore : new MemoryBlockStore()
 
   // Consume the source
@@ -27,7 +31,7 @@ export async function packToStream ({ input, writable, blockstore: userBlockstor
       maxChunkSize: 262144,
       hasher: sha256,
       rawLeaves: true,
-      wrapWithDirectory: false // TODO: Set to true when not directory to keep names?
+      wrapWithDirectory: true
     })
   ))
 
