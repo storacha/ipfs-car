@@ -23,7 +23,7 @@ export async function pack ({ input, blockstore: userBlockstore }: { input: Impo
       maxChunkSize: 262144,
       hasher: sha256,
       rawLeaves: true,
-      wrapWithDirectory: false // TODO: Set to true when not directory to keep names?
+      wrapWithDirectory: true
     })
   ))
 
