@@ -25,8 +25,9 @@ describe('unpack', () => {
     const files = await all(unpack(carReader))
 
     expect(files.length).to.eql(1)
-    expect(files[0].type).to.eql('raw')
-    expect(files[0].name).to.eql('bafkreifidl2jnal7ycittjrnbki6jasdxwwvpf7fj733vnyhidtusxby4y')
+    expect(files[0].type).to.eql('directory')
+    expect(files[0].name).to.eql('bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354')
+    console.log('files', files[0])
   })
 })
 
@@ -40,8 +41,8 @@ describe('unpackStream', () => {
         })
         const files = await all(unpackStream(out, {blockstore: new Blockstore()}))
         expect(files.length).to.eql(1)
-        expect(files[0].type).to.eql('raw')
-        expect(files[0].name).to.eql('bafkreifidl2jnal7ycittjrnbki6jasdxwwvpf7fj733vnyhidtusxby4y')
+        expect(files[0].type).to.eql('directory')
+        expect(files[0].name).to.eql('bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354')
       })
       it('with readablestream input', async () => {
         const { out } = await pack({
@@ -58,8 +59,8 @@ describe('unpackStream', () => {
         })
         const files = await all(unpackStream(stream, {blockstore: new Blockstore()}))
         expect(files.length).to.eql(1)
-        expect(files[0].type).to.eql('raw')
-        expect(files[0].name).to.eql('bafkreifidl2jnal7ycittjrnbki6jasdxwwvpf7fj733vnyhidtusxby4y')
+        expect(files[0].type).to.eql('directory')
+        expect(files[0].name).to.eql('bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354')
       })
     })
   })

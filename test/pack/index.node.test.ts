@@ -196,7 +196,7 @@ describe('pack', () => {
         })
 
         expect(car).to.exist
-        expect(root.toString()).to.eql('bafkreifidl2jnal7ycittjrnbki6jasdxwwvpf7fj733vnyhidtusxby4y')
+        expect(root.toString()).to.eql('bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354')
         await blockstore.destroy()
       })
     })

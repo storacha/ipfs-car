@@ -20,8 +20,8 @@ describe('pack', () => {
           carParts.push(part)
         }
 
-        expect(root.toString()).to.eql('bafkreifidl2jnal7ycittjrnbki6jasdxwwvpf7fj733vnyhidtusxby4y')
-        expect(carParts.length).to.eql(4)
+        expect(root.toString()).to.eql('bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354')
+        expect(carParts.length).to.eql(7)
       })
 
       it('returns a car blob', async () => {
@@ -30,7 +30,7 @@ describe('pack', () => {
           blockstore: new Blockstore()
         })
 
-        expect(root.toString()).to.eql('bafkreifidl2jnal7ycittjrnbki6jasdxwwvpf7fj733vnyhidtusxby4y')
+        expect(root.toString()).to.eql('bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354')
       })
 
       it('pack does not destroy provided blockstore', async () => {
