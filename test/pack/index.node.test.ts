@@ -199,6 +199,21 @@ describe('pack', () => {
         expect(root.toString()).to.eql('bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354')
         await blockstore.close()
       })
+
+      it('should error to pack empty input', async () => {
+        const blockstore = new Blockstore()
+
+        try {
+          await pack({
+            input: [],
+            blockstore
+          })
+        } catch (err) {
+          expect(err).to.exist
+          return
+        }
+        throw new Error('pack should throw error with empty input')
+      })
     })
   })
 })
