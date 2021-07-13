@@ -19,20 +19,19 @@ describe('blockstore', () => {
         blockstore = new Blockstore()
       })
 
-      afterEach(() => blockstore.destroy())
+      afterEach(() => blockstore.close())
 
       it('can put and get', async () => {
-        await blockstore.put({ cid, bytes })
+        await blockstore.put(cid, bytes)
         const storedBlock = await blockstore.get(cid)
         if (!storedBlock) {
           expect.fail("should return a block");
         }
-        expect(cid.equals(storedBlock.cid)).eql(true)
-        expect(equals(bytes, storedBlock.bytes)).eql(true)
+        expect(equals(bytes, storedBlock)).eql(true)
       })
 
       it('can iterate on stored blocks', async () => {
-        await blockstore.put({ cid, bytes })
+        await blockstore.put(cid, bytes)
         const blocks = await all(blockstore.blocks())
 
         expect(blocks.length).eql(1)
@@ -45,16 +44,16 @@ describe('blockstore', () => {
         const cid3 = CID.parse('bafkreifidl2jnal7ycittjrnbki6jasdxwwvpf7fj733vnyhidtusxby6y')
 
         await Promise.all([
-          blockstore.put({ cid, bytes }),
-          blockstore.put({ cid: cid2, bytes }),
-          blockstore.put({ cid: cid3, bytes })
+          blockstore.put(cid, bytes),
+          blockstore.put(cid2, bytes),
+          blockstore.put(cid3, bytes)
         ])
 
         const blocks = await all(blockstore.blocks())
         expect(blocks.length).eql(3)
       })
 
-      it('can destroy immediately after creating', () => {
+      it('can close immediately after creating', () => {
         // Do nothing, rely on beforeEach and afterEach
       })
     })

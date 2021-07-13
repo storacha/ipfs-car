@@ -1,8 +1,6 @@
 import * as idb from 'idb-keyval'
-
 import { CID } from 'multiformats'
-import { Block } from '@ipld/car/api'
-
+import { BlockstoreAdapter } from 'interface-blockstore'
 import { Blockstore } from './index'
 
 /**
@@ -11,31 +9,42 @@ import { Blockstore } from './index'
  * blocks iteration method only returns blocks from this invocation,
  * and so that the caller can destory it without affecting others.
  */
-export class IdbBlockStore implements Blockstore {
+export class IdbBlockStore extends BlockstoreAdapter implements Blockstore {
   private store: idb.UseStore
 
   constructor () {
+    super()
+
     const dbName = `IdbBlockStore-${Date.now()}-${Math.random()}`
     this.store = idb.createStore(dbName, `IdbBlockStore`)
   }
 
   async * blocks () {
     const keys = await idb.keys(this.store)
-    for (const key of keys) {
-      yield idb.get(key, this.store)
+
+    for await (const key of keys) {
+      yield {
+        cid: CID.parse(key.toString()),
+        bytes: await idb.get(key, this.store)
+      }
     }
   }
 
-  async put (block: Block) {
-    await idb.set(block.cid.toString(), block, this.store)
-    return block
+  async put (cid: CID, bytes: Uint8Array) {
+    await idb.set(cid.toString(), bytes, this.store)
   }
 
-  async get (cid: CID): Promise<Block | undefined> {
-    return idb.get(cid.toString(), this.store)
+  async get (cid: CID): Promise<Uint8Array> {
+    const bytes = await idb.get(cid.toString(), this.store)
+
+    if (!bytes) {
+      throw new Error(`block with cid ${cid.toString()} no found`)
+    }
+
+    return bytes
   }
 
-  async destroy () {
+  async close () {
     return idb.clear(this.store)
   }
 }

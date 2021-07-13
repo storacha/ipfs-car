@@ -27,7 +27,6 @@ describe('unpack', () => {
     expect(files.length).to.eql(1)
     expect(files[0].type).to.eql('directory')
     expect(files[0].name).to.eql('bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354')
-    console.log('files', files[0])
   })
 })
 

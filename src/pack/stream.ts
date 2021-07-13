@@ -4,7 +4,7 @@ import last from 'it-last'
 import pipe from 'it-pipe'
 
 import { CarWriter } from '@ipld/car'
-import { importer } from '@vascosantos/ipfs-unixfs-importer'
+import { importer } from 'ipfs-unixfs-importer'
 import normalizeAddInput from 'ipfs-core-utils/src/files/normalise-input/index.js'
 import globSource from 'ipfs-utils/src/files/glob-source.js'
 import { sha256 } from 'multiformats/hashes/sha2'
@@ -47,7 +47,7 @@ export async function packToStream ({ input, writable, blockstore: userBlockstor
   await writer.close()
 
   if (!userBlockstore) {
-    await blockstore.destroy()
+    await blockstore.close()
   }
 
   return { root }

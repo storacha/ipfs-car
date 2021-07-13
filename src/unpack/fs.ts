@@ -5,7 +5,7 @@ import { map } from 'streaming-iterables'
 
 import { CarIndexedReader } from '@ipld/car'
 import { CID } from 'multiformats'
-import { UnixFSEntry } from '@vascosantos/ipfs-unixfs-exporter'
+import { UnixFSEntry } from 'ipfs-unixfs-exporter'
 import { FsBlockStore } from '../blockstore/fs'
 
 // @ts-ignore stream-to-it has no types exported
@@ -25,7 +25,7 @@ export async function unpackStreamToFs ({input, roots, output, blockstore: userB
   const blockstore = userBlockstore ? userBlockstore : new FsBlockStore()
   await writeFiles(unpackStream(input, { roots, blockstore }), output)
   if (!userBlockstore) {
-    await blockstore.destroy()
+    await blockstore.close()
   }
 }
 
