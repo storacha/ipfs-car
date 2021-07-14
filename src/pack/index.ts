@@ -12,6 +12,10 @@ import { Blockstore } from '../blockstore/index'
 import { MemoryBlockStore } from '../blockstore/memory'
 
 export async function pack ({ input, blockstore: userBlockstore }: { input: ImportCandidateStream, blockstore?: Blockstore }) {
+  if (!input || (Array.isArray(input) && !input.length)) {
+    throw new Error('missing input file(s)')
+  }
+
   const blockstore = userBlockstore ? userBlockstore : new MemoryBlockStore()
 
   // Consume the source

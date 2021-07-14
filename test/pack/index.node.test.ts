@@ -60,7 +60,7 @@ describe('pack', () => {
         const carReader = await CarReader.fromIterable(inStream)
         const files = await all(unpack(carReader))
 
-        expect(files).to.have.lengthOf(2)
+        expect(files).to.have.lengthOf(3)
       })
 
       it('pack dir to car with filesystem output', async () => {
@@ -78,7 +78,7 @@ describe('pack', () => {
         const carReader = await CarReader.fromIterable(inStream)
         const files = await all(unpack(carReader))
 
-        expect(files).to.have.lengthOf(2)
+        expect(files).to.have.lengthOf(3)
       })
 
       it('pack raw file to car with filesystem output', async () => {
@@ -96,10 +96,10 @@ describe('pack', () => {
         const carReader = await CarReader.fromIterable(inStream)
         const files = await all(unpack(carReader))
 
-        expect(files).to.have.lengthOf(1)
+        expect(files).to.have.lengthOf(2)
 
         const rawOriginalContent = new Uint8Array(fs.readFileSync(`${__dirname}/../fixtures/file.raw`))
-        const rawContent = (await all(files[0].content()))[0]
+        const rawContent = (await all(files[files.length - 1].content()))[0]
 
         expect(equals(rawOriginalContent, rawContent)).to.eql(true)
       })
@@ -120,10 +120,10 @@ describe('pack', () => {
         const carReader = await CarReader.fromIterable(inStream)
         const files = await all(unpack(carReader))
 
-        expect(files).to.have.lengthOf(1)
+        expect(files).to.have.lengthOf(2)
 
         const rawOriginalContent = new Uint8Array(fs.readFileSync(`${__dirname}/../fixtures/file.raw`))
-        const rawContent = (await all(files[0].content()))[0]
+        const rawContent = (await all(files[files.length - 1].content()))[0]
 
         expect(equals(rawOriginalContent, rawContent)).to.eql(true)
 
@@ -147,10 +147,10 @@ describe('pack', () => {
         const carReader = await CarReader.fromIterable(inStream)
         const files = await all(unpack(carReader))
 
-        expect(files).to.have.lengthOf(1)
+        expect(files).to.have.lengthOf(2)
 
         const rawOriginalContent = new Uint8Array(fs.readFileSync(`${__dirname}/../fixtures/file.raw`))
-        const rawContent = (await all(files[0].content()))[0]
+        const rawContent = (await all(files[files.length - 1].content()))[0]
 
         expect(equals(rawOriginalContent, rawContent)).to.eql(true)
       })
@@ -198,6 +198,21 @@ describe('pack', () => {
         expect(car).to.exist
         expect(root.toString()).to.eql('bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354')
         await blockstore.close()
+      })
+
+      it('should error to pack empty input', async () => {
+        const blockstore = new Blockstore()
+
+        try {
+          await pack({
+            input: [],
+            blockstore
+          })
+        } catch (err) {
+          expect(err).to.exist
+          return
+        }
+        throw new Error('pack should throw error with empty input')
       })
     })
   })
