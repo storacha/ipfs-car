@@ -7,13 +7,19 @@ import { CarWriter } from '@ipld/car'
 import { importer } from 'ipfs-unixfs-importer'
 import normalizeAddInput from 'ipfs-core-utils/src/files/normalise-input/index.js'
 import globSource from 'ipfs-utils/src/files/glob-source.js'
-import { sha256 } from 'multiformats/hashes/sha2'
 
-import { Blockstore } from '../blockstore/index'
 import { MemoryBlockStore } from '../blockstore/memory'
+import { unixfsImporterOptionsDefault } from './constants'
+
+import type { PackProperties } from './index'
+
+export type PackToStreamProperties = PackProperties & {
+  input: string | Iterable<string> | AsyncIterable<string>,
+  writable: Writable
+}
 
 // Node version of toCar with Node Stream Writable
-export async function packToStream ({ input, writable, blockstore: userBlockstore }: { input: string | Iterable<string> | AsyncIterable<string>, writable: Writable, blockstore?: Blockstore }) {
+export async function packToStream ({ input, writable, blockstore: userBlockstore, unixfsImporterOptions = unixfsImporterOptionsDefault }: PackToStreamProperties) {
   if (!input || (Array.isArray(input) && !input.length)) {
     throw new Error('given input could not be parsed correctly')
   }
@@ -25,14 +31,7 @@ export async function packToStream ({ input, writable, blockstore: userBlockstor
     normalizeAddInput(globSource(input, {
       recursive: true
     }),),
-    (source: any) => importer(source, blockstore, {
-      cidVersion: 1,
-      chunker: 'fixed',
-      maxChunkSize: 262144,
-      hasher: sha256,
-      rawLeaves: true,
-      wrapWithDirectory: true
-    })
+    (source: any) => importer(source, blockstore, unixfsImporterOptions)
   ))
 
   if (!rootEntry || !rootEntry.cid) {

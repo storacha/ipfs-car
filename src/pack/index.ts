@@ -4,14 +4,21 @@ import pipe from 'it-pipe'
 import { CarWriter } from '@ipld/car'
 import { importer } from 'ipfs-unixfs-importer'
 import normalizeAddInput from 'ipfs-core-utils/src/files/normalise-input/index.js'
+import type { UserImporterOptions } from 'ipfs-unixfs-importer/src/types'
 import type { ImportCandidateStream } from 'ipfs-core-types/src/utils'
 export type { ImportCandidateStream }
-import { sha256 } from 'multiformats/hashes/sha2'
 
 import { Blockstore } from '../blockstore/index'
 import { MemoryBlockStore } from '../blockstore/memory'
+import { unixfsImporterOptionsDefault } from './constants'
 
-export async function pack ({ input, blockstore: userBlockstore }: { input: ImportCandidateStream, blockstore?: Blockstore }) {
+export type PackProperties = {
+  input: ImportCandidateStream,
+  blockstore?: Blockstore,
+  unixfsImporterOptions?: UserImporterOptions
+}
+
+export async function pack ({ input, blockstore: userBlockstore, unixfsImporterOptions = unixfsImporterOptionsDefault }: PackProperties) {
   if (!input || (Array.isArray(input) && !input.length)) {
     throw new Error('missing input file(s)')
   }
@@ -21,14 +28,7 @@ export async function pack ({ input, blockstore: userBlockstore }: { input: Impo
   // Consume the source
   const rootEntry = await last(pipe(
     normalizeAddInput(input),
-    (source: any) => importer(source, blockstore, {
-      cidVersion: 1,
-      chunker: 'fixed',
-      maxChunkSize: 262144,
-      hasher: sha256,
-      rawLeaves: true,
-      wrapWithDirectory: true
-    })
+    (source: any) => importer(source, blockstore, unixfsImporterOptions)
   ))
 
   if (!rootEntry || !rootEntry.cid) {

@@ -3,16 +3,16 @@ import all from 'it-all'
 import type { ImportCandidateStream } from 'ipfs-core-types/src/utils'
 export type { ImportCandidateStream }
 
-import { Blockstore } from '../blockstore/index'
 import { MemoryBlockStore } from '../blockstore/memory'
-
 import { pack } from './index'
+import type { PackProperties } from './index'
 
-export async function packToBlob ({ input, blockstore: userBlockstore }: { input: ImportCandidateStream, blockstore?: Blockstore }) {
+export async function packToBlob ({ input, blockstore: userBlockstore, unixfsImporterOptions }: PackProperties) {
   const blockstore = userBlockstore ? userBlockstore : new MemoryBlockStore()
   const { root, out } = await pack({
     input,
-    blockstore
+    blockstore,
+    unixfsImporterOptions
   })
 
   if (!userBlockstore) {
