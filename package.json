@@ -126,6 +126,7 @@
   "dependencies": {
     "@ipld/car": "^3.1.4",
     "@web-std/blob": "^2.1.1",
+    "@web-std/file": "^1.1.0",
     "bl": "^5.0.0",
     "idb-keyval": "^5.0.6",
     "interface-blockstore": "^1.0.0",
