@@ -28,14 +28,7 @@ describe('pack', () => {
         const { root, out } = await pack({
           input: [new Uint8Array([21, 31])],
           blockstore: new Blockstore(),
-          unixfsImporterOptions: {
-            cidVersion: 1,
-            chunker: 'fixed',
-            maxChunkSize: 262144,
-            hasher: sha256,
-            rawLeaves: true,
-            wrapWithDirectory: false
-          }
+          wrapWithDirectory: false
         })
 
         const carParts = []

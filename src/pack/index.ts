@@ -4,7 +4,6 @@ import pipe from 'it-pipe'
 import { CarWriter } from '@ipld/car'
 import { importer } from 'ipfs-unixfs-importer'
 import normalizeAddInput from 'ipfs-core-utils/src/files/normalise-input/index.js'
-import type { UserImporterOptions } from 'ipfs-unixfs-importer/src/types'
 import type { ImportCandidateStream } from 'ipfs-core-types/src/utils'
 export type { ImportCandidateStream }
 
@@ -15,10 +14,11 @@ import { unixfsImporterOptionsDefault } from './constants'
 export type PackProperties = {
   input: ImportCandidateStream,
   blockstore?: Blockstore,
-  unixfsImporterOptions?: UserImporterOptions
+  maxChunkSize?: number,
+  wrapWithDirectory?: boolean
 }
 
-export async function pack ({ input, blockstore: userBlockstore, unixfsImporterOptions = unixfsImporterOptionsDefault }: PackProperties) {
+export async function pack ({ input, blockstore: userBlockstore, maxChunkSize, wrapWithDirectory }: PackProperties) {
   if (!input || (Array.isArray(input) && !input.length)) {
     throw new Error('missing input file(s)')
   }
@@ -28,7 +28,11 @@ export async function pack ({ input, blockstore: userBlockstore, unixfsImporterO
   // Consume the source
   const rootEntry = await last(pipe(
     normalizeAddInput(input),
-    (source: any) => importer(source, blockstore, unixfsImporterOptions)
+    (source: any) => importer(source, blockstore, {
+      ...unixfsImporterOptionsDefault,
+      maxChunkSize: maxChunkSize || unixfsImporterOptionsDefault.maxChunkSize,
+      wrapWithDirectory: wrapWithDirectory === false ? false : unixfsImporterOptionsDefault.wrapWithDirectory
+    })
   ))
 
   if (!rootEntry || !rootEntry.cid) {

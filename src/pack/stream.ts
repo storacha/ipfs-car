@@ -19,7 +19,7 @@ export type PackToStreamProperties = PackProperties & {
 }
 
 // Node version of toCar with Node Stream Writable
-export async function packToStream ({ input, writable, blockstore: userBlockstore, unixfsImporterOptions = unixfsImporterOptionsDefault }: PackToStreamProperties) {
+export async function packToStream ({ input, writable, blockstore: userBlockstore, maxChunkSize, wrapWithDirectory }: PackToStreamProperties) {
   if (!input || (Array.isArray(input) && !input.length)) {
     throw new Error('given input could not be parsed correctly')
   }
@@ -31,7 +31,11 @@ export async function packToStream ({ input, writable, blockstore: userBlockstor
     normalizeAddInput(globSource(input, {
       recursive: true
     }),),
-    (source: any) => importer(source, blockstore, unixfsImporterOptions)
+    (source: any) => importer(source, blockstore, {
+      ...unixfsImporterOptionsDefault,
+      maxChunkSize: maxChunkSize || unixfsImporterOptionsDefault.maxChunkSize,
+      wrapWithDirectory: wrapWithDirectory === false ? false : unixfsImporterOptionsDefault.wrapWithDirectory
+    })
   ))
 
   if (!rootEntry || !rootEntry.cid) {
