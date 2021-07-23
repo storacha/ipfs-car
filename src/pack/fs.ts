@@ -4,16 +4,26 @@ import path from 'path'
 import moveFile from 'move-file'
 
 import { packToStream } from './stream'
-
-import { Blockstore } from '../blockstore/index'
 import { FsBlockStore } from '../blockstore/fs'
+import type { PackProperties } from './index'
 
-export async function packToFs ({ input, output, blockstore: userBlockstore }: { input: string | Iterable<string> | AsyncIterable<string>, output?: string, blockstore?: Blockstore }) {
+export type PackToFsProperties = PackProperties & {
+  input: string | Iterable<string> | AsyncIterable<string>,
+  output?: string
+}
+
+export async function packToFs ({ input, output, blockstore: userBlockstore, maxChunkSize, wrapWithDirectory }: PackToFsProperties) {
   const blockstore = userBlockstore ? userBlockstore : new FsBlockStore()
   const location = output || `${os.tmpdir()}/${(parseInt(String(Math.random() * 1e9), 10)).toString() + Date.now()}`
   const writable = fs.createWriteStream(location)
 
-  const { root } = await packToStream({ input, writable, blockstore })
+  const { root } = await packToStream({
+    input,
+    writable,
+    blockstore,
+    maxChunkSize,
+    wrapWithDirectory
+  })
 
   if (!userBlockstore) {
     await blockstore.close()

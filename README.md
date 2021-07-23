@@ -100,7 +100,9 @@ import { MemoryBlockStore } from 'ipfs-car/blockstore/memory' // You can also us
 
 const { root, out } = await pack({
   input: [new Uint8Array([21, 31, 41])],
-  blockstore: new MemoryBlockStore()
+  blockstore: new MemoryBlockStore(),
+  wrapWithDirectory: true // Wraps input into a directory. Defaults to `true`
+  maxChunkSize: 262144 // The maximum block size in bytes. Defaults to `262144`. Max safe value is < 1048576 (1MiB)
 })
 
 const carParts = []
