@@ -5,6 +5,7 @@ import { CarWriter } from '@ipld/car'
 import { importer } from 'ipfs-unixfs-importer'
 import normalizeAddInput from 'ipfs-core-utils/src/files/normalise-input/index.js'
 import type { ImportCandidateStream } from 'ipfs-core-types/src/utils'
+import type { MultihashHasher } from 'multiformats/hashes/interface'
 export type { ImportCandidateStream }
 
 import { Blockstore } from '../blockstore/index'
@@ -16,10 +17,11 @@ export type PackProperties = {
   blockstore?: Blockstore,
   maxChunkSize?: number,
   maxChildrenPerNode?: number,
-  wrapWithDirectory?: boolean
+  wrapWithDirectory?: boolean,
+  hasher?: MultihashHasher
 }
 
-export async function pack({ input, blockstore: userBlockstore, maxChunkSize, maxChildrenPerNode, wrapWithDirectory }: PackProperties) {
+export async function pack ({ input, blockstore: userBlockstore, hasher, maxChunkSize, maxChildrenPerNode, wrapWithDirectory }: PackProperties) {
   if (!input || (Array.isArray(input) && !input.length)) {
     throw new Error('missing input file(s)')
   }
@@ -31,6 +33,7 @@ export async function pack({ input, blockstore: userBlockstore, maxChunkSize, ma
     normalizeAddInput(input),
     (source: any) => importer(source, blockstore, {
       ...unixfsImporterOptionsDefault,
+      hasher: hasher || unixfsImporterOptionsDefault.hasher,
       maxChunkSize: maxChunkSize || unixfsImporterOptionsDefault.maxChunkSize,
       maxChildrenPerNode: maxChildrenPerNode || unixfsImporterOptionsDefault.maxChildrenPerNode,
       wrapWithDirectory: wrapWithDirectory === false ? false : unixfsImporterOptionsDefault.wrapWithDirectory
