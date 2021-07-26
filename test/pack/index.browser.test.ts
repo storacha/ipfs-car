@@ -28,7 +28,8 @@ describe('pack', () => {
         const { root, out } = await pack({
           input: [new Uint8Array([21, 31])],
           blockstore: new Blockstore(),
-          wrapWithDirectory: false
+          wrapWithDirectory: false,
+          maxChildrenPerNode: 10
         })
 
         const carParts = []

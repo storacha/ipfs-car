@@ -7,12 +7,13 @@ import { MemoryBlockStore } from '../blockstore/memory'
 import { pack } from './index'
 import type { PackProperties } from './index'
 
-export async function packToBlob ({ input, blockstore: userBlockstore, maxChunkSize, wrapWithDirectory }: PackProperties) {
+export async function packToBlob ({ input, blockstore: userBlockstore, maxChunkSize, maxChildrenPerNode, wrapWithDirectory }: PackProperties) {
   const blockstore = userBlockstore ? userBlockstore : new MemoryBlockStore()
   const { root, out } = await pack({
     input,
     blockstore,
     maxChunkSize,
+    maxChildrenPerNode,
     wrapWithDirectory
   })
 

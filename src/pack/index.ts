@@ -15,10 +15,11 @@ export type PackProperties = {
   input: ImportCandidateStream,
   blockstore?: Blockstore,
   maxChunkSize?: number,
+  maxChildrenPerNode?: number,
   wrapWithDirectory?: boolean
 }
 
-export async function pack ({ input, blockstore: userBlockstore, maxChunkSize, wrapWithDirectory }: PackProperties) {
+export async function pack({ input, blockstore: userBlockstore, maxChunkSize, maxChildrenPerNode, wrapWithDirectory }: PackProperties) {
   if (!input || (Array.isArray(input) && !input.length)) {
     throw new Error('missing input file(s)')
   }
@@ -31,6 +32,7 @@ export async function pack ({ input, blockstore: userBlockstore, maxChunkSize, w
     (source: any) => importer(source, blockstore, {
       ...unixfsImporterOptionsDefault,
       maxChunkSize: maxChunkSize || unixfsImporterOptionsDefault.maxChunkSize,
+      maxChildrenPerNode: maxChildrenPerNode || unixfsImporterOptionsDefault.maxChildrenPerNode,
       wrapWithDirectory: wrapWithDirectory === false ? false : unixfsImporterOptionsDefault.wrapWithDirectory
     })
   ))
