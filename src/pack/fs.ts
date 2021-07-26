@@ -12,7 +12,7 @@ export type PackToFsProperties = PackProperties & {
   output?: string
 }
 
-export async function packToFs ({ input, output, blockstore: userBlockstore, maxChunkSize, wrapWithDirectory }: PackToFsProperties) {
+export async function packToFs ({ input, output, blockstore: userBlockstore, hasher, maxChunkSize, maxChildrenPerNode, wrapWithDirectory }: PackToFsProperties) {
   const blockstore = userBlockstore ? userBlockstore : new FsBlockStore()
   const location = output || `${os.tmpdir()}/${(parseInt(String(Math.random() * 1e9), 10)).toString() + Date.now()}`
   const writable = fs.createWriteStream(location)
@@ -21,7 +21,9 @@ export async function packToFs ({ input, output, blockstore: userBlockstore, max
     input,
     writable,
     blockstore,
+    hasher,
     maxChunkSize,
+    maxChildrenPerNode,
     wrapWithDirectory
   })
 

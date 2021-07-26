@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
-import { sha256 } from 'multiformats/hashes/sha2'
+import { sha512 } from 'multiformats/hashes/sha2'
 
 import { pack } from '../../src/pack'
 import { packToBlob } from '../../src/pack/blob'
@@ -28,6 +28,9 @@ describe('pack', () => {
         const { root, out } = await pack({
           input: [new Uint8Array([21, 31])],
           blockstore: new Blockstore(),
+          hasher: sha512,
+          maxChunkSize: 1048576,
+          maxChildrenPerNode: 1024,
           wrapWithDirectory: false
         })
 
@@ -36,7 +39,7 @@ describe('pack', () => {
           carParts.push(part)
         }
 
-        expect(root.toString()).to.eql('bafkreifidl2jnal7ycittjrnbki6jasdxwwvpf7fj733vnyhidtusxby4y')
+        expect(root.toString()).to.eql('bafkrgqdqehl5lkv4gfiooickxq4ikjacq6n34aczh7ga4euh46zqxgp2dvszwyxi5262v6rkv55pwi5m5yvd6kwxpxr36ipk7pu2mk3pnsnms')
         expect(carParts.length).to.eql(4)
       })
 

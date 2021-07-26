@@ -7,5 +7,6 @@ export const unixfsImporterOptionsDefault = {
   maxChunkSize: 262144,
   hasher: sha256,
   rawLeaves: true,
-  wrapWithDirectory: true
+  wrapWithDirectory: true,
+  maxChildrenPerNode: 174
 } as UserImporterOptions
