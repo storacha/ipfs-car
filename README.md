@@ -2,6 +2,12 @@
 
 > Convert files to content-addressable archives (.car) and back
 
+[![Build](https://github.com/web3-storage/ipfs-car/actions/workflows/main.yml/badge.svg)](https://github.com/web3-storage/ipfs-car/actions/workflows/main.yml)
+[![dependencies Status](https://status.david-dm.org/gh/web3-storage/ipfs-car.svg)](https://david-dm.org/web3-storage/ipfs-car)
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![Downloads](https://img.shields.io/npm/dm/ipfs-car.svg)](https://www.npmjs.com/package/ipfs-car)
+[![Minzipped size](https://badgen.net/bundlephobia/minzip/ipfs-car)](https://bundlephobia.com/result?p=ipfs-car)
+
 ## Description
 
 `ipfs-car` is a library and CLI tool to pack & unpack files from [Content Addressable aRchives (CAR)](https://github.com/ipld/specs/blob/master/block-layer/content-addressable-archives.md) file. A thin wrapper over [@ipld/car](https://github.com/ipld/js-car) and [unix-fs](https://github.com/ipfs/js-ipfs-unixfs).
