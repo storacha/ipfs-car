@@ -6,6 +6,7 @@ import all from 'it-all'
 import equals from 'uint8arrays/equals'
 
 import { CarReader } from '@ipld/car'
+import { File } from '@web-std/file'
 
 import { pack } from '../../src/pack'
 import { unpack } from '../../src/unpack'
@@ -192,6 +193,20 @@ describe('pack', () => {
 
         const { car, root } = await packToBlob({
           input: [new Uint8Array([21, 31])],
+          blockstore
+        })
+
+        expect(car).to.exist
+        expect(root.toString()).to.eql('bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354')
+        await blockstore.close()
+      })
+
+      it('can packToBlob Web File', async () => {
+        const blockstore = new Blockstore()
+
+        const file = new File([new Uint8Array([1, 2, 3])], 'file.txt')
+        const { car, root } = await packToBlob({
+          input: [file],
           blockstore
         })
 
