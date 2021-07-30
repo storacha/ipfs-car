@@ -201,7 +201,7 @@ describe('pack', () => {
         await blockstore.close()
       })
 
-      it.only('can packToBlob Web File', async () => {
+      it('can packToBlob Web File', async () => {
         const blockstore = new Blockstore()
 
         const file = new File([new Uint8Array([1, 2, 3])], 'file.txt')
