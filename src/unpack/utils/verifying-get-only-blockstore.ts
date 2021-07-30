@@ -1,4 +1,4 @@
-import { equals } from 'uint8arrays'
+import { equals } from '@vascosantos/uint8arrays/equals'
 import { Block } from '@ipld/car/api'
 import { sha256 } from 'multiformats/hashes/sha2'
 import { CID } from 'multiformats'

@@ -24,7 +24,6 @@
   "author": "vasco-santos",
   "license": "(Apache-2.0 AND MIT)",
   "scripts": {
-    "prepare": "npm run build",
     "build": "npm run compile:esm && npm run compile:cjs",
     "compile:esm": "ttsc -p tsconfig.json && echo '{ \"type\" : \"module\" }' > dist/esm/package.json",
     "compile:cjs": "tsc -p tsconfig-cjs.json",
@@ -129,11 +128,11 @@
     "bl": "^5.0.0",
     "idb-keyval": "^5.0.6",
     "interface-blockstore": "^1.0.0",
-    "ipfs-core-types": "^0.5.2",
-    "ipfs-core-utils": "^0.8.0",
-    "ipfs-unixfs-exporter": "^6.0.0",
-    "ipfs-unixfs-importer": "^8.0.0",
-    "ipfs-utils": "^8.1.0",
+    "ipfs-core-types": "^https://gitpkg.now.sh/ipfs/js-ipfs/packages/ipfs-core-types?chore/update-uint8arrays",
+    "ipfs-core-utils": "^https://gitpkg.now.sh/ipfs/js-ipfs/packages/ipfs-core-utils?chore/update-uint8arrays",
+    "ipfs-unixfs-exporter": "^https://gitpkg.now.sh/ipfs/js-ipfs-unixfs/packages/ipfs-unixfs-exporter?chore/switch-to-esm",
+    "ipfs-unixfs-importer": "^https://gitpkg.now.sh/ipfs/js-ipfs-unixfs/packages/ipfs-unixfs-importer?chore/switch-to-esm",
+    "ipfs-utils": "https://gitpkg.now.sh/ipfs/js-ipfs-utils?chore/update-uint8arrays",
     "it-all": "^1.0.5",
     "it-last": "^1.0.5",
     "it-pipe": "^1.1.0",
@@ -142,7 +141,7 @@
     "multiformats": "^9.3.0",
     "stream-to-it": "^0.2.3",
     "streaming-iterables": "^6.0.0",
-    "uint8arrays": "^2.1.5"
+    "@vascosantos/uint8arrays": "^3.0.3"
   },
   "devDependencies": {
     "@types/bl": "^5.0.1",
