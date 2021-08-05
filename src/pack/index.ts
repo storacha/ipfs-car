@@ -52,7 +52,7 @@ export async function pack ({ input, blockstore: userBlockstore, hasher, maxChun
     writer.put(block)
   }
 
-  writer.close()
+  await writer.close()
 
   if (!userBlockstore) {
     await blockstore.close()
