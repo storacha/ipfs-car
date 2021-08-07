@@ -45,17 +45,39 @@ export async function pack ({ input, blockstore: userBlockstore, hasher, maxChun
   }
 
   const root = rootEntry.cid
+  const { writer, out: carOut } = await CarWriter.create([root])
+  const carOutIter = carOut[Symbol.asyncIterator]()
 
-  const { writer, out } = await CarWriter.create([root])
-
-  for await (const block of blockstore.blocks()) {
-    writer.put(block)
+  let writingPromise: Promise<void>
+  const writeAll = async () => {
+    for await (const block of blockstore.blocks()) {
+      // `await` will block until all bytes in `carOut` are consumed by the user
+      // so we have backpressure here
+      await writer.put(block)
+    }
+    await writer.close()
+    if (!userBlockstore) {
+      await blockstore.close()
+    }
   }
 
-  writer.close()
-
-  if (!userBlockstore) {
-    await blockstore.close()
+  const out: AsyncIterable<Uint8Array> = {
+    [Symbol.asyncIterator] () {
+      if (writingPromise != null) {
+        throw new Error('Multiple iterator not supported')
+      }
+      // don't start writing until the user starts consuming the iterator
+      writingPromise = writeAll()
+      return {
+        async next () {
+          const result = await carOutIter.next()
+          if (result.done) {
+            await writingPromise // any errors will propagate from here
+          }
+          return result
+        }
+      }
+    }
   }
 
   return { root, out }
