@@ -1,6 +1,6 @@
 {
   "name": "ipfs-car",
-  "version": "0.5.4",
+  "version": "0.5.5",
   "description": "Convert files to content-addressed archives (.car) and back",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
