@@ -3,7 +3,7 @@ import sinon from 'sinon'
 import fs from 'fs'
 import process from 'process'
 import all from 'it-all'
-import equals from 'uint8arrays/equals'
+import { equals } from 'uint8arrays/equals'
 
 import { CarReader } from '@ipld/car'
 import { File } from '@web-std/file'

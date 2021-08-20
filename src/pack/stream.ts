@@ -5,6 +5,7 @@ import pipe from 'it-pipe'
 
 import { CarWriter } from '@ipld/car'
 import { importer } from 'ipfs-unixfs-importer'
+// @ts-ignore
 import normalizeAddInput from 'ipfs-core-utils/src/files/normalise-input/index.js'
 import globSource from 'ipfs-utils/src/files/glob-source.js'
 
