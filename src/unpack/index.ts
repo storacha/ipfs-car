@@ -2,7 +2,7 @@ import toIterable from 'browser-readablestream-to-it'
 import { CarBlockIterator } from '@ipld/car/iterator'
 import { CarReader } from '@ipld/car/api'
 import { CID } from 'multiformats'
-import exporter from 'ipfs-unixfs-exporter'
+import { recursive as unixFsExporter } from 'ipfs-unixfs-exporter'
 import type { UnixFSEntry } from 'ipfs-unixfs-exporter'
 export type { UnixFSEntry }
 
@@ -19,7 +19,7 @@ export async function* unpack(carReader: CarReader, roots?: CID[]): AsyncIterabl
   }
 
   for (const root of roots) {
-    yield* exporter.recursive(root, verifyingBlockService, { /* options */ })
+    yield* unixFsExporter(root, verifyingBlockService, { /* options */ })
   }
 }
 
@@ -38,7 +38,7 @@ export async function* unpackStream(readable: ReadableStream<Uint8Array> | Async
   }
 
   for (const root of roots) {
-    yield* exporter.recursive(root, verifyingBlockStore)
+    yield* unixFsExporter(root, verifyingBlockStore)
   }
 }
 
