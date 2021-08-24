@@ -3,7 +3,9 @@ import pipe from 'it-pipe'
 
 import { CarWriter } from '@ipld/car'
 import { importer } from 'ipfs-unixfs-importer'
-import normalizeAddInput from 'ipfs-core-utils/src/files/normalise-input/index.js'
+// @ts-ignore
+import { normaliseInput } from 'ipfs-core-utils/src/files/normalise-input/index.js'
+// @ts-ignore
 import type { ImportCandidateStream } from 'ipfs-core-types/src/utils'
 import type { MultihashHasher } from 'multiformats/hashes/interface'
 export type { ImportCandidateStream }
@@ -30,7 +32,7 @@ export async function pack ({ input, blockstore: userBlockstore, hasher, maxChun
 
   // Consume the source
   const rootEntry = await last(pipe(
-    normalizeAddInput(input),
+    normaliseInput(input),
     (source: any) => importer(source, blockstore, {
       ...unixfsImporterOptionsDefault,
       hasher: hasher || unixfsImporterOptionsDefault.hasher,

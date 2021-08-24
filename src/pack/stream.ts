@@ -5,7 +5,8 @@ import pipe from 'it-pipe'
 
 import { CarWriter } from '@ipld/car'
 import { importer } from 'ipfs-unixfs-importer'
-import normalizeAddInput from 'ipfs-core-utils/src/files/normalise-input/index.js'
+// @ts-ignore
+import { normaliseInput } from 'ipfs-core-utils/src/files/normalise-input/index.js'
 import globSource from 'ipfs-utils/src/files/glob-source.js'
 
 import { MemoryBlockStore } from '../blockstore/memory'
@@ -28,7 +29,7 @@ export async function packToStream ({ input, writable, blockstore: userBlockstor
 
   // Consume the source
   const rootEntry = await last(pipe(
-    normalizeAddInput(globSource(input, {
+    normaliseInput(globSource(input, {
       recursive: true
     }),),
     (source: any) => importer(source, blockstore, {

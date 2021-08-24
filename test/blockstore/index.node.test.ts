@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 
 import { CID } from 'multiformats'
-import equals from 'uint8arrays/equals'
+import { equals } from 'uint8arrays/equals'
 import all from 'it-all'
 
 import { Blockstore as BlockstoreInterface } from '../../src/blockstore'

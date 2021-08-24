@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import concat from 'uint8arrays/concat'
+import { concat } from 'uint8arrays/concat'
 import all from 'it-all'
 import { CarReader } from '@ipld/car'
 

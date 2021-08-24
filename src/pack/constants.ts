@@ -1,5 +1,5 @@
 import { sha256 } from 'multiformats/hashes/sha2'
-import type { UserImporterOptions } from 'ipfs-unixfs-importer/src/types'
+import type { UserImporterOptions } from 'ipfs-unixfs-importer/types/src/types'
 
 export const unixfsImporterOptionsDefault = {
   cidVersion: 1,

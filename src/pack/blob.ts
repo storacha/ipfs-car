@@ -1,5 +1,6 @@
 import { Blob } from "@web-std/blob"
 import all from 'it-all'
+// @ts-ignore
 import type { ImportCandidateStream } from 'ipfs-core-types/src/utils'
 export type { ImportCandidateStream }
 
