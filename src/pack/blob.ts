@@ -19,11 +19,12 @@ export async function packToBlob ({ input, blockstore: userBlockstore, hasher, m
     wrapWithDirectory
   })
 
+  const carParts = await all(out)
+
   if (!userBlockstore) {
     await blockstore.close()
   }
 
-  const carParts = await all(out)
   const car = new Blob(carParts, {
     type: 'application/car',
   })
