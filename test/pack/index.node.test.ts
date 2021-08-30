@@ -197,7 +197,7 @@ describe('pack', () => {
         })
 
         expect(car).to.exist
-        expect(root.toString()).to.eql('bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354')
+        expect(root.toString()).to.eql('bafkreifidl2jnal7ycittjrnbki6jasdxwwvpf7fj733vnyhidtusxby4y')
         await blockstore.close()
       })
 
@@ -211,7 +211,7 @@ describe('pack', () => {
         })
 
         expect(car).to.exist
-        expect(root.toString()).to.eql('bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354')
+        expect(root.toString()).to.eql('bafkreiadsbmmn4waznesyuz3bjgrj33xzqhxrk6mz3ksq7meugrachh3qe')
         await blockstore.close()
       })
 

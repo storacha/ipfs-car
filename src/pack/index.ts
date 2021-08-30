@@ -28,6 +28,11 @@ export async function pack ({ input, blockstore: userBlockstore, hasher, maxChun
     throw new Error('missing input file(s)')
   }
 
+  // Disable wrap with directory if we receive byte arrays as input with no path
+  if (Array.isArray(input) && input.filter((i) => !i.path).length) {
+    wrapWithDirectory = false
+  }
+
   const blockstore = userBlockstore ? userBlockstore : new MemoryBlockStore()
 
   // Consume the source

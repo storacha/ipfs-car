@@ -12,21 +12,29 @@ import { IdbBlockStore } from '../../src/blockstore/idb'
 describe('unpack', () => {
   it('with CarReader input', async () => {
     const { out } = await pack({
-      input: [new Uint8Array([21, 31])],
+      input: [{
+        path: 'a.txt',
+        content: new Uint8Array([21, 31])
+      }],
       blockstore: new MemoryBlockStore()
     })
 
     let bytes = new Uint8Array([])
+    let carParts = []
     for await (const part of out) {
+      carParts.push(part)
       bytes = concat([bytes, new Uint8Array(part)])
     }
 
     const carReader = await CarReader.fromBytes(bytes)
     const files = await all(unpack(carReader))
 
-    expect(files.length).to.eql(1)
+    expect(files.length).to.eql(2)
     expect(files[0].type).to.eql('directory')
-    expect(files[0].name).to.eql('bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354')
+    expect(files[0].name).to.eql('bafybeiglo54z2343qksf253l2xtsik3n4kdguwtfayhhtn36btqrnlwrsu')
+    expect(files[1].type).to.eql('raw')
+    expect(files[1].name).to.eql('a.txt')
+    expect(files[1].path).to.eql('bafybeiglo54z2343qksf253l2xtsik3n4kdguwtfayhhtn36btqrnlwrsu/a.txt')
   })
 })
 
@@ -35,17 +43,26 @@ describe('unpackStream', () => {
     describe(`with ${Blockstore.name}`, () => {
       it('with iterable input', async () => {
         const { out } = await pack({
-          input: [new Uint8Array([21, 31])],
+          input: [{
+            path: 'a.txt',
+            content: new Uint8Array([21, 31])
+          }],
           blockstore: new MemoryBlockStore()
         })
         const files = await all(unpackStream(out, {blockstore: new Blockstore()}))
-        expect(files.length).to.eql(1)
+        expect(files.length).to.eql(2)
         expect(files[0].type).to.eql('directory')
-        expect(files[0].name).to.eql('bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354')
+        expect(files[0].name).to.eql('bafybeiglo54z2343qksf253l2xtsik3n4kdguwtfayhhtn36btqrnlwrsu')
+        expect(files[1].type).to.eql('raw')
+        expect(files[1].name).to.eql('a.txt')
+        expect(files[1].path).to.eql('bafybeiglo54z2343qksf253l2xtsik3n4kdguwtfayhhtn36btqrnlwrsu/a.txt')
       })
       it('with readablestream input', async () => {
         const { out } = await pack({
-          input: [new Uint8Array([21, 31])],
+          input: [{
+            path: 'a.txt',
+            content: new Uint8Array([21, 31])
+          }],
           blockstore: new MemoryBlockStore()
         })
         const stream = new ReadableStream({
@@ -57,9 +74,12 @@ describe('unpackStream', () => {
           }
         })
         const files = await all(unpackStream(stream, {blockstore: new Blockstore()}))
-        expect(files.length).to.eql(1)
+        expect(files.length).to.eql(2)
         expect(files[0].type).to.eql('directory')
-        expect(files[0].name).to.eql('bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354')
+        expect(files[0].name).to.eql('bafybeiglo54z2343qksf253l2xtsik3n4kdguwtfayhhtn36btqrnlwrsu')
+        expect(files[1].type).to.eql('raw')
+        expect(files[1].name).to.eql('a.txt')
+        expect(files[1].path).to.eql('bafybeiglo54z2343qksf253l2xtsik3n4kdguwtfayhhtn36btqrnlwrsu/a.txt')
       })
     })
   })

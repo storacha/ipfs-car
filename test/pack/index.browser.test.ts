@@ -9,7 +9,88 @@ import { MemoryBlockStore } from '../../src/blockstore/memory'
 describe('pack', () => {
   [MemoryBlockStore].map((Blockstore) => {
     describe(`with ${Blockstore.name}`, () => {
-      it('with iterable input', async () => {
+      it('with iterable input of one file', async () => {
+        const { root, out } = await pack({
+          input: [{
+            path: 'a.txt',
+            content: new Uint8Array([21, 31])
+          }],
+          blockstore: new Blockstore()
+        })
+
+        const carParts = []
+        for await (const part of out) {
+          carParts.push(part)
+        }
+
+        expect(root.toString()).to.eql('bafybeiglo54z2343qksf253l2xtsik3n4kdguwtfayhhtn36btqrnlwrsu')
+        expect(carParts.length).to.eql(7)
+      })
+
+      it('with iterable input of many files', async () => {
+        const { root, out } = await pack({
+          input: [
+            {
+              path: 'a.txt',
+              content: new Uint8Array([21, 31])
+            },
+            {
+              path: 'b.txt',
+              content: new Uint8Array([22, 32])
+            }
+          ],
+          blockstore: new Blockstore()
+        })
+
+        const carParts = []
+        for await (const part of out) {
+          carParts.push(part)
+        }
+
+        expect(root.toString()).to.eql('bafybeifvinv2j25rn2dndgrpgeo5bfrknvjpqowoxw7msr4iyub6izyr5a')
+        expect(carParts.length).to.eql(10)
+      })
+
+      it('can pack with an array input without path (defaults to wrapWithDirectory to false)', async () => {
+        const { root, out } = await pack({
+          input: [{
+            content: new Uint8Array([21, 31])
+          }],
+          blockstore: new Blockstore()
+        })
+
+        const carParts = []
+        for await (const part of out) {
+          carParts.push(part)
+        }
+
+        expect(root.toString()).to.eql('bafkreifidl2jnal7ycittjrnbki6jasdxwwvpf7fj733vnyhidtusxby4y')
+        expect(carParts.length).to.eql(4)
+      })
+
+      it('can pack with an array input without path in one of the entries (defaults to wrapWithDirectory to false)', async () => {
+        const { root, out } = await pack({
+          input: [{
+              path: 'a.txt',
+              content: new Uint8Array([21, 31])
+            },
+            {
+              content: new Uint8Array([22, 32])
+            }
+          ],
+          blockstore: new Blockstore()
+        })
+
+        const carParts = []
+        for await (const part of out) {
+          carParts.push(part)
+        }
+
+        expect(root.toString()).to.eql('bafkreihdoh3xvolzxa4aa3snjjnhkgigs4rbbsj2qdax5kfbtlfewdmx5q')
+        expect(carParts.length).to.eql(7)
+      })
+
+      it('can pack with an uint8array input without path (defaults to wrapWithDirectory to false)', async () => {
         const { root, out } = await pack({
           input: [new Uint8Array([21, 31])],
           blockstore: new Blockstore()
@@ -20,13 +101,16 @@ describe('pack', () => {
           carParts.push(part)
         }
 
-        expect(root.toString()).to.eql('bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354')
-        expect(carParts.length).to.eql(7)
+        expect(root.toString()).to.eql('bafkreifidl2jnal7ycittjrnbki6jasdxwwvpf7fj733vnyhidtusxby4y')
+        expect(carParts.length).to.eql(4)
       })
 
       it('can pack with custom unixfs importer options', async () => {
         const { root, out } = await pack({
-          input: [new Uint8Array([21, 31])],
+          input: [{
+            path: 'a.txt',
+            content: new Uint8Array([21, 31])
+          }],
           blockstore: new Blockstore(),
           hasher: sha512,
           maxChunkSize: 1048576,
@@ -45,11 +129,14 @@ describe('pack', () => {
 
       it('returns a car blob', async () => {
         const { root, car } = await packToBlob({
-          input: [new Uint8Array([21, 31])],
+          input: [{
+            path: 'a.txt',
+            content: new Uint8Array([21, 31])
+          }],
           blockstore: new Blockstore()
         })
 
-        expect(root.toString()).to.eql('bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354')
+        expect(root.toString()).to.eql('bafybeiglo54z2343qksf253l2xtsik3n4kdguwtfayhhtn36btqrnlwrsu')
       })
 
       it('pack does not close provided blockstore', async () => {
@@ -57,7 +144,10 @@ describe('pack', () => {
         const spy = sinon.spy(blockstore, 'close')
 
         await pack({
-          input: [new Uint8Array([21, 31])],
+          input: [{
+            path: 'a.txt',
+            content: new Uint8Array([21, 31])
+          }],
           blockstore
         })
 
@@ -70,7 +160,10 @@ describe('pack', () => {
         const spy = sinon.spy(blockstore, 'close')
 
         await packToBlob({
-          input: [new Uint8Array([21, 31])],
+          input: [{
+            path: 'a.txt',
+            content: new Uint8Array([21, 31])
+          }],
           blockstore
         })
 
