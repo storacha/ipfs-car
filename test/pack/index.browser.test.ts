@@ -20,8 +20,26 @@ describe('pack', () => {
           carParts.push(part)
         }
 
-        expect(root.toString()).to.eql('bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354')
-        expect(carParts.length).to.eql(7)
+        expect(root.toString()).to.eql('bafkreifidl2jnal7ycittjrnbki6jasdxwwvpf7fj733vnyhidtusxby4y')
+        expect(carParts.length).to.eql(4)
+      })
+
+      it('with iterable input and wrapping with directory', async () => {
+        const { root, out } = await pack({
+          input: [{
+            path: 'test.txt',
+            content: new Uint8Array([21, 31])
+          }],
+          blockstore: new Blockstore()
+        })
+
+        const carParts = []
+        for await (const part of out) {
+          carParts.push(part)
+        }
+
+        expect(root.toString()).to.eql('bafkreifidl2jnal7ycittjrnbki6jasdxwwvpf7fj733vnyhidtusxby4y')
+        expect(carParts.length).to.eql(4)
       })
 
       it('can pack with custom unixfs importer options', async () => {
@@ -49,7 +67,7 @@ describe('pack', () => {
           blockstore: new Blockstore()
         })
 
-        expect(root.toString()).to.eql('bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354')
+        expect(root.toString()).to.eql('bafkreifidl2jnal7ycittjrnbki6jasdxwwvpf7fj733vnyhidtusxby4y')
       })
 
       it('pack does not close provided blockstore', async () => {

@@ -107,7 +107,7 @@ import { MemoryBlockStore } from 'ipfs-car/blockstore/memory' // You can also us
 const { root, out } = await pack({
   input: [new Uint8Array([21, 31, 41])],
   blockstore: new MemoryBlockStore(),
-  wrapWithDirectory: true // Wraps input into a directory. Defaults to `true`
+  wrapWithDirectory: false // Wraps inputs with paths into a directory. Defaults to `false`
   maxChunkSize: 262144 // The maximum block size in bytes. Defaults to `262144`. Max safe value is < 1048576 (1MiB)
 })
 
@@ -115,6 +115,21 @@ const carParts = []
 for await (const part of out) {
   carParts.push(part)
 }
+```
+
+When using `wrapWithDirectory` functionality, a path for the files needs to be provided, in order to have DAG links properly created. See the example as follows:
+
+```js
+import { pack } from 'ipfs-car/pack'
+import { MemoryBlockStore } from 'ipfs-car/blockstore/memory' // You can also use the `level-blockstore` module
+
+const { root, out } = await pack({
+  input: [{
+    path: 'file.txt',
+    content: new Uint8Array([21, 31, 41])
+  }],
+  wrapWithDirectory: true
+})
 ```
 
 ### `ipfs-car/pack/blob`
