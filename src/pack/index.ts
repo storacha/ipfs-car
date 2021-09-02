@@ -28,9 +28,19 @@ export async function pack ({ input, blockstore: userBlockstore, hasher, maxChun
     throw new Error('missing input file(s)')
   }
 
-  // Disable wrap with directory if we receive byte arrays as input with no path
-  if (Array.isArray(input) && input.filter((i) => !i.path).length) {
-    wrapWithDirectory = false
+  // Transform Web File to Import candidate
+  if (Array.isArray(input) && input.filter((i) => i.name).length) {
+    input = input.map((file) => {
+      if (file.name) {
+        file.path = file.name
+      }
+      return file
+    })
+  }
+
+  // if we receive byte arrays as input with no path it must include a path or wrapWithDirectory should be disabled
+  if (Array.isArray(input) && input.filter((i) => !i.path).length && wrapWithDirectory !== false) {
+    throw new Error('inputs with no path provided need to have a path specified or wrapWithDirectory option must be disabled')
   }
 
   const blockstore = userBlockstore ? userBlockstore : new MemoryBlockStore()

@@ -192,12 +192,15 @@ describe('pack', () => {
         const blockstore = new Blockstore()
 
         const { car, root } = await packToBlob({
-          input: [new Uint8Array([21, 31])],
+          input: [{
+            path: 'file.txt',
+            content: new Uint8Array([21, 31])
+          }],
           blockstore
         })
 
         expect(car).to.exist
-        expect(root.toString()).to.eql('bafkreifidl2jnal7ycittjrnbki6jasdxwwvpf7fj733vnyhidtusxby4y')
+        expect(root.toString()).to.eql('bafybeif3hyrtm2skjmldufjid3myfp37sxyqbtz7xe3f2fqyd7ugi33b2a')
         await blockstore.close()
       })
 
@@ -211,7 +214,7 @@ describe('pack', () => {
         })
 
         expect(car).to.exist
-        expect(root.toString()).to.eql('bafkreiadsbmmn4waznesyuz3bjgrj33xzqhxrk6mz3ksq7meugrachh3qe')
+        expect(root.toString()).to.eql('bafybeifspimntdv4o3ykr3qtt3vk5nwhegyzcktqiu2iatwuti66acbpby')
         await blockstore.close()
       })
 
@@ -228,6 +231,21 @@ describe('pack', () => {
           return
         }
         throw new Error('pack should throw error with empty input')
+      })
+
+      it('should error to pack byte array input with wrapWithDirectory enabled and not path', async () => {
+        const blockstore = new Blockstore()
+
+        try {
+          await pack({
+            input: [new Uint8Array([1, 2, 3])],
+            blockstore
+          })
+        } catch (err) {
+          expect(err).to.exist
+          return
+        }
+        throw new Error('pack should throw error when byte array is received as content and no path is provided')
       })
     })
   })
