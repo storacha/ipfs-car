@@ -38,7 +38,7 @@ export async function packToStream ({ input, writable, blockstore: userBlockstor
       maxChunkSize: maxChunkSize || unixfsImporterOptionsDefault.maxChunkSize,
       maxChildrenPerNode: maxChildrenPerNode || unixfsImporterOptionsDefault.maxChildrenPerNode,
       wrapWithDirectory: wrapWithDirectory === false ? false : unixfsImporterOptionsDefault.wrapWithDirectory,
-      shardSplitThreshold: shardSplitThreshold || undefined
+      ...(shardSplitThreshold) && { shardSplitThreshold : shardSplitThreshold }
     })
   ))
 
