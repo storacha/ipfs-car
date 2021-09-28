@@ -16,7 +16,8 @@ describe('unpack', () => {
         path: 'a.txt',
         content: new Uint8Array([21, 31])
       }],
-      blockstore: new MemoryBlockStore()
+      blockstore: new MemoryBlockStore(),
+      wrapWithDirectory: true
     })
 
     let bytes = new Uint8Array([])
@@ -47,7 +48,8 @@ describe('unpackStream', () => {
             path: 'a.txt',
             content: new Uint8Array([21, 31])
           }],
-          blockstore: new MemoryBlockStore()
+          blockstore: new MemoryBlockStore(),
+          wrapWithDirectory: true
         })
         const files = await all(unpackStream(out, {blockstore: new Blockstore()}))
         expect(files.length).to.eql(2)
@@ -63,7 +65,8 @@ describe('unpackStream', () => {
             path: 'a.txt',
             content: new Uint8Array([21, 31])
           }],
-          blockstore: new MemoryBlockStore()
+          blockstore: new MemoryBlockStore(),
+          wrapWithDirectory: true
         })
         const stream = new ReadableStream({
           async pull(controller) {

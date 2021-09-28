@@ -53,7 +53,7 @@ export async function pack ({ input, blockstore: userBlockstore, hasher, maxChun
       hasher: hasher || unixfsImporterOptionsDefault.hasher,
       maxChunkSize: maxChunkSize || unixfsImporterOptionsDefault.maxChunkSize,
       maxChildrenPerNode: maxChildrenPerNode || unixfsImporterOptionsDefault.maxChildrenPerNode,
-      wrapWithDirectory: wrapWithDirectory === false ? false : unixfsImporterOptionsDefault.wrapWithDirectory
+      wrapWithDirectory: wrapWithDirectory === true ? true : unixfsImporterOptionsDefault.wrapWithDirectory
     })
   ))
 

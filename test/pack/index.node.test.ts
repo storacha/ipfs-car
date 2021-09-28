@@ -61,7 +61,7 @@ describe('pack', () => {
         const carReader = await CarReader.fromIterable(inStream)
         const files = await all(unpack(carReader))
 
-        expect(files).to.have.lengthOf(3)
+        expect(files).to.have.lengthOf(2)
       })
 
       it('pack dir to car with filesystem output', async () => {
@@ -79,7 +79,7 @@ describe('pack', () => {
         const carReader = await CarReader.fromIterable(inStream)
         const files = await all(unpack(carReader))
 
-        expect(files).to.have.lengthOf(3)
+        expect(files).to.have.lengthOf(2)
       })
 
       it('pack raw file to car with filesystem output', async () => {
@@ -97,7 +97,7 @@ describe('pack', () => {
         const carReader = await CarReader.fromIterable(inStream)
         const files = await all(unpack(carReader))
 
-        expect(files).to.have.lengthOf(2)
+        expect(files).to.have.lengthOf(1)
 
         const rawOriginalContent = new Uint8Array(fs.readFileSync(`${__dirname}/../fixtures/file.raw`))
         const rawContent = (await all(files[files.length - 1].content()))[0]
@@ -121,7 +121,7 @@ describe('pack', () => {
         const carReader = await CarReader.fromIterable(inStream)
         const files = await all(unpack(carReader))
 
-        expect(files).to.have.lengthOf(2)
+        expect(files).to.have.lengthOf(1)
 
         const rawOriginalContent = new Uint8Array(fs.readFileSync(`${__dirname}/../fixtures/file.raw`))
         const rawContent = (await all(files[files.length - 1].content()))[0]
@@ -148,7 +148,7 @@ describe('pack', () => {
         const carReader = await CarReader.fromIterable(inStream)
         const files = await all(unpack(carReader))
 
-        expect(files).to.have.lengthOf(2)
+        expect(files).to.have.lengthOf(1)
 
         const rawOriginalContent = new Uint8Array(fs.readFileSync(`${__dirname}/../fixtures/file.raw`))
         const rawContent = (await all(files[files.length - 1].content()))[0]
@@ -200,7 +200,7 @@ describe('pack', () => {
         })
 
         expect(car).to.exist
-        expect(root.toString()).to.eql('bafybeif3hyrtm2skjmldufjid3myfp37sxyqbtz7xe3f2fqyd7ugi33b2a')
+        expect(root.toString()).to.eql('bafkreifidl2jnal7ycittjrnbki6jasdxwwvpf7fj733vnyhidtusxby4y')
         await blockstore.close()
       })
 
@@ -214,7 +214,7 @@ describe('pack', () => {
         })
 
         expect(car).to.exist
-        expect(root.toString()).to.eql('bafybeifspimntdv4o3ykr3qtt3vk5nwhegyzcktqiu2iatwuti66acbpby')
+        expect(root.toString()).to.eql('bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354')
         await blockstore.close()
       })
 

@@ -23,7 +23,26 @@ describe('pack', () => {
           carParts.push(part)
         }
 
-        expect(root.toString()).to.eql('bafybeiglo54z2343qksf253l2xtsik3n4kdguwtfayhhtn36btqrnlwrsu')
+        expect(root.toString()).to.eql('bafkreifidl2jnal7ycittjrnbki6jasdxwwvpf7fj733vnyhidtusxby4y')
+        expect(carParts.length).to.eql(4)
+      })
+
+      it('with iterable input and wrapping with directory', async () => {
+        const { root, out } = await pack({
+          input: [{
+            path: 'test.txt',
+            content: new Uint8Array([21, 31])
+          }],
+          blockstore: new Blockstore(),
+          wrapWithDirectory: true
+        })
+
+        const carParts = []
+        for await (const part of out) {
+          carParts.push(part)
+        }
+
+        expect(root.toString()).to.eql('bafybeifo5opnp65qnlowjrmrwsc6xs7tfzlehy4hsraugkaf7afzj2qkvu')
         expect(carParts.length).to.eql(7)
       })
 
@@ -40,6 +59,31 @@ describe('pack', () => {
             }
           ],
           blockstore: new Blockstore()
+        })
+
+        const carParts = []
+        for await (const part of out) {
+          carParts.push(part)
+        }
+
+        expect(root.toString()).to.eql('bafkreihdoh3xvolzxa4aa3snjjnhkgigs4rbbsj2qdax5kfbtlfewdmx5q')
+        expect(carParts.length).to.eql(7)
+      })
+
+      it('with iterable input of many files and wrapping with directory', async () => {
+        const { root, out } = await pack({
+          input: [
+            {
+              path: 'a.txt',
+              content: new Uint8Array([21, 31])
+            },
+            {
+              path: 'b.txt',
+              content: new Uint8Array([22, 32])
+            }
+          ],
+          blockstore: new Blockstore(),
+          wrapWithDirectory: true
         })
 
         const carParts = []
@@ -82,7 +126,7 @@ describe('pack', () => {
           blockstore: new Blockstore()
         })
 
-        expect(root.toString()).to.eql('bafybeiglo54z2343qksf253l2xtsik3n4kdguwtfayhhtn36btqrnlwrsu')
+        expect(root.toString()).to.eql('bafkreifidl2jnal7ycittjrnbki6jasdxwwvpf7fj733vnyhidtusxby4y')
       })
 
       it('pack does not close provided blockstore', async () => {
