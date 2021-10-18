@@ -48,6 +48,21 @@ export class FsBlockStore extends BlockstoreAdapter implements Blockstore {
     return bytes
   }
 
+  async has (cid: CID) {
+    if (!this._opened) {
+      await this._open()
+    }
+
+    const cidStr = cid.toString()
+    const location = `${this.path}/${cidStr}`
+    try {
+      await fs.promises.access(location)
+      return true
+    } catch (err) {
+      return false
+    }
+  }
+
   async * blocks () {
     if (!this._opened) {
       await this._open()

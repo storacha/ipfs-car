@@ -56,6 +56,13 @@ describe('blockstore', () => {
       it('can close immediately after creating', () => {
         // Do nothing, rely on beforeEach and afterEach
       })
+
+      it('can has', async () => {
+        await blockstore.put(cid, bytes)
+        expect(await blockstore.has(cid)).to.eql(true)
+        const externalCid = CID.parse('bafkreifidl2jnal7ycittjrnbki6jasdxwwvpf7fj733vnyhidtusxby5y')
+        expect(await blockstore.has(externalCid)).to.eql(false)
+      })
     })
   })
 })
