@@ -32,6 +32,10 @@ export class MemoryBlockStore extends BlockstoreAdapter implements Blockstore {
     return Promise.resolve(bytes)
   }
 
+  has (cid: CID) {
+    return Promise.resolve(this.store.has(cid.toString()))
+  }
+
   close () {
     this.store.clear()
     return Promise.resolve()

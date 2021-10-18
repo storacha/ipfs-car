@@ -52,6 +52,13 @@ describe('blockstore', () => {
         const blocks = await all(blockstore.blocks())
         expect(blocks.length).eql(3)
       })
+
+      it('can has', async () => {
+        await blockstore.put(cid, bytes)
+        expect(await blockstore.has(cid)).to.eql(true)
+        const externalCid = CID.parse('bafkreifidl2jnal7ycittjrnbki6jasdxwwvpf7fj733vnyhidtusxby5y')
+        expect(await blockstore.has(externalCid)).to.eql(false)
+      })
     })
   })
 })

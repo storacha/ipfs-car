@@ -44,6 +44,11 @@ export class IdbBlockStore extends BlockstoreAdapter implements Blockstore {
     return bytes
   }
 
+  async has (cid: CID) {
+    const bytes = await idb.get(cid.toString(), this.store)
+    return Boolean(bytes)
+  }
+
   async close () {
     return idb.clear(this.store)
   }
