@@ -14,6 +14,7 @@ interface Flags {
   list?: string,
   listCids?: string
   listRoots?: string
+  wrapWithDirectory?: boolean
 }
 
 const options = {
@@ -43,6 +44,11 @@ const options = {
     },
     listRoots: {
       type: 'string'
+    },
+    wrapWithDirectory: {
+      type: 'boolean',
+      alias: 'w',
+      default: true
     }
   }
 } as const;
@@ -62,6 +68,9 @@ const cli = meow(`
 
     # specify the car file name.
     $ ipfs-car --pack path/to/files --output path/to/write/a.car
+
+    # pack files without wrapping with top-level directory
+    $ ipfs-car --wrapWithDirectory false --pack path/to/files --output path/to/write/a.car
 
   Unpacking files from a .car
 
@@ -96,7 +105,7 @@ const cli = meow(`
 
 async function handleInput ({ flags }: { flags: Flags }) {
   if (flags.pack) {
-    const { root, filename } = await packToFs({input: flags.pack, output: flags.output})
+    const { root, filename } = await packToFs({input: flags.pack, output: flags.output, wrapWithDirectory: flags.wrapWithDirectory})
     // tslint:disable-next-line: no-console
     console.log(`root CID: ${root.toString()}`)
     // tslint:disable-next-line: no-console
