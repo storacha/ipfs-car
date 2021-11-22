@@ -3,8 +3,7 @@ import pipe from 'it-pipe'
 
 import { CarWriter } from '@ipld/car'
 import { importer } from 'ipfs-unixfs-importer'
-import { normaliseInput as normaliseInputSingle } from 'ipfs-core-utils/files/normalise-input-single'
-import { normaliseInput as normaliseInputMultiple } from 'ipfs-core-utils/files/normalise-input-multiple'
+import { getNormaliser } from './utils/normalise-input'
 import type { ImportCandidateStream, ImportCandidate } from 'ipfs-core-types/src/utils'
 import type { MultihashHasher } from 'multiformats/hashes/interface'
 export type { ImportCandidateStream }
@@ -20,28 +19,6 @@ export interface PackProperties {
   maxChildrenPerNode?: number,
   wrapWithDirectory?: boolean,
   hasher?: MultihashHasher
-}
-
-function isBytes (obj: any) {
-  return ArrayBuffer.isView(obj) || obj instanceof ArrayBuffer
-}
-
-function isBlob (obj: any) {
-  return Boolean(obj.constructor) &&
-    (obj.constructor.name === 'Blob' || obj.constructor.name === 'File') &&
-    typeof obj.stream === 'function'
-}
-
-function isSingle (input: ImportCandidateStream | ImportCandidate): input is ImportCandidate {
-  return typeof input === 'string' || input instanceof String || isBytes(input) || isBlob(input) || '_readableState' in input
-}
-
-function getNormaliser (input: ImportCandidateStream | ImportCandidate) {
-  if (isSingle(input)) {
-    return normaliseInputSingle(input)
-  } else {
-    return normaliseInputMultiple(input)
-  }
 }
 
 export async function pack ({ input, blockstore: userBlockstore, hasher, maxChunkSize, maxChildrenPerNode, wrapWithDirectory }: PackProperties) {
