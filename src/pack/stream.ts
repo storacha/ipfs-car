@@ -1,3 +1,5 @@
+import fs from 'fs'
+import path from 'path'
 import { Readable, Writable } from 'stream'
 
 import last from 'it-last'
@@ -29,11 +31,7 @@ export async function packToStream ({ input, writable, blockstore: userBlockstor
 
   // Consume the source
   const rootEntry = await last(pipe(
-    async function * () {
-      for await (const it of input) {
-        yield * globSource(process.cwd(), it)
-      }
-    },
+    legacyGlobSource(input),
     source => normaliseInput(source),
     (source: any) => importer(source, blockstore, {
       ...unixfsImporterOptionsDefault,
@@ -64,4 +62,26 @@ export async function packToStream ({ input, writable, blockstore: userBlockstor
   }
 
   return { root }
+}
+
+/**
+ * This function replicates the old behaviour of globSource to not introduce a
+ * breaking change.
+ * 
+ * TODO: figure out what the breaking change will be.
+ */
+async function * legacyGlobSource (input: Iterable<string> | AsyncIterable<string>) {
+  for await (const p of input) {
+    const resolvedPath = path.resolve(p)
+    const stat = await fs.promises.stat(resolvedPath)
+    const fileName = path.basename(resolvedPath)
+    if (stat.isDirectory()) {
+      yield { path: fileName }
+      for await (const candidate of globSource(resolvedPath, '**/*')) {
+        yield { ...candidate, path: path.join(fileName, candidate.path) }
+      }
+    } else {
+      yield { path: fileName, content: fs.createReadStream(resolvedPath) }
+    }
+  }
 }

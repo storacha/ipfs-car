@@ -1,7 +1,7 @@
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
-import { moveFile } from 'move-file'
+import moveFile from 'move-file'
 
 import { packToStream } from './stream'
 import { FsBlockStore } from '../blockstore/fs'
