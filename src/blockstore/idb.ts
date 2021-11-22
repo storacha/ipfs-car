@@ -1,6 +1,6 @@
 import * as idb from 'idb-keyval'
 import { CID } from 'multiformats'
-import { BlockstoreAdapter } from 'interface-blockstore'
+import { BaseBlockstore } from 'blockstore-core'
 import { Blockstore } from './index'
 
 /**
@@ -9,7 +9,7 @@ import { Blockstore } from './index'
  * blocks iteration method only returns blocks from this invocation,
  * and so that the caller can destory it without affecting others.
  */
-export class IdbBlockStore extends BlockstoreAdapter implements Blockstore {
+export class IdbBlockStore extends BaseBlockstore implements Blockstore {
   private store: idb.UseStore
 
   constructor () {

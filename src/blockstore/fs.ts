@@ -2,10 +2,10 @@ import fs from 'fs'
 import os from 'os'
 
 import { CID } from 'multiformats'
-import { BlockstoreAdapter } from 'interface-blockstore'
+import { BaseBlockstore } from 'blockstore-core'
 import { Blockstore } from './index'
 
-export class FsBlockStore extends BlockstoreAdapter implements Blockstore {
+export class FsBlockStore extends BaseBlockstore implements Blockstore {
   path: string
   _opened: boolean
   _opening?: Promise<void>
