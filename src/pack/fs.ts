@@ -1,13 +1,13 @@
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
-import moveFile from 'move-file'
+import { moveFile } from 'move-file'
 
 import { packToStream } from './stream'
 import { FsBlockStore } from '../blockstore/fs'
 import type { PackProperties } from './index'
 
-export type PackToFsProperties = PackProperties & {
+export interface PackToFsProperties extends PackProperties {
   input: string | Iterable<string> | AsyncIterable<string>,
   output?: string
 }

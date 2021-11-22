@@ -3,9 +3,7 @@ import pipe from 'it-pipe'
 
 import { CarWriter } from '@ipld/car'
 import { importer } from 'ipfs-unixfs-importer'
-// @ts-ignore
-import { normaliseInput } from 'ipfs-core-utils/src/files/normalise-input/index.js'
-// @ts-ignore
+import { normaliseInput } from 'ipfs-core-utils/files/normalise-input-multiple'
 import type { ImportCandidateStream } from 'ipfs-core-types/src/utils'
 import type { MultihashHasher } from 'multiformats/hashes/interface'
 export type { ImportCandidateStream }
@@ -14,7 +12,7 @@ import { Blockstore } from '../blockstore/index'
 import { MemoryBlockStore } from '../blockstore/memory'
 import { unixfsImporterOptionsDefault } from './constants'
 
-export type PackProperties = {
+export interface PackProperties {
   input: ImportCandidateStream,
   blockstore?: Blockstore,
   maxChunkSize?: number,

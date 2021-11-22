@@ -1,8 +1,8 @@
 import { CID } from 'multiformats'
-import { BlockstoreAdapter } from 'interface-blockstore'
+import { BaseBlockstore } from 'blockstore-core'
 import { Blockstore } from './index'
 
-export class MemoryBlockStore extends BlockstoreAdapter implements Blockstore {
+export class MemoryBlockStore extends BaseBlockstore implements Blockstore {
   store: Map<string, Uint8Array>
 
   constructor () {

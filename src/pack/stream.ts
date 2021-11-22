@@ -5,8 +5,7 @@ import pipe from 'it-pipe'
 
 import { CarWriter } from '@ipld/car'
 import { importer } from 'ipfs-unixfs-importer'
-// @ts-ignore
-import { normaliseInput } from 'ipfs-core-utils/src/files/normalise-input/index.js'
+import { normaliseInput } from 'ipfs-core-utils/files/normalise-input-multiple'
 import globSource from 'ipfs-utils/src/files/glob-source.js'
 
 import { MemoryBlockStore } from '../blockstore/memory'
@@ -14,7 +13,7 @@ import { unixfsImporterOptionsDefault } from './constants'
 
 import type { PackProperties } from './index'
 
-export type PackToStreamProperties = PackProperties & {
+export interface PackToStreamProperties extends PackProperties {
   input: string | Iterable<string> | AsyncIterable<string>,
   writable: Writable
 }
@@ -24,14 +23,18 @@ export async function packToStream ({ input, writable, blockstore: userBlockstor
   if (!input || (Array.isArray(input) && !input.length)) {
     throw new Error('given input could not be parsed correctly')
   }
+  input = typeof input === 'string' ? [input] : input
 
   const blockstore = userBlockstore ? userBlockstore : new MemoryBlockStore()
 
   // Consume the source
   const rootEntry = await last(pipe(
-    normaliseInput(globSource(input, {
-      recursive: true
-    }),),
+    async function * () {
+      for await (const it of input) {
+        yield * globSource(process.cwd(), it)
+      }
+    },
+    source => normaliseInput(source),
     (source: any) => importer(source, blockstore, {
       ...unixfsImporterOptionsDefault,
       hasher: hasher || unixfsImporterOptionsDefault.hasher,

@@ -3,12 +3,12 @@ import { Block } from '@ipld/car/api'
 import { sha256 } from 'multiformats/hashes/sha2'
 import { CID } from 'multiformats'
 import { CarReader } from '@ipld/car/api'
-import { BlockstoreAdapter } from 'interface-blockstore'
+import { BaseBlockstore } from 'blockstore-core'
 import { Blockstore } from '../../blockstore/index'
 
 type verifyingBlockStore = { get: (cid: CID) => Promise<Uint8Array | undefined> }
 
-export class VerifyingGetOnlyBlockStore extends BlockstoreAdapter {
+export class VerifyingGetOnlyBlockStore extends BaseBlockstore {
   store: verifyingBlockStore
 
   constructor (blockstore: verifyingBlockStore) {
