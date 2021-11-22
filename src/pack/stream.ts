@@ -67,7 +67,7 @@ export async function packToStream ({ input, writable, blockstore: userBlockstor
 /**
  * This function replicates the old behaviour of globSource to not introduce a
  * breaking change.
- * 
+ *
  * TODO: figure out what the breaking change will be.
  */
 async function * legacyGlobSource (input: Iterable<string> | AsyncIterable<string>) {
