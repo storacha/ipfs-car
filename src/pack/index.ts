@@ -18,10 +18,14 @@ export interface PackProperties {
   maxChunkSize?: number,
   maxChildrenPerNode?: number,
   wrapWithDirectory?: boolean,
-  hasher?: MultihashHasher
+  hasher?: MultihashHasher,
+  /**
+   * Use raw codec for leaf nodes. Default: true.
+   */
+  rawLeaves?: boolean
 }
 
-export async function pack ({ input, blockstore: userBlockstore, hasher, maxChunkSize, maxChildrenPerNode, wrapWithDirectory }: PackProperties) {
+export async function pack ({ input, blockstore: userBlockstore, hasher, maxChunkSize, maxChildrenPerNode, wrapWithDirectory, rawLeaves }: PackProperties) {
   if (!input || (Array.isArray(input) && !input.length)) {
     throw new Error('missing input file(s)')
   }
@@ -36,7 +40,8 @@ export async function pack ({ input, blockstore: userBlockstore, hasher, maxChun
       hasher: hasher || unixfsImporterOptionsDefault.hasher,
       maxChunkSize: maxChunkSize || unixfsImporterOptionsDefault.maxChunkSize,
       maxChildrenPerNode: maxChildrenPerNode || unixfsImporterOptionsDefault.maxChildrenPerNode,
-      wrapWithDirectory: wrapWithDirectory === false ? false : unixfsImporterOptionsDefault.wrapWithDirectory
+      wrapWithDirectory: wrapWithDirectory === false ? false : unixfsImporterOptionsDefault.wrapWithDirectory,
+      rawLeaves: rawLeaves == null ? unixfsImporterOptionsDefault.rawLeaves : rawLeaves
     })
   ))
 

@@ -229,6 +229,18 @@ describe('pack', () => {
         }
         throw new Error('pack should throw error with empty input')
       })
+
+      it('can create a DAG with non-raw leaf nodes allowing downgradable CID', async () => {
+        const { root } = await pack({
+          input: [new Uint8Array([21, 31])],
+          blockstore: new Blockstore(),
+          rawLeaves: false,
+          wrapWithDirectory: false
+        })
+
+        expect(() => root.toV0()).to.not.throw()
+        expect(root.toV0().toString()).to.eql('QmNUCKvjKRFeHZR2wyYM5cPEbEB969hz2zowTYvwGrQXP2')
+      })
     })
   })
 })
