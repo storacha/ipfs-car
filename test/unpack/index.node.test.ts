@@ -54,7 +54,11 @@ describe('unpackStreamToFs', () => {
   })
 
   afterEach(() => {
-    fs.rmSync(dirTmp, { recursive: true })
+    try {
+      fs.rmSync(dirTmp, { recursive: true })
+    } catch (e) {
+      // Windows Workers in CI _sometimes_ fail with permissions
+    }
   })
 
   it('raw file stream', async () => {
@@ -90,7 +94,11 @@ describe('unpackToFs', () => {
   })
 
   afterEach(() => {
-    fs.rmSync(dirTmp, { recursive: true })
+    try {
+      fs.rmSync(dirTmp, { recursive: true })
+    } catch (e) {
+      // Windows Workers in CI _sometimes_ fail with permissions
+    }
   })
 
   it('file system raw', async () => {
