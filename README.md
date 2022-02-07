@@ -52,6 +52,11 @@ $ ipfs-car --pack path/to/file/or/dir
 
 # specify the car file name.
 $ ipfs-car --pack path/to/files --output path/to/write/a.car
+
+# by default, ipfs-car will wrap files in an IPFS directory.
+# use --wrapWithDirectory false to avoid this.
+$ ipfs-car --pack path/to/file --wrapWithDirectory false --output path/to/write/a.car
+
 ```
 
 `--unpack` files from a .car
