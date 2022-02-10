@@ -29,7 +29,11 @@ describe('pack', () => {
       })
 
       afterEach(() => {
-        fs.rmSync(dirTmp, { recursive: true })
+        try {
+          fs.rmSync(dirTmp, { recursive: true })
+        } catch (e) {
+          // Windows Workers in CI _sometimes_ fail with permissions
+        }
       })
 
       it('can pack from a readable stream', async () => {
@@ -129,7 +133,11 @@ describe('pack', () => {
         expect(equals(rawOriginalContent, rawContent)).to.eql(true)
 
         // Remove created file
-        fs.rmSync(newCarPath)
+        try {
+          fs.rmSync(newCarPath)
+        } catch (e) {
+          // Windows Workers in CI _sometimes_ fail with permissions
+        }
       })
 
       it('pack raw file to car with writable stream', async () => {
