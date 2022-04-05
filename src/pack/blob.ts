@@ -27,7 +27,8 @@ export async function packToBlob ({ input, blockstore: userBlockstore, hasher, m
   }
 
   const car = new Blob(carParts, {
-    type: 'application/car',
+    // https://www.iana.org/assignments/media-types/application/vnd.ipld.car
+    type: 'application/vnd.ipld.car',
   })
 
   return { root, car }
