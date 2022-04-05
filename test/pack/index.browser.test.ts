@@ -50,6 +50,7 @@ describe('pack', () => {
         })
 
         expect(root.toString()).to.eql('bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354')
+        expect(car.type).to.eql('application/vnd.ipld.car')
       })
 
       it('pack does not close provided blockstore', async () => {
