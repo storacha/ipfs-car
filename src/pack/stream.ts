@@ -6,7 +6,7 @@ import last from 'it-last'
 import pipe from 'it-pipe'
 
 import { CarWriter } from '@ipld/car'
-import { importer } from 'ipfs-unixfs-importer'
+import {importer, ImportResult} from 'ipfs-unixfs-importer'
 import { normaliseInput } from 'ipfs-core-utils/files/normalise-input-multiple'
 import globSource from 'ipfs-utils/src/files/glob-source.js'
 
@@ -84,5 +84,15 @@ async function * legacyGlobSource (input: Iterable<string> | AsyncIterable<strin
     } else {
       yield { path: fileName, content: fs.createReadStream(resolvedPath) }
     }
+  }
+}
+
+async function *printCarContent(root: AsyncGenerator<ImportResult, void, unknown>, verbose: boolean | undefined): AsyncGenerator<ImportResult, void, unknown> {
+  for await (const entry of root) {
+    if (verbose && entry.path) {
+      // tslint:disable-next-line:no-console
+      console.log(`${entry.cid.toString()} ${entry.path}`)
+    }
+    yield entry
   }
 }
