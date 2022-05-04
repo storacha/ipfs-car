@@ -1,5 +1,4 @@
 import fs from 'fs'
-import os from 'os'
 import path from 'path'
 import moveFile from 'move-file'
 
@@ -13,8 +12,10 @@ export interface PackToFsProperties extends PackProperties {
 }
 
 export async function packToFs ({ input, output, blockstore: userBlockstore, hasher, maxChunkSize, maxChildrenPerNode, wrapWithDirectory, rawLeaves }: PackToFsProperties) {
-  const blockstore = userBlockstore ? userBlockstore : new FsBlockStore()
-  const location = output || `${os.tmpdir()}/${(parseInt(String(Math.random() * 1e9), 10)).toString() + Date.now()}`
+  const realpath = path.basename(await fs.promises.realpath(input as string))
+  const inputBasename = realpath === "/" ? "file" : realpath
+  const blockstore = userBlockstore ? userBlockstore : new FsBlockStore(`/tmp/${inputBasename}.tmp.${process.pid}`)
+  const location = output || `${process.cwd()}/.${inputBasename}.car.tmp.${process.pid}`
   const writable = fs.createWriteStream(location)
 
   const { root } = await packToStream({
@@ -35,7 +36,7 @@ export async function packToFs ({ input, output, blockstore: userBlockstore, has
   // Move to work dir
   if (!output) {
     const basename = typeof input === 'string' ? path.parse(path.basename(input)).name : root.toString()
-    const filename = `${basename}.car`
+    const filename = basename === "/" ? "file.car" : `${basename}.car`
     await moveFile(location, `${process.cwd()}/${filename}`)
 
     return {root, filename}

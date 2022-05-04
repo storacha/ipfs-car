@@ -14,6 +14,8 @@ import { MemoryBlockStore } from '../blockstore/memory'
 import { unixfsImporterOptionsDefault } from './constants'
 
 import type { PackProperties } from './index'
+import {Blockstore} from "../blockstore";
+import {FsBlockStore} from "../blockstore/fs";
 
 export interface PackToStreamProperties extends PackProperties {
   input: string | Iterable<string> | AsyncIterable<string>,
@@ -27,21 +29,32 @@ export async function packToStream ({ input, writable, blockstore: userBlockstor
   }
   input = typeof input === 'string' ? [input] : input
 
-  const blockstore = userBlockstore ? userBlockstore : new MemoryBlockStore()
+  if (userBlockstore) {
+    process.on("SIGINT", async (signal) => await handleSignal(signal, userBlockstore));
+    process.on("SIGTERM", async (signal) => await handleSignal(signal, userBlockstore));
+  }
 
-  // Consume the source
-  const rootEntry = await last(pipe(
-    legacyGlobSource(input),
-    source => normaliseInput(source),
-    (source: any) => importer(source, blockstore, {
-      ...unixfsImporterOptionsDefault,
-      hasher: hasher || unixfsImporterOptionsDefault.hasher,
-      maxChunkSize: maxChunkSize || unixfsImporterOptionsDefault.maxChunkSize,
-      maxChildrenPerNode: maxChildrenPerNode || unixfsImporterOptionsDefault.maxChildrenPerNode,
-      wrapWithDirectory: wrapWithDirectory === false ? false : unixfsImporterOptionsDefault.wrapWithDirectory,
-      rawLeaves: rawLeaves == null ? unixfsImporterOptionsDefault.rawLeaves : rawLeaves
-    })
-  ))
+  const blockstore = userBlockstore ? userBlockstore : new MemoryBlockStore()
+  let rootEntry
+
+  try {
+    // Consume the source
+    rootEntry = await last(pipe(
+      legacyGlobSource(input),
+      source => normaliseInput(source),
+      (source: any) => importer(source, blockstore, {
+        ...unixfsImporterOptionsDefault,
+        hasher: hasher || unixfsImporterOptionsDefault.hasher,
+        maxChunkSize: maxChunkSize || unixfsImporterOptionsDefault.maxChunkSize,
+        maxChildrenPerNode: maxChildrenPerNode || unixfsImporterOptionsDefault.maxChildrenPerNode,
+        wrapWithDirectory: wrapWithDirectory === false ? false : unixfsImporterOptionsDefault.wrapWithDirectory,
+        rawLeaves: rawLeaves == null ? unixfsImporterOptionsDefault.rawLeaves : rawLeaves
+      })
+    ))
+  } catch (err) {
+    // tslint:disable-next-line:no-console
+    console.log("Error while importing")
+  }
 
   if (!rootEntry || !rootEntry.cid) {
     throw new Error('given input could not be parsed correctly')
@@ -52,8 +65,13 @@ export async function packToStream ({ input, writable, blockstore: userBlockstor
   const { writer, out } = await CarWriter.create([root])
   Readable.from(out).pipe(writable)
 
-  for await (const block of blockstore.blocks()) {
-    await writer.put(block)
+  try {
+    for await (const block of blockstore.blocks()) {
+      await writer.put(block)
+    }
+  } catch (err) {
+    // tslint:disable-next-line:no-console
+    console.log("Error while writing blocks")
   }
 
   await writer.close()
@@ -85,4 +103,11 @@ async function * legacyGlobSource (input: Iterable<string> | AsyncIterable<strin
       yield { path: fileName, content: fs.createReadStream(resolvedPath) }
     }
   }
+}
+
+async function handleSignal(signal: NodeJS.Signals, blockstore: Blockstore) {
+  // tslint:disable-next-line:no-console
+  console.log(`Received ${signal} signal, cleaning up...`)
+  fs.rmSync((blockstore as FsBlockStore).path, {recursive: true, force: true})
+  fs.rmSync((blockstore as FsBlockStore).path.replace(".tmp", ".car.tmp").replace("/tmp/", `${process.cwd()}/.`), {recursive: true, force: true})
 }
