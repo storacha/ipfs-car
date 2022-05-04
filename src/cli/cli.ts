@@ -4,7 +4,7 @@ import meow from 'meow'
 import { CID } from 'multiformats';
 import { packToFs } from '../pack/fs'
 import { unpackToFs, unpackStreamToFs } from '../unpack/fs'
-import { listFilesInCar, listCidsInCar, listRootsInCar } from './lib'
+import {listFilesInCar, listCidsInCar, listRootsInCar, listFilesAndCidsInCar} from './lib'
 
 interface Flags {
   output?: string,
@@ -14,6 +14,7 @@ interface Flags {
   list?: string,
   listCids?: string
   listRoots?: string
+  listFull?: string
   wrapWithDirectory?: boolean
 }
 
@@ -43,6 +44,9 @@ const options = {
       type: 'string'
     },
     listRoots: {
+      type: 'string'
+    },
+    listFull: {
       type: 'string'
     },
     wrapWithDirectory: {
@@ -97,6 +101,9 @@ const cli = meow(`
     # list the files.
     $ ipfs-car --list path/to/my.car
 
+    # list both the files' path and their CIDs.
+    $ ipfs-car --list-full path/to/my.car
+
   TL;DR
   --pack <path> --output <my.car>
   --unpack <my.car> --output <path>
@@ -126,6 +133,9 @@ async function handleInput ({ flags }: { flags: Flags }) {
 
   } else if (flags.listCids) {
     return listCidsInCar({input: flags.listCids})
+
+  } else if (flags.listFull) {
+    return listFilesAndCidsInCar({input: flags.listFull})
 
   } else if (!process.stdin.isTTY) {
     // maybe stream?
