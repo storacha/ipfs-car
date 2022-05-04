@@ -21,7 +21,7 @@ export interface PackToStreamProperties extends PackProperties {
 }
 
 // Node version of toCar with Node Stream Writable
-export async function packToStream ({ input, writable, blockstore: userBlockstore, hasher, maxChunkSize, maxChildrenPerNode, wrapWithDirectory, rawLeaves }: PackToStreamProperties) {
+export async function packToStream ({ input, writable, blockstore: userBlockstore, hasher, maxChunkSize, maxChildrenPerNode, wrapWithDirectory, rawLeaves, verbose }: PackToStreamProperties) {
   if (!input || (Array.isArray(input) && !input.length)) {
     throw new Error('given input could not be parsed correctly')
   }
@@ -40,7 +40,8 @@ export async function packToStream ({ input, writable, blockstore: userBlockstor
       maxChildrenPerNode: maxChildrenPerNode || unixfsImporterOptionsDefault.maxChildrenPerNode,
       wrapWithDirectory: wrapWithDirectory === false ? false : unixfsImporterOptionsDefault.wrapWithDirectory,
       rawLeaves: rawLeaves == null ? unixfsImporterOptionsDefault.rawLeaves : rawLeaves
-    })
+    }),
+    (source: any) => printCarContent(source, verbose)
   ))
 
   if (!rootEntry || !rootEntry.cid) {

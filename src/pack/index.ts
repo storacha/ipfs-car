@@ -8,7 +8,7 @@ import type { ImportCandidateStream, ImportCandidate } from 'ipfs-core-types/src
 import type { MultihashHasher } from 'multiformats/hashes/interface'
 export type { ImportCandidateStream }
 
-import { Blockstore } from '../blockstore/index'
+import { Blockstore } from '../blockstore'
 import { MemoryBlockStore } from '../blockstore/memory'
 import { unixfsImporterOptionsDefault } from './constants'
 
@@ -19,6 +19,7 @@ export interface PackProperties {
   maxChildrenPerNode?: number,
   wrapWithDirectory?: boolean,
   hasher?: MultihashHasher,
+  verbose?: boolean,
   /**
    * Use raw codec for leaf nodes. Default: true.
    */
