@@ -29,7 +29,7 @@ $ ipfs-car --unpack my-files.car --output path/to/write/to
 Fetch and locally verify files from a IPFS gateway over http
 
 ```sh
-curl -X POST "https://ipfs.io/api/v0/dag/export?arg=bafybeidd2gyhagleh47qeg77xqndy2qy3yzn4vkxmk775bg2t5lpuy7pcu" | 🚘
+curl -H "Accept: application/vnd.ipld.car" "https://ipfs.io/ipfs/bafybeidd2gyhagleh47qeg77xqndy2qy3yzn4vkxmk775bg2t5lpuy7pcu" | 🚘
 ```
 
 ## Install
