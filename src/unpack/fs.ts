@@ -12,7 +12,7 @@ import { FsBlockStore } from '../blockstore/fs'
 import toIterable from 'stream-to-it'
 
 import { unpack, unpackStream } from './index'
-import { Blockstore } from '../blockstore/index'
+import { Blockstore } from '../blockstore'
 
 // Node only, read a car from fs, write files to fs
 export async function unpackToFs ({input, roots, output}: {input: string, roots?: CID[], output?: string}) {
@@ -22,7 +22,7 @@ export async function unpackToFs ({input, roots, output}: {input: string, roots?
 
 // Node only, read a stream, write files to fs
 export async function unpackStreamToFs ({input, roots, output, blockstore: userBlockstore}: {input: AsyncIterable<Uint8Array>, roots?: CID[], output?: string, blockstore?: Blockstore}) {
-  const blockstore = userBlockstore ? userBlockstore : new FsBlockStore()
+  const blockstore = userBlockstore ? userBlockstore : new FsBlockStore(output ? output : (roots ? roots[0].toString() : "output"))
   await writeFiles(unpackStream(input, { roots, blockstore }), output)
   if (!userBlockstore) {
     await blockstore.close()
