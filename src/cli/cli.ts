@@ -5,6 +5,7 @@ import { CID } from 'multiformats';
 import { packToFs } from '../pack/fs'
 import { unpackToFs, unpackStreamToFs } from '../unpack/fs'
 import {listFilesInCar, listCidsInCar, listRootsInCar, listFilesAndCidsInCar} from './lib'
+import {printUnixFsContent} from "./verbose-handler";
 
 interface Flags {
   output?: string,
@@ -121,7 +122,7 @@ const cli = meow(`
 
 async function handleInput ({ flags }: { flags: Flags }) {
   if (flags.pack) {
-    const { root, filename } = await packToFs({input: flags.pack, output: flags.output, wrapWithDirectory: flags.wrapWithDirectory, verbose: flags.verbose})
+    const { root, filename } = await packToFs({input: flags.pack, output: flags.output, wrapWithDirectory: flags.wrapWithDirectory, customHandler: flags.verbose ? printUnixFsContent : undefined})
     // tslint:disable-next-line: no-console
     console.log(`root CID: ${root.toString()}`)
     // tslint:disable-next-line: no-console

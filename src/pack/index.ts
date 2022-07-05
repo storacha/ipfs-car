@@ -2,7 +2,7 @@ import last from 'it-last'
 import pipe from 'it-pipe'
 
 import { CarWriter } from '@ipld/car'
-import { importer } from 'ipfs-unixfs-importer'
+import {importer, ImportResult} from 'ipfs-unixfs-importer'
 import { getNormaliser } from './utils/normalise-input'
 import type { ImportCandidateStream, ImportCandidate } from 'ipfs-core-types/src/utils'
 import type { MultihashHasher } from 'multiformats/hashes/interface'
@@ -19,7 +19,7 @@ export interface PackProperties {
   maxChildrenPerNode?: number,
   wrapWithDirectory?: boolean,
   hasher?: MultihashHasher,
-  verbose?: boolean,
+  customHandler?: (sources: AsyncGenerator<ImportResult, void, unknown>) => AsyncGenerator<any, void, unknown>
   /**
    * Use raw codec for leaf nodes. Default: true.
    */

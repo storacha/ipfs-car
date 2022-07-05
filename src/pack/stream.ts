@@ -21,7 +21,7 @@ export interface PackToStreamProperties extends PackProperties {
 }
 
 // Node version of toCar with Node Stream Writable
-export async function packToStream ({ input, writable, blockstore: userBlockstore, hasher, maxChunkSize, maxChildrenPerNode, wrapWithDirectory, rawLeaves, verbose }: PackToStreamProperties) {
+export async function packToStream ({ input, writable, blockstore: userBlockstore, hasher, maxChunkSize, maxChildrenPerNode, wrapWithDirectory, rawLeaves, customHandler }: PackToStreamProperties) {
   if (!input || (Array.isArray(input) && !input.length)) {
     throw new Error('given input could not be parsed correctly')
   }
@@ -41,7 +41,7 @@ export async function packToStream ({ input, writable, blockstore: userBlockstor
       wrapWithDirectory: wrapWithDirectory === false ? false : unixfsImporterOptionsDefault.wrapWithDirectory,
       rawLeaves: rawLeaves == null ? unixfsImporterOptionsDefault.rawLeaves : rawLeaves
     }),
-    (source: any) => printCarContent(source, verbose)
+    customHandler ? customHandler : (sources: AsyncGenerator<ImportResult, void, unknown>) => sources
   ))
 
   if (!rootEntry || !rootEntry.cid) {
@@ -85,15 +85,5 @@ async function * legacyGlobSource (input: Iterable<string> | AsyncIterable<strin
     } else {
       yield { path: fileName, content: fs.createReadStream(resolvedPath) }
     }
-  }
-}
-
-async function *printCarContent(root: AsyncGenerator<ImportResult, void, unknown>, verbose: boolean | undefined): AsyncGenerator<ImportResult, void, unknown> {
-  for await (const entry of root) {
-    if (verbose && entry.path) {
-      // tslint:disable-next-line:no-console
-      console.log(`${entry.cid.toString()} ${entry.path}`)
-    }
-    yield entry
   }
 }
