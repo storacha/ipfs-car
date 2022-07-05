@@ -3,15 +3,16 @@ import fs from 'fs'
 import { CID } from 'multiformats'
 import { BaseBlockstore } from 'blockstore-core'
 import { Blockstore } from './index'
+import * as os from "os";
 
 export class FsBlockStore extends BaseBlockstore implements Blockstore {
   path: string
   _opened: boolean
   _opening?: Promise<void>
 
-  constructor (path: string) {
+  constructor (path?: string) {
     super()
-    this.path = path
+    this.path = path ? path : `${os.tmpdir()}/${(parseInt(String(Math.random() * 1e9), 10)).toString() + Date.now()}`
     this._opened = false
   }
 
