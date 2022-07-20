@@ -122,7 +122,7 @@ const cli = meow(`
 
 async function handleInput ({ flags }: { flags: Flags }) {
   if (flags.pack) {
-    const { root, filename } = await packToFs({input: flags.pack, output: flags.output, wrapWithDirectory: flags.wrapWithDirectory, customHandler: flags.verbose ? printUnixFsContent : undefined})
+    const { root, filename } = await packToFs({input: flags.pack, output: flags.output, wrapWithDirectory: flags.wrapWithDirectory, customStreamSink: flags.verbose ? printUnixFsContent : undefined})
     // tslint:disable-next-line: no-console
     console.log(`root CID: ${root.toString()}`)
     // tslint:disable-next-line: no-console

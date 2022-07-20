@@ -19,7 +19,7 @@ export interface PackProperties {
   maxChildrenPerNode?: number,
   wrapWithDirectory?: boolean,
   hasher?: MultihashHasher,
-  customHandler?: (sources: AsyncGenerator<ImportResult, void, unknown>) => AsyncGenerator<any, void, unknown>
+  customStreamSink?: (sources: AsyncGenerator<ImportResult, void, unknown>) => AsyncGenerator<any, void, unknown>
   /**
    * Use raw codec for leaf nodes. Default: true.
    */
