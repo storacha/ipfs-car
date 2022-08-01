@@ -11,6 +11,7 @@ export type { ImportCandidateStream }
 import { Blockstore } from '../blockstore/index'
 import { MemoryBlockStore } from '../blockstore/memory'
 import { unixfsImporterOptionsDefault } from './constants'
+import {CIDVersion} from "multiformats/types/src/cid";
 
 export interface PackProperties {
   input: ImportCandidateStream | ImportCandidate,
@@ -23,9 +24,10 @@ export interface PackProperties {
    * Use raw codec for leaf nodes. Default: true.
    */
   rawLeaves?: boolean
+  cidVersion?: CIDVersion | undefined
 }
 
-export async function pack ({ input, blockstore: userBlockstore, hasher, maxChunkSize, maxChildrenPerNode, wrapWithDirectory, rawLeaves }: PackProperties) {
+export async function pack ({ input, blockstore: userBlockstore, hasher, maxChunkSize, maxChildrenPerNode, wrapWithDirectory, rawLeaves, cidVersion }: PackProperties) {
   if (!input || (Array.isArray(input) && !input.length)) {
     throw new Error('missing input file(s)')
   }
@@ -41,7 +43,8 @@ export async function pack ({ input, blockstore: userBlockstore, hasher, maxChun
       maxChunkSize: maxChunkSize || unixfsImporterOptionsDefault.maxChunkSize,
       maxChildrenPerNode: maxChildrenPerNode || unixfsImporterOptionsDefault.maxChildrenPerNode,
       wrapWithDirectory: wrapWithDirectory === false ? false : unixfsImporterOptionsDefault.wrapWithDirectory,
-      rawLeaves: rawLeaves == null ? unixfsImporterOptionsDefault.rawLeaves : rawLeaves
+      rawLeaves: rawLeaves == null ? unixfsImporterOptionsDefault.rawLeaves : rawLeaves,
+      cidVersion: cidVersion || unixfsImporterOptionsDefault.cidVersion
     })
   ))
 
