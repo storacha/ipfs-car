@@ -57,6 +57,8 @@ $ ipfs-car --pack path/to/files --output path/to/write/a.car
 # use --wrapWithDirectory false to avoid this.
 $ ipfs-car --pack path/to/file --wrapWithDirectory false --output path/to/write/a.car
 
+# displays which file is being packed
+$ ipfs-car --pack path/to/files --verbose
 ```
 
 `--unpack` files from a .car
@@ -83,6 +85,9 @@ $ ipfs-car --list-roots path/to/my.car
 
 # list the cids for all the blocks.
 $ ipfs-car --list-cids path/to/my.car
+
+# list both the files and their CIDs.
+$ ipfs-car --list-full path/to/my.car
 ```
 
 ## API
@@ -103,7 +108,7 @@ To unpack content-addressable archives to files, you can use the functions provi
 
 ### `ipfs-car/pack`
 
-Takes an [ImportCandidateStream](https://github.com/ipfs/js-ipfs/blob/master/packages/ipfs-core-types/src/utils.ts#L21) and returns a a [CAR writer](https://github.com/ipld/js-car#carwriter) async iterable.
+Takes an [ImportCandidateStream](https://github.com/ipfs/js-ipfs/blob/master/packages/ipfs-core-types/src/utils.ts#L21) and returns a [CAR writer](https://github.com/ipld/js-car#carwriter) async iterable.
 
 ```js
 import { pack } from 'ipfs-car/pack'
@@ -112,7 +117,7 @@ import { MemoryBlockStore } from 'ipfs-car/blockstore/memory' // You can also us
 const { root, out } = await pack({
   input: [new Uint8Array([21, 31, 41])],
   blockstore: new MemoryBlockStore(),
-  wrapWithDirectory: true // Wraps input into a directory. Defaults to `true`
+  wrapWithDirectory: true, // Wraps input into a directory. Defaults to `true`
   maxChunkSize: 262144 // The maximum block size in bytes. Defaults to `262144`. Max safe value is < 1048576 (1MiB)
 })
 
@@ -205,7 +210,7 @@ for await (const file of unpackStream(inStream)) {
 `unpackStream` takes an options object, allowing you to pass in a `BlockStore` implementation. The blocks are unpacked from the stream in the order they appear, which may not be the order needed to reassemble them into the Files and Directories they represent. The blockstore is used to store the blocks as they are consumed from the stream. Once the stream is consumed, the blockstore provides the random access by CID to the blocks, needed to assemble the tree.
 
 The default is a [`MemoryBlockStore`](./src/blockstore/memory.ts), that will store all the blocks in memory.
-For larger CARs in the browser you can use IndexedDB by passing in an [IdbBlocksStore]('./src/blockstore/idb.ts'), and in Node.js you can provide a [FsBlockStore] instance to write blocks to the tmp dir.
+For larger CARs in the browser you can use IndexedDB by passing in an [IdbBlocksStore](./src/blockstore/idb.ts), and in Node.js you can provide an [FsBlockStore] instance to write blocks to the tmp dir.
 
 ```js
 /* browser */
@@ -224,7 +229,7 @@ for await (const file of unpackStream(res.body, { blockstore })) {
 blockstore.destroy()
 ```
 
-When providing a custom Blockstore, it is your responsibiltiy to call `blockstore.destroy()` when you're finished. Failing to do so will fill up the users storage.
+When providing a custom Blockstore, it is your responsibility to call `blockstore.destroy()` when you're finished. Failing to do so will fill up the users' storage.
 
 ### `ipfs-car/unpack/fs`
 

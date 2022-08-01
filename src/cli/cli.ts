@@ -4,7 +4,8 @@ import meow from 'meow'
 import { CID } from 'multiformats';
 import { packToFs } from '../pack/fs'
 import { unpackToFs, unpackStreamToFs } from '../unpack/fs'
-import { listFilesInCar, listCidsInCar, listRootsInCar } from './lib'
+import {listFilesInCar, listCidsInCar, listRootsInCar, listFilesAndCidsInCar} from './lib'
+import {printUnixFsContent} from "./verbose-handler";
 
 interface Flags {
   output?: string,
@@ -14,7 +15,9 @@ interface Flags {
   list?: string,
   listCids?: string
   listRoots?: string
+  listFull?: string
   wrapWithDirectory?: boolean
+  verbose?: boolean
 }
 
 const options = {
@@ -45,10 +48,18 @@ const options = {
     listRoots: {
       type: 'string'
     },
+    listFull: {
+      type: 'string'
+    },
     wrapWithDirectory: {
       type: 'boolean',
       alias: 'w',
       default: true
+    },
+    verbose: {
+      type: 'boolean',
+      alias: 'v',
+      default: false
     }
   }
 } as const;
@@ -71,6 +82,9 @@ const cli = meow(`
 
     # pack files without wrapping with top-level directory
     $ ipfs-car --wrapWithDirectory false --pack path/to/files --output path/to/write/a.car
+
+    # pack files and display which one is being packed
+    $ ipfs-car --pack /path/to/files --verbose
 
   Unpacking files from a .car
 
@@ -97,6 +111,9 @@ const cli = meow(`
     # list the files.
     $ ipfs-car --list path/to/my.car
 
+    # list both the files' path and their CIDs.
+    $ ipfs-car --list-full path/to/my.car
+
   TL;DR
   --pack <path> --output <my.car>
   --unpack <my.car> --output <path>
@@ -105,7 +122,7 @@ const cli = meow(`
 
 async function handleInput ({ flags }: { flags: Flags }) {
   if (flags.pack) {
-    const { root, filename } = await packToFs({input: flags.pack, output: flags.output, wrapWithDirectory: flags.wrapWithDirectory})
+    const { root, filename } = await packToFs({input: flags.pack, output: flags.output, wrapWithDirectory: flags.wrapWithDirectory, customStreamSink: flags.verbose ? printUnixFsContent : undefined})
     // tslint:disable-next-line: no-console
     console.log(`root CID: ${root.toString()}`)
     // tslint:disable-next-line: no-console
@@ -126,6 +143,9 @@ async function handleInput ({ flags }: { flags: Flags }) {
 
   } else if (flags.listCids) {
     return listCidsInCar({input: flags.listCids})
+
+  } else if (flags.listFull) {
+    return listFilesAndCidsInCar({input: flags.listFull})
 
   } else if (!process.stdin.isTTY) {
     // maybe stream?

@@ -6,7 +6,7 @@ import last from 'it-last'
 import pipe from 'it-pipe'
 
 import { CarWriter } from '@ipld/car'
-import { importer } from 'ipfs-unixfs-importer'
+import {importer, ImportResult} from 'ipfs-unixfs-importer'
 import { normaliseInput } from 'ipfs-core-utils/files/normalise-input-multiple'
 import globSource from 'ipfs-utils/src/files/glob-source.js'
 
@@ -21,7 +21,7 @@ export interface PackToStreamProperties extends PackProperties {
 }
 
 // Node version of toCar with Node Stream Writable
-export async function packToStream ({ input, writable, blockstore: userBlockstore, hasher, maxChunkSize, maxChildrenPerNode, wrapWithDirectory, rawLeaves }: PackToStreamProperties) {
+export async function packToStream ({ input, writable, blockstore: userBlockstore, hasher, maxChunkSize, maxChildrenPerNode, wrapWithDirectory, rawLeaves, customStreamSink }: PackToStreamProperties) {
   if (!input || (Array.isArray(input) && !input.length)) {
     throw new Error('given input could not be parsed correctly')
   }
@@ -40,7 +40,8 @@ export async function packToStream ({ input, writable, blockstore: userBlockstor
       maxChildrenPerNode: maxChildrenPerNode || unixfsImporterOptionsDefault.maxChildrenPerNode,
       wrapWithDirectory: wrapWithDirectory === false ? false : unixfsImporterOptionsDefault.wrapWithDirectory,
       rawLeaves: rawLeaves == null ? unixfsImporterOptionsDefault.rawLeaves : rawLeaves
-    })
+    }),
+    customStreamSink ? customStreamSink : (sources: AsyncGenerator<ImportResult, void, unknown>) => sources
   ))
 
   if (!rootEntry || !rootEntry.cid) {
