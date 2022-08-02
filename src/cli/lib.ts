@@ -26,3 +26,11 @@ export async function listRootsInCar ({input}: {input: string}) {
     console.log(root.toString())
   }
 }
+
+export async function listFilesAndCidsInCar({input}: {input: string}) {
+  const carReader = await CarIndexedReader.fromFile(input)
+  for await (const file of unpack(carReader)) {
+    // tslint:disable-next-line: no-console
+    console.log(`${file.cid.toString()} ${file.path}`)
+  }
+}
