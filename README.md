@@ -29,7 +29,7 @@ $ ipfs-car --unpack my-files.car --output path/to/write/to
 Fetch and locally verify files from a IPFS gateway over http
 
 ```sh
-curl -X POST "https://ipfs.io/api/v0/dag/export?arg=bafybeidd2gyhagleh47qeg77xqndy2qy3yzn4vkxmk775bg2t5lpuy7pcu" | 🚘
+curl "https://ipfs.io/ipfs/bafybeidd2gyhagleh47qeg77xqndy2qy3yzn4vkxmk775bg2t5lpuy7pcu?format=car" | 🚘
 ```
 
 ## Install
@@ -217,10 +217,7 @@ For larger CARs in the browser you can use IndexedDB by passing in an [IdbBlocks
 import { unpackStream } from 'ipfs-car/unpack'
 import { IdbBlockStore } from 'ipfs-car/blockstore/idb'
 
-const res = fetch(
-  'https://ipfs.io/api/v0/dag/export?arg=bafkreigh2akiscaildcqabsyg3dfr6chu3fgpregiymsck7e7aqa4s52zy',
-  { method: 'POST' }
-)
+const res = fetch('https://ipfs.io/ipfs/bafkreigh2akiscaildcqabsyg3dfr6chu3fgpregiymsck7e7aqa4s52zy?format=car')
 const files = []
 const blockstore = new IdbBlockStore()
 for await (const file of unpackStream(res.body, { blockstore })) {
