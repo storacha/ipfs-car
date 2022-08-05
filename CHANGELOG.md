@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.1](https://github.com/web3-storage/ipfs-car/compare/v0.8.0...v0.8.1) (2022-08-05)
+
+
+### Bug Fixes
+
+* readme contributing and license ([e4cf245](https://github.com/web3-storage/ipfs-car/commit/e4cf245923407fdd44b1ddf8426248a4393e4cc6))
+
 ## [0.8.0](https://github.com/web3-storage/ipfs-car/compare/v0.7.0...v0.8.0) (2022-08-02)
 
 
