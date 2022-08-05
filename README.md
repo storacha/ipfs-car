@@ -258,3 +258,11 @@ await unpackStreamToFs({
 // foo now exists in process.cwd()
 // it is either a file or a directory depending on the contents of the .car
 ```
+
+## Contributing
+
+Feel free to join in. All welcome. [Open an issue](https://github.com/web3-storage/ipfs-car/issues)!
+
+## License
+
+Dual-licensed under [MIT + Apache 2.0](https://github.com/web3-storage/ipfs-car/blob/main/LICENSE.md)
