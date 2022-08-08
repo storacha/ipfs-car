@@ -10,9 +10,9 @@
 
 ## Description
 
-`ipfs-car` is a library and CLI tool to pack & unpack files from [Content Addressable aRchives (CAR)](https://github.com/ipld/specs/blob/master/block-layer/content-addressable-archives.md) file. A thin wrapper over [@ipld/car](https://github.com/ipld/js-car) and [unix-fs](https://github.com/ipfs/js-ipfs-unixfs).
+`ipfs-car` is a library and CLI tool to pack & unpack files from [Content Addressable aRchives (CAR)](https://ipld.io/specs/transport/car/) file. A thin wrapper over [@ipld/car](https://github.com/ipld/js-car) and [unix-fs](https://github.com/ipfs/js-ipfs-unixfs).
 
-Content-addressable archives store data as blocks (a sequence of bytes) each prefixed with the [Content ID (CID)](https://docs.ipfs.io/concepts/content-addressing/) derived from the hash of the data; typically in a file with a `.car` extension.
+Content-addressable archives store data as blocks (a sequence of bytes) each prefixed with the [Content ID (CID)](https://docs.ipfs.tech/concepts/content-addressing/) derived from the hash of the data; typically in a file with a `.car` extension.
 
 Use `ipfs-car` to pack your files into a .car; a portable, verifiable, IPFS compatible archive.
 
