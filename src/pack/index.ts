@@ -11,10 +11,12 @@ export type { ImportCandidateStream }
 import { Blockstore } from '../blockstore'
 import { MemoryBlockStore } from '../blockstore/memory'
 import { unixfsImporterOptionsDefault } from './constants'
+import { CIDVersion } from 'multiformats/cid'
 
 export interface PackProperties {
   input: ImportCandidateStream | ImportCandidate,
   blockstore?: Blockstore,
+  cidVersion?: CIDVersion;
   maxChunkSize?: number,
   maxChildrenPerNode?: number,
   wrapWithDirectory?: boolean,
@@ -26,7 +28,7 @@ export interface PackProperties {
   rawLeaves?: boolean
 }
 
-export async function pack ({ input, blockstore: userBlockstore, hasher, maxChunkSize, maxChildrenPerNode, wrapWithDirectory, rawLeaves }: PackProperties) {
+export async function pack ({ input, blockstore: userBlockstore, cidVersion, hasher, maxChunkSize, maxChildrenPerNode, wrapWithDirectory, rawLeaves }: PackProperties) {
   if (!input || (Array.isArray(input) && !input.length)) {
     throw new Error('missing input file(s)')
   }
@@ -38,6 +40,7 @@ export async function pack ({ input, blockstore: userBlockstore, hasher, maxChun
     getNormaliser(input),
     (source: any) => importer(source, blockstore, {
       ...unixfsImporterOptionsDefault,
+      cidVersion: cidVersion !== undefined ? cidVersion : unixfsImporterOptionsDefault.cidVersion,
       hasher: hasher || unixfsImporterOptionsDefault.hasher,
       maxChunkSize: maxChunkSize || unixfsImporterOptionsDefault.maxChunkSize,
       maxChildrenPerNode: maxChildrenPerNode || unixfsImporterOptionsDefault.maxChildrenPerNode,
