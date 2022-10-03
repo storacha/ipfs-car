@@ -1,6 +1,8 @@
 import fs from 'fs'
 import { CarIndexedReader, CarCIDIterator } from '@ipld/car'
-import { unpack } from '../unpack'
+import { CID } from 'multiformats/cid'
+import { sha256 } from 'multiformats/hashes/sha2'
+import { unpack } from '../unpack/index'
 
 export async function listFilesInCar ({input}: {input: string}) {
   const carReader = await CarIndexedReader.fromFile(input)
@@ -33,4 +35,12 @@ export async function listFilesAndCidsInCar({input}: {input: string}) {
     // tslint:disable-next-line: no-console
     console.log(`${file.cid.toString()} ${file.path}`)
   }
+}
+
+const carCode = 0x0202
+
+export async function hashCar({input}: {input: string}) {
+  const bytes = await fs.promises.readFile(input)
+  // tslint:disable-next-line: no-console
+  console.log(CID.createV1(carCode, await sha256.digest(bytes)).toString())
 }
