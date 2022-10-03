@@ -90,6 +90,13 @@ $ ipfs-car --list-cids path/to/my.car
 $ ipfs-car --list-full path/to/my.car
 ```
 
+Get other information about a CAR
+
+```sh
+# generate CID for a CAR
+$ ipfs-car --hash path/to/my.car
+```
+
 ## API
 
 To pack files into content-addressable archives, you can use the functions provided in:
