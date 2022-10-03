@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.1](https://github.com/web3-storage/ipfs-car/compare/v0.9.0...v0.9.1) (2022-10-03)
+
+
+### Bug Fixes
+
+* add car hash command to docs ([baf23a6](https://github.com/web3-storage/ipfs-car/commit/baf23a6d5555172c5b6c7bbca1e8769058880e05))
+
 ## [0.9.0](https://github.com/web3-storage/ipfs-car/compare/v0.8.1...v0.9.0) (2022-10-03)
 
 
