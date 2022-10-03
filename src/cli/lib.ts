@@ -41,5 +41,6 @@ const carCode = 0x0202
 
 export async function hashCar({input}: {input: string}) {
   const bytes = await fs.promises.readFile(input)
+  // tslint:disable-next-line: no-console
   console.log(CID.createV1(carCode, await sha256.digest(bytes)).toString())
 }
