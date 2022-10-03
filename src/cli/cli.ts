@@ -4,7 +4,7 @@ import meow from 'meow'
 import { CID } from 'multiformats';
 import { packToFs } from '../pack/fs'
 import { unpackToFs, unpackStreamToFs } from '../unpack/fs'
-import {listFilesInCar, listCidsInCar, listRootsInCar, listFilesAndCidsInCar} from './lib'
+import {listFilesInCar, listCidsInCar, listRootsInCar, listFilesAndCidsInCar, hashCar} from './lib'
 import {printUnixFsContent} from "./verbose-handler";
 
 interface Flags {
@@ -16,6 +16,7 @@ interface Flags {
   listCids?: string
   listRoots?: string
   listFull?: string
+  hash?: string
   wrapWithDirectory?: boolean
   verbose?: boolean
 }
@@ -50,6 +51,10 @@ const options = {
     },
     listFull: {
       type: 'string'
+    },
+    hash: {
+      type: 'string',
+      alias: 'h'
     },
     wrapWithDirectory: {
       type: 'boolean',
@@ -114,6 +119,11 @@ const cli = meow(`
     # list both the files' path and their CIDs.
     $ ipfs-car --list-full path/to/my.car
 
+  Get other information about a CAR
+
+    # generate CID for a CAR
+    $ ipfs-car --hash path/to/my.car
+
   TL;DR
   --pack <path> --output <my.car>
   --unpack <my.car> --output <path>
@@ -146,6 +156,9 @@ async function handleInput ({ flags }: { flags: Flags }) {
 
   } else if (flags.listFull) {
     return listFilesAndCidsInCar({input: flags.listFull})
+
+  } else if (flags.hash) {
+    return hashCar({input: flags.hash})
 
   } else if (!process.stdin.isTTY) {
     // maybe stream?
