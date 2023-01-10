@@ -21,13 +21,25 @@ export interface PackToStreamProperties extends PackProperties {
 }
 
 // Node version of toCar with Node Stream Writable
-export async function packToStream ({ input, writable, blockstore: userBlockstore, hasher, maxChunkSize, maxChildrenPerNode, wrapWithDirectory, rawLeaves, customStreamSink }: PackToStreamProperties) {
+export async function packToStream ({ input, writable, blockstore: userBlockstore, hasher, maxChunkSize, maxChildrenPerNode, wrapWithDirectory, cidVersion, rawLeaves, customStreamSink }: PackToStreamProperties) {
   if (!input || (Array.isArray(input) && !input.length)) {
     throw new Error('given input could not be parsed correctly')
   }
   input = typeof input === 'string' ? [input] : input
 
   const blockstore = userBlockstore ? userBlockstore : new MemoryBlockStore()
+
+  // Resolve the CID version
+  const resolvedCidVersion = cidVersion === undefined ? unixfsImporterOptionsDefault.cidVersion : cidVersion
+
+  // Resolve the raw leaves option
+  if (resolvedCidVersion === 0) {
+    if (rawLeaves === true) {
+      throw new Error('cannot use raw leaves with CIDv0, must use dag-pb encoding');
+    }
+
+    rawLeaves = false
+  }
 
   // Consume the source
   const rootEntry = await last(pipe(
@@ -39,6 +51,7 @@ export async function packToStream ({ input, writable, blockstore: userBlockstor
       maxChunkSize: maxChunkSize || unixfsImporterOptionsDefault.maxChunkSize,
       maxChildrenPerNode: maxChildrenPerNode || unixfsImporterOptionsDefault.maxChildrenPerNode,
       wrapWithDirectory: wrapWithDirectory === false ? false : unixfsImporterOptionsDefault.wrapWithDirectory,
+      cidVersion: resolvedCidVersion,
       rawLeaves: rawLeaves == null ? unixfsImporterOptionsDefault.rawLeaves : rawLeaves
     }),
     customStreamSink ? customStreamSink : (sources: AsyncGenerator<ImportResult, void, unknown>) => sources

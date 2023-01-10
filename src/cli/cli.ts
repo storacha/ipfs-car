@@ -7,6 +7,8 @@ import { unpackToFs, unpackStreamToFs } from '../unpack/fs'
 import {listFilesInCar, listCidsInCar, listRootsInCar, listFilesAndCidsInCar, hashCar} from './lib'
 import {printUnixFsContent} from "./verbose-handler";
 
+import type { CIDVersion } from 'multiformats/cid';
+
 interface Flags {
   output?: string,
   pack?: string,
@@ -18,6 +20,7 @@ interface Flags {
   listFull?: string
   hash?: string
   wrapWithDirectory?: boolean
+  cidVersion?: number
   verbose?: boolean
 }
 
@@ -61,6 +64,11 @@ const options = {
       alias: 'w',
       default: true
     },
+    cidVersion: {
+      type: 'number',
+      alias: 'c',
+      default: 1
+    },
     verbose: {
       type: 'boolean',
       alias: 'v',
@@ -87,6 +95,9 @@ const cli = meow(`
 
     # pack files without wrapping with top-level directory
     $ ipfs-car --wrapWithDirectory false --pack path/to/files --output path/to/write/a.car
+
+    # pack files with CIDv0
+    $ ipfs-car --cidVersion 0 --pack path/to/files --output path/to/write/a.car
 
     # pack files and display which one is being packed
     $ ipfs-car --pack /path/to/files --verbose
@@ -132,7 +143,11 @@ const cli = meow(`
 
 async function handleInput ({ flags }: { flags: Flags }) {
   if (flags.pack) {
-    const { root, filename } = await packToFs({input: flags.pack, output: flags.output, wrapWithDirectory: flags.wrapWithDirectory, customStreamSink: flags.verbose ? printUnixFsContent : undefined})
+    if (flags.cidVersion !== 0 && flags.cidVersion !== 1) {
+      throw new Error(`Invalid CID version: ${flags.cidVersion}`);
+    }
+
+    const { root, filename } = await packToFs({input: flags.pack, output: flags.output, wrapWithDirectory: flags.wrapWithDirectory, cidVersion: flags.cidVersion, customStreamSink: flags.verbose ? printUnixFsContent : undefined})
     // tslint:disable-next-line: no-console
     console.log(`root CID: ${root.toString()}`)
     // tslint:disable-next-line: no-console
