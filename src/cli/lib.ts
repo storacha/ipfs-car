@@ -37,6 +37,7 @@ export async function listFilesAndCidsInCar({input}: {input: string}) {
   }
 }
 
+// cid code
 const carCode = 0x0202
 
 export async function hashCar({input}: {input: string}) {
