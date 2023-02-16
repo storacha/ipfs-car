@@ -7,6 +7,7 @@ import { getNormaliser } from './utils/normalise-input'
 import type { ImportCandidateStream, ImportCandidate } from 'ipfs-core-types/src/utils'
 import type { MultihashHasher } from 'multiformats/hashes/interface'
 export type { ImportCandidateStream }
+import type { CIDVersion } from 'multiformats/cid';
 
 import { Blockstore } from '../blockstore'
 import { MemoryBlockStore } from '../blockstore/memory'
@@ -15,6 +16,7 @@ import { unixfsImporterOptionsDefault } from './constants'
 export interface PackProperties {
   input: ImportCandidateStream | ImportCandidate,
   blockstore?: Blockstore,
+  cidVersion?: CIDVersion,
   maxChunkSize?: number,
   maxChildrenPerNode?: number,
   wrapWithDirectory?: boolean,
@@ -26,12 +28,24 @@ export interface PackProperties {
   rawLeaves?: boolean
 }
 
-export async function pack ({ input, blockstore: userBlockstore, hasher, maxChunkSize, maxChildrenPerNode, wrapWithDirectory, rawLeaves }: PackProperties) {
+export async function pack ({ input, blockstore: userBlockstore, hasher, maxChunkSize, maxChildrenPerNode, wrapWithDirectory, rawLeaves, cidVersion }: PackProperties) {
   if (!input || (Array.isArray(input) && !input.length)) {
     throw new Error('missing input file(s)')
   }
 
   const blockstore = userBlockstore ? userBlockstore : new MemoryBlockStore()
+
+  // Resolve the CID version
+  const resolvedCidVersion = cidVersion === undefined ? unixfsImporterOptionsDefault.cidVersion : cidVersion
+
+  // Resolve the raw leaves option
+  if (resolvedCidVersion === 0) {
+    if (rawLeaves === true) {
+      throw new Error('cannot use raw leaves with CIDv0, must use dag-pb encoding');
+    }
+
+    rawLeaves = false
+  }
 
   // Consume the source
   const rootEntry = await last(pipe(
@@ -42,7 +56,8 @@ export async function pack ({ input, blockstore: userBlockstore, hasher, maxChun
       maxChunkSize: maxChunkSize || unixfsImporterOptionsDefault.maxChunkSize,
       maxChildrenPerNode: maxChildrenPerNode || unixfsImporterOptionsDefault.maxChildrenPerNode,
       wrapWithDirectory: wrapWithDirectory === false ? false : unixfsImporterOptionsDefault.wrapWithDirectory,
-      rawLeaves: rawLeaves == null ? unixfsImporterOptionsDefault.rawLeaves : rawLeaves
+      rawLeaves: rawLeaves == null ? unixfsImporterOptionsDefault.rawLeaves : rawLeaves,
+      cidVersion: resolvedCidVersion
     })
   ))
 

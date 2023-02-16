@@ -249,6 +249,17 @@ describe('pack', () => {
         expect(() => root.toV0()).to.not.throw()
         expect(root.toV0().toString()).to.eql('QmNUCKvjKRFeHZR2wyYM5cPEbEB969hz2zowTYvwGrQXP2')
       })
+
+      it('can create a v0 CID', async () => {
+        const { root } = await pack({
+          input: [new Uint8Array([21, 31])],
+          blockstore: new Blockstore(),
+          wrapWithDirectory: false,
+          cidVersion: 0
+        })
+
+        expect(root.toString()).to.eql('QmNUCKvjKRFeHZR2wyYM5cPEbEB969hz2zowTYvwGrQXP2')
+      })
     })
   })
 })
