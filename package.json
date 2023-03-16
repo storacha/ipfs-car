@@ -58,5 +58,8 @@
     "ignore": [
       "*.ts"
     ]
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
