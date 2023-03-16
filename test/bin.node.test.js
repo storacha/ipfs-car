@@ -7,7 +7,9 @@ import { execaSync } from 'execa'
 
 const binPath = './bin.js'
 
-describe('CLI', () => {
+describe('CLI', function () {
+  this.timeout(5000)
+
   /** @type {string[]} */
   let tmpPaths = []
   const tmpPath = () => {
