@@ -16,7 +16,6 @@ jobs:
         with:
           node-version: ${{matrix.node}}
       - uses: bahmutov/npm-install@v1
-      - run: npm run build
       - name: Lint
         run: npm run lint
   test-node:
@@ -25,15 +24,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
-        node: [14, 16]
+        os: [ubuntu-latest, macos-latest]
+        node: [18, 19]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
           node-version: ${{matrix.node}}
       - uses: bahmutov/npm-install@v1
-      - name: Unit tests
+      - name: Test Node.js
         run: npm run test:node
   test-browser:
     needs: check
@@ -41,7 +40,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: bahmutov/npm-install@v1
-      - name: Unit tests
+      - name: Test Browser
         run: npm run test:browser
   changelog:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -71,8 +70,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
           node-version: 16
       - uses: bahmutov/npm-install@v1
-      - run: npm run build
-      - name: NPM Publish
+      - name: Publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
         run: npm publish --access=public

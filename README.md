@@ -17,19 +17,19 @@ Content-addressable archives store data as blocks (a sequence of bytes) each pre
 Use `ipfs-car` to pack your files into a .car; a portable, verifiable, IPFS compatible archive.
 
 ```sh
-$ ipfs-car --pack path/to/files --output my-files.car
+$ ipfs-car pack path/to/files --output my-files.car
 ```
 
 or unpack files from a .car, and verify that every block matches it's CID
 
 ```sh
-$ ipfs-car --unpack my-files.car --output path/to/write/to
+$ ipfs-car unpack my-files.car --output path/to/write/to
 ```
 
 Fetch and locally verify files from a IPFS gateway over http
 
 ```sh
-curl "https://ipfs.io/ipfs/bafybeidd2gyhagleh47qeg77xqndy2qy3yzn4vkxmk775bg2t5lpuy7pcu?format=car" | 🚘
+curl "https://ipfs.io/ipfs/bafybeidd2gyhagleh47qeg77xqndy2qy3yzn4vkxmk775bg2t5lpuy7pcu?format=car" | ipfs-car unpack
 ```
 
 ## Install
@@ -38,232 +38,224 @@ curl "https://ipfs.io/ipfs/bafybeidd2gyhagleh47qeg77xqndy2qy3yzn4vkxmk775bg2t5lp
 # install it as a dependency
 $ npm i ipfs-car
 
-# or use the cli without installing via `npx`
+# OR use the cli without installing via `npx`
 $ npx ipfs-car --help
 ```
 
 ## Usage
 
-`--pack` files into a .car
+Pack files into a .car
 
 ```sh
-# write a content addressed archive to the current working dir.
-$ ipfs-car --pack path/to/file/or/dir
+# write a content addressed archive to stdout.
+$ ipfs-car pack path/to/file/or/dir
+# note: CAR data streamed to stdout will not have roots set in CAR header!
 
 # specify the car file name.
-$ ipfs-car --pack path/to/files --output path/to/write/a.car
+$ ipfs-car pack path/to/files --output path/to/write/a.car
 
 # by default, ipfs-car will wrap files in an IPFS directory.
-# use --wrapWithDirectory false to avoid this.
-$ ipfs-car --pack path/to/file --wrapWithDirectory false --output path/to/write/a.car
-
-# displays which file is being packed
-$ ipfs-car --pack path/to/files --verbose
+# use --no-wrap to avoid this.
+$ ipfs-car pack path/to/file --no-wrap --output path/to/write/a.car
 ```
 
-`--unpack` files from a .car
+Unpack files from a .car
 
 ```sh
 # unpack files to a specific path.
-$ ipfs-car --unpack path/to/my.car --output /path/to/unpack/files/to
+$ ipfs-car unpack path/to/my.car --output /path/to/unpack/files/to
 
-# unpack specific roots
-$ ipfs-car --unpack path/to/my.car --root <cid1> [--root <cid2>]
+# unpack a specific root.
+$ ipfs-car unpack path/to/my.car --root <cid1>
 
 # unpack files from a .car on stdin.
-$ cat path/to/my.car | ipfs-car --unpack
+$ cat path/to/my.car | ipfs-car unpack
 ```
 
-List the contents of a .car
+Show the files and directories in a .car
 
 ```sh
-# list the files.
-$ ipfs-car --list path/to/my.car
+# show the files and directories.
+$ ipfs-car ls path/to/my.car
 
-# list the cid roots.
-$ ipfs-car --list-roots path/to/my.car
+# show the files and directories, their CIDs and byte sizes.
+$ ipfs-car ls path/to/my.car --verbose
+```
 
-# list the cids for all the blocks.
-$ ipfs-car --list-cids path/to/my.car
+Show the root CIDs in a .car
 
-# list both the files and their CIDs.
-$ ipfs-car --list-full path/to/my.car
+```sh
+# show the CID roots found in the CAR header.
+$ ipfs-car roots path/to/my.car
+
+# show the CID roots found implicitly from the blocks in the file.
+$ ipfs-car roots --implicit path/to/my.car
+```
+
+Show the block CIDs in a .car
+
+```sh
+# show the CIDs for all the blocks.
+$ ipfs-car blocks path/to/my.car
 ```
 
 Get other information about a CAR
 
 ```sh
-# generate CID for a CAR
-$ ipfs-car --hash path/to/my.car
+# generate CID for a CAR.
+$ ipfs-car hash path/to/my.car
 ```
 
 ## API
 
-To pack files into content-addressable archives, you can use the functions provided in:
+To pack files into content-addressable archives, you can use the following:
 
-- `ipfs-car/pack` for consuming a [CAR writer](https://github.com/ipld/js-car#carwriter) async iterable
-- `ipfs-car/pack/blob` for getting a blob with the CAR file
-- `ipfs-car/pack/fs` for storing in the local file system (**Node.js only**)
-- `ipfs-car/pack/stream` for writing to a writable stream (**Node.js only**)
+- `createFileEncoderStream` a factory function for creating a `ReadbaleStream` that encodes a single file into DAG `Block`s.
+- `createDirectoryEncoderStream` a factory function for creating a `ReadbleStream` for encoding a directory of files into DAG `Block`s.
+- `CAREncoderStream` a `TransformStream` sub-class that you can write `Block`s to and read `Uint8Array` CAR file data from.
 
-⚠️ While packing files into CAR files, a [Blockstore](./src/blockstore) is used for temporary storage. All pack functions provide a default, but you can use other options (if supported on your runtime).
+To unpack content-addressable archives to files, you should use `@ipld/car` and `ipfs-unixfs-exporter` modules.
 
-To unpack content-addressable archives to files, you can use the functions provided in:
+### Examples
 
-- `ipfs-car/unpack` for getting an async iterable of the UnixFS entries stored in the CAR file
-- `ipfs-car/unpack/fs` for writing the unpacked files to disk (**Node.js only**)
-
-### `ipfs-car/pack`
-
-Takes an [ImportCandidateStream](https://github.com/ipfs/js-ipfs/blob/master/packages/ipfs-core-types/src/utils.ts#L21) and returns a [CAR writer](https://github.com/ipld/js-car#carwriter) async iterable.
+#### Basic single file pack
 
 ```js
-import { pack } from 'ipfs-car/pack'
-import { MemoryBlockStore } from 'ipfs-car/blockstore/memory' // You can also use the `level-blockstore` module
+import { createFileEncoderStream, CAREncoderStream } from 'ipfs-car'
 
-const { root, out } = await pack({
-  input: [new Uint8Array([21, 31, 41])],
-  blockstore: new MemoryBlockStore(),
-  wrapWithDirectory: true, // Wraps input into a directory. Defaults to `true`
-  maxChunkSize: 262144 // The maximum block size in bytes. Defaults to `262144`. Max safe value is < 1048576 (1MiB)
-})
+const file = new Blob(['Hello ipfs-car!'])
+const carStream = createFileEncoderStream(file).pipeThrough(new CAREncoderStream())
 
-const carParts = []
-for await (const part of out) {
-  carParts.push(part)
-}
+// carStream.pipeTo(somewhereWritable)
 ```
 
-### `ipfs-car/pack/blob`
-
-Takes an [ImportCandidateStream](https://github.com/ipfs/js-ipfs/blob/master/packages/ipfs-core-types/src/utils.ts#L21) and writes it to a [Blob](https://github.com/web-std/io/tree/main/blob).
+#### Directory pack to file system in Node.js
 
 ```js
-import { packToBlob } from 'ipfs-car/pack/blob'
-import { MemoryBlockStore } from 'ipfs-car/blockstore/memory' // You can also use the `level-blockstore` module
+import { Writable } from 'stream'
+import { createDirectoryEncoderStream, CAREncoderStream } from 'ipfs-car'
+import { filesFromPaths } from 'files-from-path'
 
-const { root, car } = await packToBlob({
-  input: [new Uint8Array([21, 31, 41])],
-  blockstore: new MemoryBlockStore()
-})
+const files = await filesFromPaths(process.argv.slice(2))
+
+await createDirectoryEncoderStream(files)
+  .pipeThrough(new CAREncoderStream())
+  .pipeTo(Writable.toWeb(process.stdout))
 ```
 
-### `ipfs-car/pack/fs`
+Usage: `node script.js file0 file1 dir0 > my.car`.
 
-Takes a path on disk and writes it to CAR file (**Node.js only**).
+#### Obtaining the root CID
+
+The root CID is the final block generated by the file/directory encoder stream. Use a transform stream to record the CID of the last block generated:
 
 ```js
-import { packToFs } from 'ipfs-car/pack/fs'
-import { FsBlockStore } from 'ipfs-car/blockstore/fs'
+import { createFileEncoderStream, CAREncoderStream } from 'ipfs-car'
 
-await packToFs({
-  input: `${process.cwd()}/path/to/files`,
-  output: `${process.cwd()}/output.car`,
-  blockstore: new FsBlockStore()
-})
-// output.car file now exists in process.cwd()
+const file = new Blob(['Hello ipfs-car!'])
+let rootCID
+
+await createFileEncoderStream(file)
+  .pipeThrough(new TransformStream({
+    transform (block, controller) {
+      rootCID = block.cid
+      controller.enqueue(block)
+    }
+  }))
+  .pipeThrough(new CAREncoderStream())
+  .pipeTo(new WritableStream())
+
+console.log(rootCID.toString())
 ```
 
-### `ipfs-car/pack/stream`
+#### Adding root CIDs to the CAR header
 
-Takes a writable stream and pipes the CAR Writer stream to it (**Node.js only**).
+If you need root CIDs in the CAR header, there are two approaches you can use:
+
+1. Buffer all the DAG blocks, then encode with known root:
+
+```js
+import { createFileEncoderStream, CAREncoderStream } from 'ipfs-car'
+
+const file = new Blob(['Hello ipfs-car!'])
+const blocks = []
+
+// buffer the output
+await createFileEncoderStream(file)
+  .pipeTo(new WritableStream({ write: b => blocks.push(b) }))
+
+const rootCID = blocks.at(-1).cid
+const blockStream = new ReadableStream({
+  pull (controller) {
+    if (blocks.length) {
+      controller.enqueue(blocks.shift())
+    } else {
+      controller.close()
+    }
+  }
+})
+
+await blockStream
+  .pipeThrough(new CAREncoderStream([rootCID])) // pass root to CAR encoder
+  .pipeTo(new WritableStream())
+```
+
+2. Write to disk with placeholder CID, then update after DAG is completely generated (Note: Node.js only):
 
 ```js
 import fs from 'fs'
-import { packToStream } from 'ipfs-car/pack/stream'
-import { FsBlockStore } from 'ipfs-car/blockstore/fs'
+import { Writable } from 'stream'
+import { CarWriter } from '@ipld/car/writer'
+import { CID } from 'multiformats/cid'
+import { createFileEncoderStream, CAREncoderStream } from 'ipfs-car'
 
-const writable = fs.createWriteStream(`${process.cwd()}/output.car`)
+// Root CID written in CAR file header before it is updated with the real root CID.
+const placeholderCID = CID.parse('bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi')
 
-await packToStream({
-  input: `${process.cwd()}/path/to/files`,
-  writable,
-  blockstore: new FsBlockStore()
+const file = new Blob(['Hello ipfs-car!'])
+let rootCID
+
+await createFileEncoderStream(file)
+  .pipeThrough(new TransformStream({
+    transform (block, controller) {
+      rootCID = block.cid
+      controller.enqueue(block)
+    }
+  }))
+  .pipeThrough(new CAREncoderStream(placeholderCID))
+  .pipeTo(Writable.toWeb(fs.createWriteStream('path/to/my.car')))
+
+// update roots in CAR header
+const fd = await fs.promises.open(opts.output, 'r+')
+await CarWriter.updateRootsInFile(fd, [rootCID])
+await fd.close()
+```
+
+#### Unpacking files from a CAR
+
+This functionality is not provided by this library, but is easy to do with `@ipld/car` and `ipfs-unixfs-exporter` modules:
+
+```js
+import { CarIndexedReader } from '@ipld/car/indexed-reader'
+import { recursive as exporter } from 'ipfs-unixfs-exporter'
+
+const reader = await CarIndexedReader.fromFile('path/to/my.car')
+const roots = await reader.getRoots()
+
+const entries = exporter(roots[0], {
+  async get (cid) {
+    const block = await reader.get(cid)
+    return block.bytes
+  }
 })
-// output.car file now exists in process.cwd()
-```
 
-### `ipfs-car/unpack`
-
-Takes a CAR reader and yields files to be consumed.
-
-```js
-import fs from 'fs'
-import { unpack } from 'ipfs-car/unpack'
-
-const inStream = fs.createReadStream(`${process.cwd()}/output.car`)
-const carReader = await CarReader.fromIterable(inStream)
-
-const files = []
-for await (const file of unpack(carReader)) {
-  // Iterate over files
+for await (const entry of entries) {
+  if (entry.type === 'file' || entry.type === 'raw') {
+    console.log('file', entry.path, entry.content)
+  } else if (entry.type === 'directory') {
+    console.log('directory', entry.path)
+  }
 }
-```
-
-Takes an AsyncIterable and yields files to be consumed.
-
-```js
-import fs from 'fs'
-import { unpackStream } from 'ipfs-car/unpack'
-
-const inStream = fs.createReadStream(`${process.cwd()}/output.car`)
-
-const files = []
-for await (const file of unpackStream(inStream)) {
-  // Iterate over files
-}
-```
-
-`unpackStream` takes an options object, allowing you to pass in a `BlockStore` implementation. The blocks are unpacked from the stream in the order they appear, which may not be the order needed to reassemble them into the Files and Directories they represent. The blockstore is used to store the blocks as they are consumed from the stream. Once the stream is consumed, the blockstore provides the random access by CID to the blocks, needed to assemble the tree.
-
-The default is a [`MemoryBlockStore`](./src/blockstore/memory.ts), that will store all the blocks in memory.
-For larger CARs in the browser you can use IndexedDB by passing in an [IdbBlocksStore](./src/blockstore/idb.ts), and in Node.js you can provide an [FsBlockStore] instance to write blocks to the tmp dir.
-
-```js
-/* browser */
-import { unpackStream } from 'ipfs-car/unpack'
-import { IdbBlockStore } from 'ipfs-car/blockstore/idb'
-
-const res = fetch('https://ipfs.io/ipfs/bafkreigh2akiscaildcqabsyg3dfr6chu3fgpregiymsck7e7aqa4s52zy?format=car')
-const files = []
-const blockstore = new IdbBlockStore()
-for await (const file of unpackStream(res.body, { blockstore })) {
-  // Iterate over files
-}
-blockstore.destroy()
-```
-
-When providing a custom Blockstore, it is your responsibility to call `blockstore.destroy()` when you're finished. Failing to do so will fill up the users' storage.
-
-### `ipfs-car/unpack/fs`
-
-Takes a path to a CAR file on disk and unpacks it to a given path
-
-```js
-import { unpackToFs } from 'ipfs-car/unpack/fs'
-
-await unpackToFs({
-  input: `${process.cwd()}/my.car`,
-  output: `${process.cwd()}/foo`
-})
-// foo now exists in process.cwd()
-// it is either a file or a directory depending on the contents of the .car
-```
-
-Takes a stream to a CAR file and unpacks it to a given path on disc
-
-```js
-import fs from 'fs'
-import { unpackStreamToFs } from 'ipfs-car/unpack/fs'
-
-const input = fs.createReadStream(`${process.cwd()}/my.car`)
-
-await unpackStreamToFs({
-  input,
-  output: `${process.cwd()}/foo`
-})
-// foo now exists in process.cwd()
-// it is either a file or a directory depending on the contents of the .car
 ```
 
 ## Contributing
