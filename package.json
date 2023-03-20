@@ -38,9 +38,6 @@
     "@ipld/dag-pb": "^4.0.2",
     "@ipld/unixfs": "^2.1.1",
     "@web3-storage/car-block-validator": "^1.0.1",
-    "archy": "^1.0.0",
-    "assert": "^2.0.0",
-    "colors": "^1.4.0",
     "files-from-path": "^1.0.0",
     "ipfs-unixfs-exporter": "^13.0.1",
     "multiformats": "^11.0.2",
@@ -48,6 +45,7 @@
     "varint": "^6.0.0"
   },
   "devDependencies": {
+    "assert": "^2.0.0",
     "execa": "^7.1.1",
     "hundreds": "^0.0.9",
     "mocha": "^10.2.0",
