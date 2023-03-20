@@ -7,11 +7,11 @@ import { getRoots } from './lib/car.js'
 
 /**
  * @param {string} carPath
- * @param {object} opts
+ * @param {object} [opts]
  * @param {string} [opts.root]
  * @param {boolean} [opts.verbose]
  */
-export default async function ls (carPath, opts) {
+export default async function ls (carPath, opts = {}) {
   if (!carPath) {
     carPath = tmpPath()
     await pipeline(process.stdin, fs.createWriteStream(carPath))

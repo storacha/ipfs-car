@@ -5,10 +5,10 @@ import { Codecs } from './codec.js'
 
 /**
  * @param {import('@ipld/car/api').CarReader} reader
- * @param {object} opts
+ * @param {object} [opts]
  * @param {string} [opts.root]
  */
-export async function getRoots (reader, opts) {
+export async function getRoots (reader, opts = {}) {
   let roots = opts.root ? [CID.parse(opts.root)] : await reader.getRoots()
   if (!roots.length) {
     roots = await findImplicitRoots(reader.blocks())

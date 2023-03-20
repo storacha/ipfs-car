@@ -12,15 +12,17 @@ const placeholderCID = CID.parse('bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3o
 
 /**
  * @param {string} filePath
- * @param {object} opts
- * @param {string[]} opts._
+ * @param {object} [opts]
+ * @param {string[]} [opts._]
  * @param {string} [opts.file]
  * @param {boolean} [opts.wrap]
  * @param {boolean} [opts.hidden]
  * @param {string} [opts.output]
  */
-export default async function pack (filePath, opts) {
-  const paths = checkPathsExist([filePath, ...opts._].filter(Boolean))
+export default async function pack (filePath, opts = {}) {
+  /* c8 ignore next */
+  const rest = opts._ ?? []
+  const paths = checkPathsExist([filePath, ...rest].filter(Boolean))
   const hidden = !!opts.hidden
   const files = paths.length
     ? await filesFromPaths(paths, { hidden })

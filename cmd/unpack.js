@@ -8,12 +8,12 @@ import { getRoots } from './lib/car.js'
 
 /**
  * @param {string} carPath
- * @param {object} opts
+ * @param {object} [opts]
  * @param {string} [opts.root]
  * @param {boolean} [opts.verify]
  * @param {string} [opts.output]
  */
-export default async function unpack (carPath, opts) {
+export default async function unpack (carPath, opts = {}) {
   if (!carPath) {
     carPath = tmpPath()
     await pipeline(process.stdin, fs.createWriteStream(carPath))
@@ -30,8 +30,11 @@ export default async function unpack (carPath, opts) {
         console.error(`Missing block: ${cid}`)
         process.exit(1)
       }
-      // @ts-expect-error
-      if (opts.verify) await validateBlock(block)
+      /* c8 ignore next */
+      if (opts.verify || opts.verify == null) {
+        // @ts-expect-error
+        await validateBlock(block)
+      }
       return block.bytes
     }
   })
