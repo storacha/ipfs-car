@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/web3-storage/ipfs-car/compare/v0.9.2...v1.0.0) (2023-03-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* The programmatic API has changed significantly, see the README for new streaming API. The CLI "commands" like `--pack` have changed to `pack` (i.e. without dashes) but are largely very similar. In the CLI, CAR files written to stdout or piped to another program (i.e. not written to disk using `--output`) will not have a root CID in the CAR header. Minimum Node.js version for the CLI has changed to 18.
+
+### Features
+
+* streaming CAR packing ([#148](https://github.com/web3-storage/ipfs-car/issues/148)) ([5f5c466](https://github.com/web3-storage/ipfs-car/commit/5f5c466e5184c885cfde20061c4e0721a7d35411))
+
 ## [0.9.2](https://github.com/web3-storage/ipfs-car/compare/v0.9.1...v0.9.2) (2023-02-15)
 
 
