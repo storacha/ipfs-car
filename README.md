@@ -29,7 +29,7 @@ $ ipfs-car unpack my-files.car --output path/to/write/to
 Fetch and locally verify files from a IPFS gateway over http
 
 ```sh
-curl "https://ipfs.io/ipfs/bafybeidd2gyhagleh47qeg77xqndy2qy3yzn4vkxmk775bg2t5lpuy7pcu?format=car" | ipfs-car unpack
+curl "https://ipfs.io/ipfs/bafybeidd2gyhagleh47qeg77xqndy2qy3yzn4vkxmk775bg2t5lpuy7pcu?format=car" | ipfs-car unpack -o images
 ```
 
 ## Install
@@ -110,8 +110,8 @@ $ ipfs-car hash path/to/my.car
 
 To pack files into content-addressable archives, you can use the following:
 
-- `createFileEncoderStream` a factory function for creating a `ReadbaleStream` that encodes a single file into DAG `Block`s.
-- `createDirectoryEncoderStream` a factory function for creating a `ReadbleStream` for encoding a directory of files into DAG `Block`s.
+- `createFileEncoderStream` a factory function for creating a `ReadableStream` that encodes a single file into DAG `Block`s.
+- `createDirectoryEncoderStream` a factory function for creating a `ReadableStream` for encoding a directory of files into DAG `Block`s.
 - `CAREncoderStream` a `TransformStream` sub-class that you can write `Block`s to and read `Uint8Array` CAR file data from.
 
 To unpack content-addressable archives to files, you should use `@ipld/car` and `ipfs-unixfs-exporter` modules.
