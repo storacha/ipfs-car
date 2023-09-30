@@ -10,6 +10,7 @@ import { CarBlockIterator } from '@ipld/car/iterator'
 export default async function blocksList (carPath, opts) {
   const blocks = await CarBlockIterator.fromIterable(carPath ? fs.createReadStream(carPath) : process.stdin)
   for await (const block of blocks) {
+    /* c8 ignore next */
     if (opts?.verify || opts?.verify == null) {
       // @ts-expect-error
       await validateBlock(block)
