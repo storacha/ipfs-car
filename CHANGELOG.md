@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.0](https://github.com/web3-storage/ipfs-car/compare/v1.0.0...v1.1.0) (2023-12-08)
+
+
+### Features
+
+* **cli:** check block hash consistency when listing blocks ([#157](https://github.com/web3-storage/ipfs-car/issues/157)) ([273079f](https://github.com/web3-storage/ipfs-car/commit/273079fa3876f7fd17593cc0791bd0fcfef43c77))
+
+
+### Bug Fixes
+
+* docs typos ([#153](https://github.com/web3-storage/ipfs-car/issues/153)) ([0144a86](https://github.com/web3-storage/ipfs-car/commit/0144a86f013087b0b54ebc195542b640c723a99b))
+
 ## [1.0.0](https://github.com/web3-storage/ipfs-car/compare/v0.9.2...v1.0.0) (2023-03-20)
 
 
