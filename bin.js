@@ -47,6 +47,7 @@ cli
 cli
   .command('blocks [car]')
   .describe('List block CIDs from a CAR.')
+  .option('--verify', 'Verify block hash consistency.', true)
   .action(createAction('./cmd/blocks.js'))
 
 cli

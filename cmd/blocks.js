@@ -1,10 +1,20 @@
 import fs from 'fs'
-import { CarCIDIterator } from '@ipld/car/iterator'
+import { validateBlock } from '@web3-storage/car-block-validator'
+import { CarBlockIterator } from '@ipld/car/iterator'
 
-/** @param {string} carPath */
-export default async function blocksList (carPath) {
-  const cids = await CarCIDIterator.fromIterable(carPath ? fs.createReadStream(carPath) : process.stdin)
-  for await (const cid of cids) {
-    console.log(cid.toString())
+/**
+ * @param {string} carPath
+ * @param {object} [opts]
+ * @param {boolean} [opts.verify]
+ */
+export default async function blocksList (carPath, opts) {
+  const blocks = await CarBlockIterator.fromIterable(carPath ? fs.createReadStream(carPath) : process.stdin)
+  for await (const block of blocks) {
+    /* c8 ignore next */
+    if (opts?.verify || opts?.verify == null) {
+      // @ts-expect-error
+      await validateBlock(block)
+    }
+    console.log(block.cid.toString())
   }
 }
