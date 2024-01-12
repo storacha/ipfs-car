@@ -98,22 +98,24 @@ describe('CLI', function () {
   })
 
   it('pack and unpack directory', async () => {
-    const dirPath = './test/fixtures/comic'
+    const dirPath = 'test/fixtures/comic'
     const packPath = tmpPath()
     const res = execaSync(binPath, ['pack', dirPath, '--output', packPath])
 
     const root = res.stderr.trim()
-    assert.equal(root, 'bafybeibkzf4twp5vs4v7qkvgg5vytqg7l4a46agerv6bqfvoefrol2pdcq')
+    assert.equal(root, 'bafybeiclikg6wjifrvhfxz72rqhda6x77wd2s2ewy3zcomtlp5f7zwvhby')
 
     const unpackPath = tmpPath()
     execaSync(binPath, ['unpack', packPath, '--output', unpackPath])
 
-    const files = await fs.promises.readdir(dirPath)
+    const files = await fs.promises.readdir(dirPath, { withFileTypes: true, recursive: true })
     for (const file of files) {
-      if (file === '.') continue
+      if (file.isDirectory()) continue
+      // @ts-expect-error `path` is deprecated but `parentPath` is experimental
+      const parentPath = file.parentPath ?? file.path
       assert.deepEqual(
-        await fs.promises.readFile(path.join(unpackPath, file)),
-        await fs.promises.readFile(path.join(dirPath, file))
+        await fs.promises.readFile(path.join(unpackPath, parentPath.replace(dirPath, ''), file.name)),
+        await fs.promises.readFile(path.join(parentPath, file.name))
       )
     }
   })
@@ -144,7 +146,7 @@ describe('CLI', function () {
     const res = execaSync(binPath, ['pack', dirPath, '--output', packPath])
 
     const root = res.stderr.trim()
-    assert.equal(root, 'bafybeibkzf4twp5vs4v7qkvgg5vytqg7l4a46agerv6bqfvoefrol2pdcq')
+    assert.equal(root, 'bafybeiclikg6wjifrvhfxz72rqhda6x77wd2s2ewy3zcomtlp5f7zwvhby')
     assert.throws(() => execaSync(binPath, ['unpack', packPath]), /Not a file/)
   })
 
@@ -194,22 +196,49 @@ describe('CLI', function () {
   it('files list', () => {
     const carPath = './test/fixtures/comic.car'
     const res = execaSync(binPath, ['ls', carPath])
-    assert.equal(res.stdout, ['.', './pinpie.jpg', './youareanonsense.jpg'].join('\n'))
+    assert.equal(res.stdout, ['.', './nested', './nested/battleelephant.jpg', './pinpie.jpg', './youareanonsense.jpg'].join('\n'))
+  })
+
+  it('files list HAMT', () => {
+    const carPath = './test/fixtures/comic-hamt.car'
+    const res = execaSync(binPath, ['ls', carPath])
+    assert.equal(res.stdout, ['.', './pinpie.jpg', './youareanonsense.jpg', './nested', './nested/battleelephant.jpg'].join('\n'))
+  })
+
+  it('files list multi block file', () => {
+    const carPath = './test/fixtures/multi-block-file.car'
+    const res = execaSync(binPath, ['ls', carPath])
+    assert.equal(res.stdout, ['.', './mega-arms.gif'].join('\n'))
+  })
+
+  it('files list multi block file HAMT', () => {
+    const carPath = './test/fixtures/multi-block-file-hamt.car'
+    const res = execaSync(binPath, ['ls', carPath])
+    assert.equal(res.stdout, ['.', './mega-arms.gif'].join('\n'))
   })
 
   it('files list verbose', () => {
     const carPath = './test/fixtures/comic.car'
     const res = execaSync(binPath, ['ls', carPath, '--verbose'])
     assert.equal(res.stdout, [
-      'bafybeibkzf4twp5vs4v7qkvgg5vytqg7l4a46agerv6bqfvoefrol2pdcq\t-\t.',
+      'bafybeiclikg6wjifrvhfxz72rqhda6x77wd2s2ewy3zcomtlp5f7zwvhby\t-\t.',
+      'bafybeib5u6im5ntmpttzg3zyt7lzc5vnn74wtdullgr2p3isd44bs6d5ta\t-\t./nested',
+      'bafkreidqychd3wyw4rixs2avqdkvlp6q7is4w3c6q2ef5h4hx77rkmm6xa\t54118\t./nested/battleelephant.jpg',
       'bafkreiajkbmpugz75eg2tmocmp3e33sg5kuyq2amzngslahgn6ltmqxxfa\t47874\t./pinpie.jpg',
       'bafkreibgj6uwfebncr524o5djgt5ibx2lru4gns3lsoy7fy5ds35zrvk24\t36981\t./youareanonsense.jpg'
     ].join('\n'))
   })
 
-  it('files list with missing block fails', () => {
+  it('files list with missing block prints "(missing)"', () => {
     const carPath = './test/fixtures/missing-root-block.car'
-    assert.throws(() => execaSync(binPath, ['ls', carPath]), /missing block/)
+    const res = execaSync(binPath, ['ls', carPath])
+    assert.equal(res.stdout, '.\t(missing)')
+  })
+
+  it('files list verbose with missing block prints "(missing)"', () => {
+    const carPath = './test/fixtures/missing-root-block.car'
+    const res = execaSync(binPath, ['ls', carPath, '--verbose'])
+    assert.equal(res.stdout, 'bafybeibkzf4twp5vs4v7qkvgg5vytqg7l4a46agerv6bqfvoefrol2pdcq\t?\t.\t(missing)')
   })
 
   it('stdin | files list', () => {
@@ -217,16 +246,18 @@ describe('CLI', function () {
     const res = execaSync(binPath, ['ls'], {
       inputFile: carPath
     })
-    assert.equal(res.stdout, ['.', './pinpie.jpg', './youareanonsense.jpg'].join('\n'))
+    assert.equal(res.stdout, ['.', './nested', './nested/battleelephant.jpg', './pinpie.jpg', './youareanonsense.jpg'].join('\n'))
   })
 
   it('blocks list', () => {
     const carPath = './test/fixtures/comic.car'
     const res = execaSync(binPath, ['blocks', carPath])
     assert.equal(res.stdout, [
+      'bafkreidqychd3wyw4rixs2avqdkvlp6q7is4w3c6q2ef5h4hx77rkmm6xa',
+      'bafybeib5u6im5ntmpttzg3zyt7lzc5vnn74wtdullgr2p3isd44bs6d5ta',
       'bafkreiajkbmpugz75eg2tmocmp3e33sg5kuyq2amzngslahgn6ltmqxxfa',
       'bafkreibgj6uwfebncr524o5djgt5ibx2lru4gns3lsoy7fy5ds35zrvk24',
-      'bafybeibkzf4twp5vs4v7qkvgg5vytqg7l4a46agerv6bqfvoefrol2pdcq'
+      'bafybeiclikg6wjifrvhfxz72rqhda6x77wd2s2ewy3zcomtlp5f7zwvhby'
     ].join('\n'))
   })
 
@@ -236,16 +267,18 @@ describe('CLI', function () {
       inputFile: carPath
     })
     assert.equal(res.stdout, [
+      'bafkreidqychd3wyw4rixs2avqdkvlp6q7is4w3c6q2ef5h4hx77rkmm6xa',
+      'bafybeib5u6im5ntmpttzg3zyt7lzc5vnn74wtdullgr2p3isd44bs6d5ta',
       'bafkreiajkbmpugz75eg2tmocmp3e33sg5kuyq2amzngslahgn6ltmqxxfa',
       'bafkreibgj6uwfebncr524o5djgt5ibx2lru4gns3lsoy7fy5ds35zrvk24',
-      'bafybeibkzf4twp5vs4v7qkvgg5vytqg7l4a46agerv6bqfvoefrol2pdcq'
+      'bafybeiclikg6wjifrvhfxz72rqhda6x77wd2s2ewy3zcomtlp5f7zwvhby'
     ].join('\n'))
   })
 
   it('generate CAR CID', () => {
     const carPath = './test/fixtures/comic.car'
     const res = execaSync(binPath, ['hash', carPath])
-    assert.equal(res.stdout, 'bagbaieraycsgjotn63wc2tdyiyadvkdach5vphpdmoeehnseebjbtapgi44q')
+    assert.equal(res.stdout, 'bagbaiera2xxdkwpmxd22m7yvjsl4jlk7envq54kcrukb4cmqnaj4v72ofeba')
   })
 
   it('stdin | generate CAR CID', () => {
@@ -253,6 +286,6 @@ describe('CLI', function () {
     const res = execaSync(binPath, ['hash'], {
       inputFile: carPath
     })
-    assert.equal(res.stdout, 'bagbaieraycsgjotn63wc2tdyiyadvkdach5vphpdmoeehnseebjbtapgi44q')
+    assert.equal(res.stdout, 'bagbaiera2xxdkwpmxd22m7yvjsl4jlk7envq54kcrukb4cmqnaj4v72ofeba')
   })
 })

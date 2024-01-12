@@ -8,7 +8,7 @@ import { Codecs } from './codec.js'
  * @param {object} [opts]
  * @param {string} [opts.root]
  */
-export async function getRoots (reader, opts = {}) {
+export async function getRoot (reader, opts = {}) {
   let roots = opts.root ? [CID.parse(opts.root)] : await reader.getRoots()
   if (!roots.length) {
     roots = await findImplicitRoots(reader.blocks())
@@ -17,7 +17,7 @@ export async function getRoots (reader, opts = {}) {
     console.error(`Multiple roots found, use --root to specify which one to use:\n${roots.join('\n')}`)
     process.exit(1)
   }
-  return roots
+  return roots[0]
 }
 
 /** @param {AsyncIterable<import('@ipld/car/api').Block>} blocks */
