@@ -46,7 +46,7 @@ export default async function ls (carPath, opts = {}) {
 }
 
 /**
- * @param {Blockstore} bs 
+ * @param {Blockstore} bs
  * @param {import('multiformats').UnknownLink} link
  * @returns {AsyncIterable<MissingEntry|DataEntry|DirectoryEntry|FileEntry>}
  */
