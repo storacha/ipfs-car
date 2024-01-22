@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/web3-storage/ipfs-car/compare/v1.1.0...v1.2.0) (2024-01-22)
+
+
+### Features
+
+* streaming sha256 CAR hash ([#162](https://github.com/web3-storage/ipfs-car/issues/162)) ([f1601a0](https://github.com/web3-storage/ipfs-car/commit/f1601a049db3f6512ddc5b1d710d856f5760bf2e))
+
 ## [1.1.0](https://github.com/web3-storage/ipfs-car/compare/v1.0.0...v1.1.0) (2023-12-08)
 
 
