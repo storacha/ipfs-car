@@ -1,6 +1,8 @@
 import fs from 'fs'
+import crypto from 'crypto'
 import { pipeline } from 'stream/promises'
 import { CID } from 'multiformats/cid'
+import * as Digest from 'multiformats/hashes/digest'
 import { sha256 } from 'multiformats/hashes/sha2'
 
 /** CAR CID code */
@@ -8,21 +10,17 @@ const carCode = 0x0202
 
 /** @param {string} carPath */
 export default async function hash (carPath) {
-  let bytes
-  if (carPath) {
-    bytes = await fs.promises.readFile(carPath)
-  } else {
-    bytes = await pipeline(
-      process.stdin,
-      async (source) => {
-        const chunks = []
-        for await (const chunk of source) {
-          chunks.push(chunk)
-        }
-        return Buffer.concat(chunks)
-      }
-    )
-  }
+  const hasher = crypto.createHash('sha256')
 
-  console.log(CID.createV1(carCode, await sha256.digest(bytes)).toString())
+  await pipeline(
+    carPath ? fs.createReadStream(carPath) : process.stdin,
+    async (source) => {
+      for await (const chunk of source) {
+        hasher.update(chunk)
+      }
+    }
+  )
+
+  const digest = Digest.create(sha256.code, hasher.digest())
+  console.log(CID.createV1(carCode, digest).toString())
 }
