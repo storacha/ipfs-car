@@ -4,7 +4,7 @@ import { CarIndexedReader } from '@ipld/car/indexed-reader'
 import { recursive as exporter } from 'ipfs-unixfs-exporter'
 import { validateBlock } from '@web3-storage/car-block-validator'
 import { tmpPath } from './lib/tmp.js'
-import { getRoots } from './lib/car.js'
+import { getRoot } from './lib/car.js'
 
 /**
  * @param {string} carPath
@@ -20,10 +20,10 @@ export default async function unpack (carPath, opts = {}) {
   }
 
   const reader = await CarIndexedReader.fromFile(carPath)
-  const roots = await getRoots(reader, opts)
+  const root = await getRoot(reader, opts)
 
   // @ts-expect-error blockstore not got `has` or `put` but they are unused
-  const entries = exporter(roots[0], {
+  const entries = exporter(root, {
     async get (cid) {
       const block = await reader.get(cid)
       if (!block) {
