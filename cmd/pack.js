@@ -41,8 +41,10 @@ export default async function pack (filePath, opts = {}) {
     // @ts-expect-error
     await CarWriter.updateRootsInFile(fd, [rootCID])
     await fd.close()
+    console.log(rootCID.toString())
+  } else {
+    console.error(rootCID.toString())
   }
-  console.error(rootCID.toString())
 }
 
 /** @param {string[]} paths */

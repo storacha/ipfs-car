@@ -41,7 +41,7 @@ describe('CLI', function () {
     const packPath = tmpPath()
     const res = execaSync(binPath, ['pack', filePath, '--output', packPath])
 
-    const root = res.stderr.trim()
+    const root = res.stdout.trim()
     assert.equal(root, 'bafybeiajdopsmspomlrpaohtzo5sdnpknbolqjpde6huzrsejqmvijrcea')
 
     const unpackPath = tmpPath()
@@ -58,7 +58,7 @@ describe('CLI', function () {
     const packPath = tmpPath()
     const res = execaSync(binPath, ['pack', filePath, '--no-wrap', '--output', packPath])
 
-    const root = res.stderr.trim()
+    const root = res.stdout.trim()
     assert.equal(root, 'bafkreiajkbmpugz75eg2tmocmp3e33sg5kuyq2amzngslahgn6ltmqxxfa')
 
     const unpackPath = tmpPath()
@@ -102,7 +102,7 @@ describe('CLI', function () {
     const packPath = tmpPath()
     const res = execaSync(binPath, ['pack', dirPath, '--output', packPath])
 
-    const root = res.stderr.trim()
+    const root = res.stdout.trim()
     assert.equal(root, 'bafybeibkzf4twp5vs4v7qkvgg5vytqg7l4a46agerv6bqfvoefrol2pdcq')
 
     const unpackPath = tmpPath()
@@ -143,7 +143,7 @@ describe('CLI', function () {
     const packPath = tmpPath()
     const res = execaSync(binPath, ['pack', dirPath, '--output', packPath])
 
-    const root = res.stderr.trim()
+    const root = res.stdout.trim()
     assert.equal(root, 'bafybeibkzf4twp5vs4v7qkvgg5vytqg7l4a46agerv6bqfvoefrol2pdcq')
     assert.throws(() => execaSync(binPath, ['unpack', packPath]), /Not a file/)
   })
