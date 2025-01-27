@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/storacha/ipfs-car/compare/v1.2.0...v2.0.0) (2025-01-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* log cid to stdout when there's an output file ([#169](https://github.com/storacha/ipfs-car/issues/169))
+
+### Features
+
+* log cid to stdout when there's an output file ([#169](https://github.com/storacha/ipfs-car/issues/169)) ([f5e21a2](https://github.com/storacha/ipfs-car/commit/f5e21a2db4aade5cf86c5456a3d690f7faa5f0fe))
+
 ## [1.2.0](https://github.com/web3-storage/ipfs-car/compare/v1.1.0...v1.2.0) (2024-01-22)
 
 
