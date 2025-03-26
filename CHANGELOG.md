@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0](https://github.com/storacha/ipfs-car/compare/v2.0.0...v3.0.0) (2025-03-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* default to 1MiB chunks and 1024 children ([#172](https://github.com/storacha/ipfs-car/issues/172))
+
+### Features
+
+* default to 1MiB chunks and 1024 children ([#172](https://github.com/storacha/ipfs-car/issues/172)) ([13553bd](https://github.com/storacha/ipfs-car/commit/13553bda3ad5d7110aecd277ef2a1ee21247fc01))
+
 ## [2.0.0](https://github.com/storacha/ipfs-car/compare/v1.2.0...v2.0.0) (2025-01-27)
 
 
