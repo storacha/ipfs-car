@@ -38,7 +38,7 @@
     "@ipld/dag-pb": "^4.0.2",
     "@ipld/unixfs": "^3.0.0",
     "@web3-storage/car-block-validator": "^1.0.1",
-    "files-from-path": "^1.0.0",
+    "files-from-path": "^1.1.5-rc.1",
     "ipfs-unixfs-exporter": "^13.0.1",
     "multiformats": "^13.0.1",
     "sade": "^1.8.1",
