@@ -70,6 +70,28 @@ describe('CLI', function () {
     )
   })
 
+  it('pack a path that includes the output, skipping the output file', async () => {
+    const filePath = './test/fixtures/comic/pinpie.jpg'
+    const packPath = tmpPath()
+    let res = execaSync(binPath, ['pack', filePath, '--output', packPath])
+
+    let root = res.stdout.trim()
+    assert.equal(root, 'bafybeiajdopsmspomlrpaohtzo5sdnpknbolqjpde6huzrsejqmvijrcea')
+
+    res = execaSync(binPath, ['pack', filePath, packPath, '--output', packPath])
+
+    root = res.stdout.trim()
+    assert.equal(root, 'A version of the output CAR file exists in the source path(s). It will not be included in the new output CAR file.\nbafybeiajdopsmspomlrpaohtzo5sdnpknbolqjpde6huzrsejqmvijrcea')
+
+    const unpackPath = tmpPath()
+    execaSync(binPath, ['unpack', packPath, '--output', unpackPath])
+
+    assert.deepEqual(
+      await fs.promises.readFile(path.join(unpackPath, 'pinpie.jpg')),
+      await fs.promises.readFile(filePath)
+    )
+  })
+
   it('stdin | pack | unpack | stdout a file', async () => {
     const filePath = './test/fixtures/comic/pinpie.jpg'
     const res0 = execaSync(binPath, ['pack', '--no-wrap'], {

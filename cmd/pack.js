@@ -24,8 +24,21 @@ export default async function pack (filePath, opts = {}) {
   const rest = opts._ ?? []
   const paths = checkPathsExist([filePath, ...rest].filter(Boolean))
   const hidden = !!opts.hidden
+  let fullOutputPath
+  if (opts.output) {
+    fullOutputPath = path.resolve(opts.output)
+  }
   const files = paths.length
-    ? await filesFromPaths(paths, { hidden })
+    ? await filesFromPaths(paths, {
+      hidden,
+      filter: (filePath) => {
+        const include = !fullOutputPath || filePath !== fullOutputPath
+        if (!include) {
+          console.log('A version of the output CAR file exists in the source path(s). It will not be included in the new output CAR file.')
+        }
+        return include
+      }
+    })
     : /** @type {import('../types').FileLike[]} */ ([{ name: 'stdin', stream: () => Readable.toWeb(process.stdin) }])
   const blockStream = files.length === 1 && (files[0].name === 'stdin' || !opts.wrap)
     ? UnixFS.createFileEncoderStream(files[0])
