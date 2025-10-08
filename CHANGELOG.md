@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.0](https://github.com/storacha/ipfs-car/compare/v3.0.0...v3.1.0) (2025-10-08)
+
+
+### Features
+
+* **cli:** hash can output a base58btc encoded multihash ([#176](https://github.com/storacha/ipfs-car/issues/176)) ([39fc03f](https://github.com/storacha/ipfs-car/commit/39fc03f0150c7f933caf39b425728de05d4f66e2))
+
 ## [3.0.0](https://github.com/storacha/ipfs-car/compare/v2.0.0...v3.0.0) (2025-03-26)
 
 
