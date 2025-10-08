@@ -248,6 +248,12 @@ describe('CLI', function () {
     assert.equal(res.stdout, 'bagbaieraycsgjotn63wc2tdyiyadvkdach5vphpdmoeehnseebjbtapgi44q')
   })
 
+  it('generate multihash', () => {
+    const carPath = './test/fixtures/comic.car'
+    const res = execaSync(binPath, ['hash', carPath, '--only-multihash'])
+    assert.equal(res.stdout, 'zQmbJeNsbY4jTphnsZ4RBHG2jC8STcBanGVPi3V3A9FQxSU')
+  })
+
   it('stdin | generate CAR CID', () => {
     const carPath = './test/fixtures/comic.car'
     const res = execaSync(binPath, ['hash'], {

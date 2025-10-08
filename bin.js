@@ -53,6 +53,7 @@ cli
 cli
   .command('hash [car]')
   .describe('Generate CID for a CAR.')
+  .option('-m, --only-multihash', 'Output base58btc encoded multihash instead of a CID.')
   .action(createAction('./cmd/hash.js'))
 
 cli.parse(process.argv)
